@@ -1,0 +1,52 @@
+/* ── Pipe-table draft card: counts, size check, section lengths, issues, network ── */
+.pipe-draft { min-width: 0; }
+.pipe-draft-section { display: grid; gap: 8px; min-width: 0; }
+.pipe-draft-heading { margin: 0; color: var(--mute); font-size: var(--fs-s); font-weight: 700; }
+.pipe-draft-meta { margin: 0; color: var(--mute); font-size: var(--fs-s); line-height: 1.5; text-wrap: pretty; }
+.pipe-draft-counts { grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); }
+.pipe-draft-counts dd, .pipe-draft-stats dd { font-family: var(--font-mono); font-size: var(--fs-l); color: var(--ink); }
+.pipe-draft-stats { grid-template-columns: repeat(auto-fit, minmax(132px, 1fr)); }
+
+.pipe-draft-verdict { display: flex; align-items: center; gap: 7px; margin: 0; color: var(--ink); font-size: var(--fs-s); font-weight: 650; }
+.pipe-draft-verdict::before { width: 7px; height: 7px; flex: 0 0 auto; background: var(--pass); content: ''; }
+.pipe-draft-verdict.is-near::before { background: var(--warn); }
+.pipe-draft-verdict.is-near { color: var(--warn); }
+
+.pipe-draft-caps { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.pipe-draft-cap { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 3px 12px; align-items: baseline; font-size: var(--fs-s); }
+.pipe-draft-cap-name { color: var(--ink); }
+.pipe-draft-cap-usage { color: var(--mute); font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.pipe-draft-meter { grid-column: 1 / -1; height: 8px; border: 1px solid var(--hairline); background: var(--raised); }
+.pipe-draft-meter > span { display: block; height: 100%; background: var(--info); }
+.pipe-draft-cap.is-near .pipe-draft-meter > span {
+  background: var(--warn);
+}
+.pipe-draft-cap.is-near .pipe-draft-cap-usage { color: var(--warn); font-weight: 700; }
+
+.pipe-draft-issues { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.pipe-draft-issues li {
+  display: grid; gap: 2px; min-width: 0; padding: 8px 10px;
+  border: 1px solid var(--fail); background: var(--raised);
+}
+.pipe-draft-issue-where { color: var(--ink); font: 700 var(--fs-s)/1.4 var(--font-mono); overflow-wrap: anywhere; }
+.pipe-draft-issue-reason { color: var(--mute); font-size: var(--fs-s); line-height: 1.45; overflow-wrap: anywhere; }
+
+.pipe-draft-network { display: grid; gap: 10px; min-width: 0; }
+.pipe-draft-action {
+  justify-self: start; min-height: var(--tgt); padding: 0 14px; font: inherit; font-size: var(--fs-s); font-weight: 700;
+  color: var(--ink); background: var(--raised); border: 1px solid var(--hairline); border-radius: 0; cursor: pointer;
+}
+.pipe-draft-action:hover { background: var(--hover); }
+.pipe-draft-action[aria-expanded='true'] { color: var(--on-select); background: var(--select); box-shadow: var(--select-edge); }
+.pipe-draft-action:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.pipe-draft-map { display: grid; gap: 8px; min-width: 0; max-width: 100%; overflow: hidden; }
+.pipe-draft-problem { display: grid; gap: 8px; margin: 0; padding: 10px 12px; color: var(--ink); font-size: var(--fs-s); line-height: 1.5; border: 1px solid var(--fail); background: var(--raised); }
+.pipe-draft-problem p { margin: 0; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .pipe-draft-meter > span { transition: width var(--d-enter) var(--ease-enter); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pipe-draft-meter > span { transition: none; }
+}
+.pipe-draft-start dt { text-transform: none; }

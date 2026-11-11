@@ -1,0 +1,23 @@
+<!--
+  OLGA Companion app-icon tile, Terminalcore prompt glyph.
+  Source of truth for every generated icon size: render to 1024x1024 PNG
+  (nearest-neighbour from the 16-unit grid), then `npx tauri icon` derives
+  .ico, .icns and the full Square*/StoreLogo/android set from it.
+
+  A prompt `>_` in signal blue #7aa2f7 followed by a phosphor-green #9ece6a
+  block cursor, on the Tokyo Night canvas #16161e inside a 1-unit frame in the
+  line colour #3b4261. Square corners, no gradient, no glow, no blur, no text:
+  the glyph is rects and one stepped path, so it needs no font.
+
+  The whole drawing sits on a 16-unit grid with integer coordinates and
+  crispEdges, so at 16, 32, 48, 64, 128 and 256 px every edge lands on a pixel
+  boundary and nothing is anti-aliased. Full-bleed tile because Windows and
+  macOS composite the icon as supplied.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="512" height="512" shape-rendering="crispEdges">
+  <rect width="16" height="16" fill="#16161e"/>
+  <path d="M0 0H16V16H0ZM1 1V15H15V1Z" fill="#3b4261" fill-rule="evenodd"/>
+  <path d="M2 4H4V5H5V6H6V7H7V9H6V10H5V11H4V12H2V11H3V10H4V9H5V7H4V6H3V5H2Z" fill="#7aa2f7"/>
+  <rect x="8" y="10" width="3" height="2" fill="#7aa2f7"/>
+  <rect x="12" y="4" width="2" height="8" fill="#9ece6a"/>
+</svg>

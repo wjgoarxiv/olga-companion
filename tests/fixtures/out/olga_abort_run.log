@@ -1,0 +1,28 @@
+WARNING 1051: Error in file 'C:/Users/Woojin/Desktop/DESKTOP_PARA/1_PROJECTS/2026-03_OLGA-LLM_SKILLSETUP/06_APP-making/var/sandbox/runs/81a26097544c/fluid.tab': Wrong header
+
+
+     **************************************************************
+     *                                                            *
+     *                       OLGA  STOP                           *
+     *                                                            *
+     **************************************************************
+
+     THE OLGA SIMULATION ABORTED AT TIME 0.00000000 SECONDS.
+
+    
+     
+     FLOWPATH_1 
+     BRANCH: TagsFrom component with LABEL or NUMBER 1 as referred to in key FLUID is not found. 
+     
+     NODE_INLET 
+     PARAMETERS: TagsFrom component with LABEL or NUMBER 1 as referred to in key FLUID is not found. 
+     
+     NODE_OUTLET 
+     PARAMETERS: TagsFrom component with LABEL or NUMBER 1 as referred to in key FLUID is not found. 
+     
+     FLOWPATH_1 Missing required keywords. HEATTRANSFER 
+
+
+
+**** OLGA stopped with exit message 'verification failed' (18) ****
+

@@ -1,0 +1,15 @@
+<!--
+  OLGA Companion mark, Terminalcore prompt glyph: a `>_` prompt in signal blue
+  #7aa2f7 and a phosphor-green #9ece6a block cursor. Glyph only, no tile, no
+  frame; use it on a Tokyo Night night surface (#16161e). The tile for app icons
+  is mark-tile.svg.
+
+  Rects and one stepped path on a 16-unit integer grid with crispEdges, so it
+  needs no font and stays sharp at 16px. No gradient, glow or rounded corner.
+  Geometry matches mark-tile.svg; keep the two in step.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="64" height="64" role="img" aria-label="OLGA Companion" shape-rendering="crispEdges">
+  <path d="M2 4H4V5H5V6H6V7H7V9H6V10H5V11H4V12H2V11H3V10H4V9H5V7H4V6H3V5H2Z" fill="#7aa2f7"/>
+  <rect x="8" y="10" width="3" height="2" fill="#7aa2f7"/>
+  <rect x="12" y="4" width="2" height="8" fill="#9ece6a"/>
+</svg>

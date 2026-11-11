@@ -1,0 +1,46 @@
+node_modules/
+dist/
+frontend/dist/
+src-tauri/target/
+src-tauri/gen/
+src-tauri/binaries/
+.pytest_cache/
+__pycache__/
+*.pyc
+var/sandbox/
+var/logs/
+var/exports/
+var/chats/
+var/demo/
+var/workspace/
+var/workspace-active.json
+var/workspace-root.json
+.venv/
+
+# Build-time OAuth secrets (never commit; antigravity provider reads env or this gitignored file)
+src/olga_companion/llm/antigravity/_provisioned_secrets.py
+_sweep/
+HANDOFF.md
+
+# Local runtime state and session tooling — never app source.
+# Root-anchored: bare patterns would also swallow nested dirs such as
+# .litopencode/litgoal/lit-loop/evidence/.
+/var/
+*.egg-info/
+/test-results/
+/.playwright-cli/
+/.autoresearch/
+/.litcodex/
+/evidence/
+/deep-interview/
+
+# Remotion workspace: deps and render output. The GIF the README embeds is
+# committed (assets/demo.gif); the full-resolution MP4 is a release asset, not
+# repository content.
+/video/node_modules/
+/video/out/
+/assets/demo.mp4
+
+# Brand faces are copied into the Remotion workspace at render time by
+# `npm --prefix video run fonts`; the originals live in frontend/public/fonts.
+/video/public/fonts/

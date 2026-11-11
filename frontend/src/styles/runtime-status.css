@@ -1,0 +1,81 @@
+.runtime-nav-status {
+  display: grid;
+  grid-template-columns: 7px minmax(52px, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  max-width: min(200px, 22vw);
+  min-width: 164px;
+  min-height: 42px;
+  padding: 5px 5px 5px 10px;
+  background: color-mix(in srgb, var(--raised) 88%, var(--fail));
+  border: 1px solid color-mix(in srgb, var(--hairline) 72%, var(--fail));
+  border-radius: var(--r-s);
+}
+
+.runtime-nav-status-signal {
+  width: 7px;
+  height: 7px;
+  background: var(--fail);
+  border-radius: var(--r-s);
+}
+
+.runtime-nav-status-busy .runtime-nav-status-signal {
+  background: var(--info);
+}
+
+.runtime-nav-status-copy {
+  display: grid;
+  min-width: 0;
+  align-content: center;
+  gap: 2px;
+}
+
+.runtime-nav-status-copy strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.runtime-nav-status-label {
+  color: var(--mute);
+  font-size: var(--fs-s);
+  font-weight: 800;
+  letter-spacing: var(--track-label);
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.runtime-nav-status-copy strong {
+  color: var(--fail);
+  font-size: var(--fs-s);
+  font-weight: 750;
+  line-height: 1.1;
+}
+.runtime-nav-status-busy .runtime-nav-status-copy strong { color: var(--info); }
+
+.runtime-nav-status .ui-button {
+  min-height: 30px;
+  padding: 0 10px;
+  font-size: var(--fs-s);
+}
+
+@media (max-width: 1080px) {
+  .runtime-nav-status { max-width: min(190px, 27vw); }
+}
+
+@media (max-width: 760px) {
+  .runtime-nav-status {
+    width: auto;
+    max-width: 150px;
+    min-width: 0;
+    grid-template-columns: 7px minmax(42px, 1fr) auto;
+    gap: 5px;
+    min-height: 36px;
+    padding: 3px 4px 3px 7px;
+  }
+  .runtime-nav-status-copy { display: grid; max-width: 68px; }
+  .runtime-nav-status-label { display: none; }
+  .runtime-nav-status-copy strong { font-size: var(--fs-s); }
+  .runtime-nav-status .ui-button { min-height: 44px; padding: 0 8px; }
+}
