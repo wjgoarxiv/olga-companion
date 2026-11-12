@@ -1,0 +1,64 @@
+/* Thin status bar: one runtime item opening the runtime popover, model and
+   locale text. Height follows the --sb-h frame token (24-28px contract). */
+.wb-status {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  flex: none;
+  height: var(--sb-h);
+  padding: 0 var(--sp-3);
+  background: var(--bg-deep);
+  border-top: 1px solid var(--hairline);
+  font-size: var(--fs-xs);
+}
+.wb-status-runtime {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 0;
+  background: var(--clear);
+  color: var(--ink);
+  cursor: pointer;
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  padding: 0 var(--sp-1);
+  align-self: stretch;
+  font-variant-numeric: tabular-nums;
+}
+.wb-heartbeat { width: 8px; height: 8px; flex: 0 0 auto; border-radius: var(--r-s); background: var(--mute); }
+.wb-status-runtime.is-online .wb-heartbeat { background: var(--pass); }
+.wb-status-text { white-space: nowrap; }
+.wb-status-model { display: inline-flex; align-items: center; gap: 6px; color: var(--mute); white-space: nowrap; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.wb-status-model-kicker { text-transform: uppercase; letter-spacing: var(--track-label); font-size: var(--fs-xs); }
+.wb-status-model-name { color: var(--ink-2); font-weight: 600; }
+.wb-status-locale {
+  margin-left: auto;
+  border: 0;
+  background: var(--clear);
+  color: var(--mute);
+  cursor: pointer;
+  font-size: var(--fs-xs);
+  font-family: var(--font-mono);
+  padding: 0 var(--sp-1);
+  align-self: stretch;
+}
+.wb-status-popover-slot { position: absolute; right: var(--sp-2); bottom: calc(100% + var(--sp-2)); z-index: 40; }
+.wb-status-popover-slot .ui-popover { position: static; width: 300px; padding: var(--sp-3) var(--sp-4); }
+.wb-status-head { margin: 0 0 var(--sp-2); font-size: var(--fs-xs); font-weight: 600; text-transform: uppercase; letter-spacing: var(--track-label); color: var(--ink-2); }
+.wb-status-row { display: flex; justify-content: space-between; gap: var(--sp-2); margin: 0 0 var(--sp-1); font-size: var(--fs-s); }
+.wb-status-row > span { color: var(--mute); }
+.wb-status-caps { list-style: none; margin: var(--sp-2) 0; padding: var(--sp-2) 0 0; border-top: 1px solid var(--hairline-soft); display: grid; gap: var(--sp-1); }
+.wb-status-caps .capability { display: flex; justify-content: space-between; gap: var(--sp-2); font-size: var(--fs-xs); }
+.wb-status-caps .capability.gated strong { color: var(--mute); }
+
+/* Corporate-proxy badge: shown only when the toggle is on and the last probe was OK. */
+.wb-status-proxy {
+  padding-inline: var(--s-xs);
+  font-size: var(--font-sm);
+  letter-spacing: 0.02em;
+  color: var(--mute);
+  border: 1px solid var(--mute);
+  border-radius: var(--r-s);
+  white-space: nowrap;
+}

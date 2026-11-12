@@ -1,0 +1,168 @@
+/* Terminalcore motion and the pixel icon paint. Every duration and
+   distance reads the preset tokens from base.css (--mo, --mo-move, --fx), so
+   Off cancels, Subtle shortens and Full adds the wipe. Easing is stepped
+   (steps(3, end)); there is no glitch, scan sweep or blur. Only transform,
+   opacity and clip-path move. The approval card and its controls
+   get no motion beyond the focus ring and hover colour: the lift rules below
+   exclude everything inside .approval-card. */
+
+.px-icon {
+  display: block;
+  flex: none;
+  width: calc(var(--px, 24) * 1px * var(--ui-scale));
+  height: calc(var(--px, 24) * 1px * var(--ui-scale));
+  shape-rendering: crispEdges;
+}
+
+@keyframes neo-enter {
+  from { opacity: 0; transform: translateY(var(--rise)); clip-path: inset(0 calc(100% * var(--fx)) 0 0); }
+  to { opacity: 1; transform: none; clip-path: inset(0 0 0 0); }
+}
+@keyframes neo-step {
+  from { opacity: calc(1 - var(--mo-move)); transform: translateX(calc(var(--rise) * -1)); clip-path: inset(0 calc(100% * var(--fx)) 0 0); }
+  to { opacity: 1; transform: none; clip-path: inset(0 0 0 0); }
+}
+
+/* Entrance: pane headers, the rail and the next-step button rise in once. */
+.wb-pane-head,
+.step-bar-main .step-next,
+.wb-activity .ui-iconbutton {
+  animation: neo-enter var(--d-enter) var(--ease-enter) backwards;
+}
+.wb-activity .ui-iconbutton:nth-of-type(2) { animation-delay: calc(var(--d-ui) * 0.3); }
+.wb-activity .ui-iconbutton:nth-of-type(3) { animation-delay: calc(var(--d-ui) * 0.6); }
+.wb-activity .ui-iconbutton:nth-of-type(4) { animation-delay: calc(var(--d-ui) * 0.9); }
+.wb-explorer-group li { animation: neo-enter var(--d-enter) var(--ease-enter) backwards; }
+.wb-explorer-group li:nth-child(2) { animation-delay: calc(var(--d-ui) * 0.3); }
+.wb-explorer-group li:nth-child(3) { animation-delay: calc(var(--d-ui) * 0.6); }
+.wb-explorer-group li:nth-child(4) { animation-delay: calc(var(--d-ui) * 0.9); }
+.wb-explorer-group li:nth-child(n+5) { animation-delay: calc(var(--d-ui) * 1.2); }
+
+/* Step transition: the newly highlighted chevron wipes in. */
+.step-cell.is-highlighted .step-open { animation: neo-step var(--d-enter) var(--ease-enter) backwards; }
+
+
+/* Hover on buttons, rail items and rows. Chrome stays still (--lift is 0), so
+   hover changes colour only. Approval controls are excluded. */
+.ui-button { transition: background-color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out), transform var(--d-ui) var(--ease-ui); }
+.wb-btn:not(.approval-card *):not(.wb-btn-primary):not([data-busy]):not(:disabled):hover,
+.ui-button:not(.approval-card *):not(.approve):not(.ui-button-primary):not(.run-go):not([data-busy]):not(:disabled):hover,
+.ui-iconbutton:not(.approval-card *):not([data-busy]):not(:disabled):hover { transform: translate(calc(var(--lift) * -1), calc(var(--lift) * -1)); }
+.wb-btn:not(.approval-card *):not(.wb-btn-primary):not([data-busy]):not(:disabled):active,
+.ui-button:not(.approval-card *):not(.approve):not(.ui-button-primary):not(.run-go):not([data-busy]):not(:disabled):active,
+.ui-iconbutton:not(.approval-card *):not([data-busy]):not(:disabled):active { transform: translate(0, 0); }
+.wb-activity .ui-iconbutton:hover { transform: translateX(var(--lift)); }
+.wb-explorer-item { transition: transform var(--d-ui) var(--ease-ui), background-color var(--d-ui) var(--ease-ui); }
+.wb-explorer-item:hover { transform: translateX(var(--lift)); }
+
+/* Sash drag affordance: the grip grows (stepped). No flicker. */
+.panel-resizer span { transition: height var(--d-ui) var(--ease-ui), width var(--d-ui) var(--ease-ui), opacity var(--d-ui) var(--ease-ui), background var(--d-ui) var(--ease-ui); }
+
+/* ── N5b technical decor: static in every preset, always aria-hidden ── */
+.rv-chart-wrap { position: relative; }
+.frame-ruler { position: absolute; z-index: 1; pointer-events: none; opacity: 0.55; }
+.frame-ruler-x { left: 0; right: 0; top: 0; height: 0; border-top: 1px solid var(--mute); }
+.frame-ruler-y { top: 0; bottom: 0; left: 0; width: 0; border-left: 1px solid var(--mute); }
+.frame-mark {
+  position: absolute;
+  z-index: 1;
+  width: 9px;
+  height: 9px;
+  color: var(--focus);
+  pointer-events: none;
+}
+/* The + mark is two 1 px bars drawn by pseudo-elements. */
+.frame-mark::before, .frame-mark::after { content: ""; position: absolute; background: currentColor; }
+.frame-mark::before { left: 0; right: 0; top: 4px; height: 1px; }
+.frame-mark::after { top: 0; bottom: 0; left: 4px; width: 1px; }
+.frame-mark-tl { top: 8px; left: 8px; }
+.frame-mark-tr { top: 8px; right: 8px; }
+.frame-mark-bl { bottom: 8px; left: 8px; }
+.frame-mark-br { bottom: 8px; right: 8px; }
+.topo-coord {
+  position: absolute;
+  right: 22px;
+  bottom: 6px;
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.04em;
+  color: var(--mute);
+  pointer-events: none;
+}
+.topo-node-icon { color: var(--ink-2); pointer-events: none; }
+.topo-node.selected .topo-node-icon { color: var(--ink); }
+.wb-barcode {
+  flex: none;
+  width: 56px;
+  height: 14px;
+  margin-inline: var(--sp-2);
+  /* A fake barcode is not a real readout (kit: no fake data): kept in the DOM, not painted. */
+  display: none;
+}
+.pane-mark {
+  position: absolute;
+  z-index: 2;
+  width: 8px;
+  height: 8px;
+  color: var(--focus);
+  pointer-events: none;
+}
+.pane-mark-tl { top: 4px; left: 4px; border-top: 1px solid; border-left: 1px solid; }
+.pane-mark-tr { top: 4px; right: 4px; border-top: 1px solid; border-right: 1px solid; }
+.pane-mark-bl { bottom: 4px; left: 4px; border-bottom: 1px solid; border-left: 1px solid; }
+.pane-mark-br { bottom: 4px; right: 4px; border-bottom: 1px solid; border-right: 1px solid; }
+.pixel-sep {
+  display: inline-block;
+  flex: none;
+  width: 1px;
+  height: 10px;
+  margin-inline: 6px;
+  background: var(--focus);
+  pointer-events: none;
+  vertical-align: middle;
+}
+.wb-centre-tabs > .pane-head-sep,
+.wb-panel > .wb-panel-bar .pane-head-sep {
+  position: absolute;
+  z-index: 2;
+  margin: 0;
+}
+.wb-centre-tabs > .pane-head-sep { left: calc(var(--sp-2) + 2.5em); top: 11px; }
+.wb-panel-bar { position: relative; }
+.wb-panel-bar .pane-head-sep { left: 40px; top: 11px; }
+.step-cell { position: relative; }
+.step-gap { position: absolute; left: 0; top: 8px; height: 12px; margin: 0; }
+.th-sep { height: 8px; margin: 0 6px 0 0; }
+
+@media (max-width: 1100px) {
+  .wb-barcode { display: none; }
+  .pane-mark, .pixel-sep { display: none; }
+}
+
+/* ── Full-only stepped transitions (--fx = 1). Off and Subtle never run these.
+   No flicker, blink, strobe, glitch or text decoding exists at any level. ── */
+@keyframes neo-wipe {
+  0% { transform: translateY(6px); }
+  100% { transform: none; }
+}
+@keyframes pixel-loader {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(4px, 0); }
+}
+html[data-motion="full"] .wb-centre-tabs > .ui-tabs > .ui-tabpanel > * > * {
+  animation: neo-wipe 160ms steps(3, end) forwards;
+}
+.activity-loader-pixels {
+  display: none;
+  width: 12px;
+  height: 12px;
+  flex: none;
+  color: var(--ink);
+  background: currentColor;
+}
+/* The one looping mark: a real loading state, stepped, and absent (not frozen) in Off. */
+html[data-motion="full"] .activity-loader-pixels { display: block; animation: pixel-loader 800ms steps(3, end) infinite; }
+html[data-motion="full"] .wb-centre-tabs > .ui-tabs > .ui-tabpanel > .rv-view > * { animation: none; }
+html[data-motion="full"] .wb-centre-tabs > .ui-tabs > .ui-tabpanel > * > :nth-child(2) { animation-delay: calc(var(--d-ui) * 0.4); }
+html[data-motion="full"] .wb-centre-tabs > .ui-tabs > .ui-tabpanel > * > :nth-child(3) { animation-delay: calc(var(--d-ui) * 0.8); }
+html[data-motion="full"] .wb-centre-tabs > .ui-tabs > .ui-tabpanel > * > :nth-child(n+4) { animation-delay: calc(var(--d-ui) * 1.2); }
