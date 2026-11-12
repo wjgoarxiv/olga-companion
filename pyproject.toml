@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "olga-companion"
+version = "0.1.4"
+description = "Standalone OLGA Companion sidecar"
+requires-python = ">=3.11"
+# httpx: codex_oauth transport; aiohttp: antigravity client transport.
+dependencies = ["fastapi", "uvicorn", "httpx", "aiohttp"]
+
+[dependency-groups]
+dev = ["pytest"]
+
+[project.optional-dependencies]
+# result_parser.py needs pyfas attributes (data_in_df, branches, timesteps)
+# that exist only on GitHub master, not the PyPI 0.4.3 release.
+# Keep these optional: the core sidecar and non-result capabilities start
+# without importing any of them.
+results = [
+    "pyfas @ git+https://github.com/gpagliuca/pyfas.git@d7432ec89cbeea1afc88dc7cf617c6df00b11b5e",
+    "easydict",
+    "matplotlib",
+    "pandas",
+    "numpy",
+    # pyfas.pilink imports win32com at package load; without pywin32 the whole
+    # `import pyfas` fails on native Windows and result_analysis gates off.
+    "pywin32; sys_platform == 'win32'",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+olga_companion = ["resources/results/fixture.tpl", "resources/olga_glossary.json", "broker/*.cs"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]

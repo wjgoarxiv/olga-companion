@@ -1,0 +1,3 @@
+!Intentionally malformed .tab fixture: no PVTTABLE record at all.
+THIS IS NOT A PVT TABLE
+just some free text that the tab parser cannot interpret

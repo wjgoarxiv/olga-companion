@@ -1,0 +1,10 @@
+<!-- Derived from assets/logo/mark-tile.svg (same 16-unit geometry); keep the two in step. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+  <rect width="16" height="16" fill="#16161e"/>
+  <path d="M0 0H16V16H0ZM1 1V15H15V1Z" fill="#3b4261" fill-rule="evenodd"/>
+  <g fill="none" stroke="#7aa2f7" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M3.5 4.5 7 8l-3.5 3.5"/>
+    <path d="M8.5 11.5h3"/>
+  </g>
+  <rect x="12" y="4" width="2" height="8" rx="1" fill="#9ece6a"/>
+</svg>
