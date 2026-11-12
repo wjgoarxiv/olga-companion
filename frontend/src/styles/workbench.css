@@ -1,0 +1,607 @@
+/* Workbench shell regions. Brutal grid: title bar, activity rail, explorer,
+   tabbed centre, chat dock, bottom panel, thin status bar. Every size and
+   duration reads a token; no raw font sizes. */
+
+.wb {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  min-width: 0;
+  background: var(--bg);
+  color: var(--ink);
+}
+
+/* Title bar: brand + case breadcrumb left; actions right. */
+.wb-titlebar {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  flex: none;
+  height: var(--tb-h);
+  padding: 0 var(--sp-3);
+  background: var(--bg-deep);
+  border-bottom: 2px solid var(--edge);
+}
+.wordmark {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  border: 0;
+  background: var(--clear);
+  color: var(--ink);
+  cursor: pointer;
+  padding: 0 var(--sp-1);
+  min-height: var(--tgt);
+}
+.wordmark-mark { width: 16px; height: 16px; flex: none; }
+.wordmark-primary {
+  font-family: var(--font-ui);
+  font-size: var(--fs-xl);
+  font-weight: 900;
+  transform: scaleX(1.12);
+  transform-origin: left center;
+  text-rendering: geometricPrecision;
+  line-height: 1;
+}
+.wordmark-secondary {
+  font-size: var(--fs-xs);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--ink-2);
+  line-height: 1;
+}
+.wb-crumb { display: flex; align-items: center; gap: var(--sp-2); min-width: 0; }
+.wb-spacer { flex: 1; }
+.wb-title-actions { display: flex; align-items: center; gap: var(--sp-2); }
+.wb-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: var(--ctl-h);
+  min-width: 0;
+  padding: 0 10px;
+  background: var(--raised);
+  color: var(--ink);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-s);
+  cursor: pointer;
+  white-space: nowrap;
+  font-weight: 500;
+  font-size: var(--fs-s);
+  transition: transform var(--d-ui) var(--ease-ui), background-color var(--d-ui) var(--ease-ui), border-color var(--d-ui) var(--ease-ui);
+}
+.wb-btn:hover { border-color: var(--mute); }
+.wb-btn:active { transform: translate(1px, 1px); }
+.wb-btn-primary {
+  background: var(--select);
+  border-color: var(--edge);
+  color: var(--on-select);
+  font-weight: 600;
+}
+.wb-btn-primary:hover { background: var(--accent); border-color: var(--edge); color: var(--accent-ink); }
+.wb-btn .ui-icon { margin-inline-end: 0; }
+.wb-title-actions .ui-iconbutton { width: var(--ctl-h); height: var(--ctl-h); }
+/* Title-bar and dialog buttons keep the 32px visual but expose a 44px
+   hit area in both densities. The busy Run button keeps its progress
+   fill instead (run.css wins on inset/background). */
+.wb-title-actions .wb-btn:not([data-busy="true"]),
+.wb-sheet-actions .wb-btn {
+  position: relative;
+}
+.wb-title-actions .wb-btn:not([data-busy="true"])::after,
+.wb-sheet-actions .wb-btn::after {
+  content: "";
+  position: absolute;
+  inset: -6px 0;
+}
+
+/* Mid row: activity, explorer, centre, dock, panel. */
+.wb-mid {
+  display: grid;
+  grid-template-columns: auto auto auto minmax(0, 1fr) auto;
+  grid-template-rows: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "activity explorer exhandle centre dock"
+    "activity explorer exhandle panel dock";
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+}
+
+/* Activity bar with one sliding indicator. */
+.wb-activity {
+  grid-area: activity;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-1);
+  width: var(--ab-w);
+  padding: var(--sp-2) 0;
+  background: var(--bg-deep);
+  border-right: 2px solid var(--edge);
+}
+.wb-activity .ui-iconbutton { width: 44px; height: 44px; position: relative; }
+.wb-activity-icon { display: inline-flex; }
+/* Rail labels stay icon-only below 1280 (tooltips + aria carry the names);
+   at 1280+ the rail widens and each button stacks glyph over visible text. */
+.wb-activity .ui-iconbutton-label { display: none; }
+@media (min-width: 1280px) {
+  :root { --ab-w: 96px; }
+  .wb-activity { padding-inline: var(--sp-2); }
+  .wb-activity .ui-iconbutton {
+    flex-direction: column;
+    width: 100%;
+    height: auto;
+    min-height: 44px;
+    gap: 2px;
+    padding: 6px 2px;
+  }
+  .wb-activity .ui-iconbutton-label {
+    display: block;
+    font-size: var(--fs-xs);
+    font-weight: 500;
+    line-height: 1.25;
+    color: inherit;
+    text-align: center;
+  }
+  .wb-activity .ui-iconbutton { color: var(--ink-2); }
+  .wb-activity .ui-iconbutton:hover { color: var(--ink); }
+  .wb-activity .ui-iconbutton[aria-pressed="true"] { color: var(--on-select); }
+}
+.wb-activity-indicator {
+  position: absolute;
+  left: var(--sp-2);
+  right: var(--sp-2);
+  top: 0;
+  background: var(--select);
+  transition: transform var(--d-ui) var(--ease-ui), height var(--d-ui) var(--ease-ui);
+}
+html[data-motion="subtle"] .wb-activity-indicator,
+html[data-motion="off"] .wb-activity-indicator { transition: none; }
+
+/* Pane headers are the kit's inverse title bar: ink fill, canvas-coloured
+   text (--on-ink-*), a 2px signal rule under it and the coordinate chip
+   inverted back to a light block. */
+.wb-pane-head {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-3) var(--sp-4);
+  background: var(--ink);
+  color: var(--on-ink-body);
+  border-bottom: 2px solid var(--select);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  font-weight: 600;
+  line-height: 1.35;
+}
+.wb-pane-idx {
+  flex: none;
+  padding: 2px 5px;
+  background: var(--on-ink-body);
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: var(--track-label);
+}
+.wb-pane-head .ui-iconbutton { color: var(--on-ink-body); border-color: var(--clear); min-width: 28px; min-height: 28px; }
+.wb-pane-head .ui-iconbutton:hover { background: var(--clear); color: var(--on-ink-body); border-color: var(--on-ink-body); }
+/* The focus ring sits on the ink bar, so it takes the bar's text colour (>= 11:1 there). */
+.wb-pane-head :focus-visible { outline-color: var(--on-ink-body); }
+
+/* Explorer region. */
+.wb-explorer {
+  grid-area: explorer;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 248px;
+  min-height: 0;
+  min-width: 0;
+  background: var(--panel);
+  border-right: 2px solid var(--edge);
+}
+@media (min-width: 1440px) {
+  .wb-explorer { width: 280px; }
+}
+.wb-explorer-resizer { grid-area: exhandle; }
+.wb-explorer-list { list-style: none; margin: 0; padding: var(--sp-1) 0 var(--sp-4); overflow: auto; flex: 1; }
+.wb-explorer-item {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-2);
+  width: 100%;
+  padding: var(--sp-2) var(--sp-4);
+  border: 0;
+  background: var(--clear);
+  color: var(--ink);
+  cursor: pointer;
+  text-align: left;
+  font-size: var(--fs-s);
+  font-weight: 500;
+}
+.wb-explorer-item:hover { background: var(--raised); }
+.wb-explorer-item[aria-current="true"] { background: var(--accent-soft); font-weight: 600; }
+.wb-explorer-name { overflow-wrap: anywhere; min-width: 0; flex: 1; }
+.wb-explorer-meta { font-size: var(--fs-xs); color: var(--mute); white-space: nowrap; }
+.wb-explorer-empty { margin: 0; padding: var(--sp-4); font-size: var(--fs-s); color: var(--mute); }
+
+/* Tabbed centre. */
+.wb-centre {
+  grid-area: centre;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  background: var(--bg);
+}
+.wb-centre-tabs { position: relative; display: flex; flex-direction: column; flex: 1; min-height: 0; }
+.wb-centre-idx { position: absolute; z-index: 1; left: var(--sp-2); top: calc((var(--tgt) - 1.2em - 4px) / 2); }
+.wb-centre-tabs .ui-tablist { padding-left: calc(var(--sp-2) + 2.4em); }
+.wb-centre-tabs .ui-tablist { background: var(--bg-deep); flex: none; }
+/* Flex column first so the panel below has a definite height; the size
+ * container then lets viewport-fit descendants (result plot sizing) read it.
+ * Previously the panel sized by content, so containment would collapse it. */
+.wb-centre-tabs > .ui-tabs { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+/* Direct child only: the results/run tabs nest their own .ui-tabpanel inside,
+ * which must keep sizing by content. */
+.wb-centre-tabs > .ui-tabs > .ui-tabpanel { flex: 1; min-height: 0; overflow: auto; container-type: size; }
+
+/* The workbench fits the viewport exactly; every region scrolls inside itself. */
+html, body { overflow: hidden; }
+
+/* Chat dock. */
+.wb-dock {
+  grid-area: dock;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 384px;
+  min-height: 0;
+  background: var(--panel);
+  border-left: 2px solid var(--edge);
+}
+/* M1 container: the dock body (not the width-animated aside, to avoid
+   containment/resize feedback) names the pane container the guide link and
+   step bar detail query against. */
+.wb-dock-body { flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden; container-type: inline-size; container-name: dock; }
+.wb-dock-shut {
+  grid-area: dock;
+  display: flex;
+  align-items: flex-start;
+  padding: var(--sp-2);
+  background: var(--bg-deep);
+  border-left: 1px solid var(--hairline);
+}
+/* The dock and panel handles share their pane's own grid area and straddle its
+   edge, so no extra track or implicit row exists; each stretches the full
+   edge. A 24 px hit area comes from the ::after below. */
+.wb-dock-resizer { grid-area: dock; justify-self: start; margin-left: -4px; border-left: 0; }
+
+/* Bottom panel. */
+.wb-panel {
+  grid-area: panel;
+  position: relative;
+  min-height: 0;
+  background: var(--panel);
+  border-top: 2px solid var(--edge);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.wb-panel-bar { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: var(--sp-1); background: var(--raised); border-top: 2px solid var(--select); }
+.wb-panel-bar .ui-tabs { display: contents; }
+.wb-panel-idx { grid-column: 1; grid-row: 1; margin-left: var(--sp-2); }
+.wb-panel-bar .ui-tablist { grid-column: 2; grid-row: 1; min-width: 0; }
+.wb-panel-bar .ui-tab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--select-line); background: var(--clear); }
+.wb-panel-bar > .ui-iconbutton { grid-column: 3; grid-row: 1; margin: var(--sp-1); }
+.wb-panel-bar .ui-tabpanel { grid-column: 1 / -1; grid-row: 2; min-width: 0; overflow: auto; }
+.wb-panel .ui-tabpanel { overflow: auto; }
+.wb-panel-empty { margin: 0; padding: var(--sp-4); color: var(--mute); font-size: var(--fs-s); }
+.wb-panel-shut {
+  grid-area: panel;
+  display: flex;
+  padding: var(--sp-1) var(--sp-2);
+  background: var(--bg-deep);
+  border-top: 1px solid var(--hairline);
+}
+.wb-panel-resizer { grid-area: panel; align-self: start; margin-top: -4px; border-top: 0; }
+.panel-resizer.is-horizontal { cursor: row-resize; width: auto; min-width: 0; height: 8px; }
+.panel-resizer.is-horizontal::before { inset: 2px 0; }
+.panel-resizer.is-horizontal span { display: block; width: 36px; height: 2px; }
+.panel-resizer.is-horizontal:hover span,
+.panel-resizer.is-horizontal:focus-visible span,
+.panel-resizer.is-horizontal:active span { width: 64px; height: 2px; }
+.wb-explorer-resizer::after,
+.wb-dock-resizer::after,
+.wb-panel-resizer::after { content: ""; position: absolute; inset: 0 -8px; }
+.wb-panel-resizer::after { inset: -8px 0; }
+
+::view-transition-old(root) { animation: vt-out 160ms var(--ease-exit); }
+::view-transition-new(root) { animation: vt-in 200ms var(--ease-enter); }
+@keyframes vt-in { from { opacity: 0; transform: translateX(6px); } to { opacity: 1; transform: none; } }
+@keyframes vt-out { from { opacity: 1; transform: none; } to { opacity: 0; transform: translateX(-6px); } }
+@keyframes vt-reveal {
+  from { opacity: 0; clip-path: circle(0px at var(--vt-x, 50%) var(--vt-y, 50%)); }
+  to { opacity: 1; clip-path: circle(140vmax at var(--vt-x, 50%) var(--vt-y, 50%)); }
+}
+
+/* Shortcut sheet. */
+.wb-sheet-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 12vh;
+}
+.wb-sheet {
+  width: min(560px, calc(100vw - var(--sp-8)));
+  background: var(--raised);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-s);
+  padding: var(--sp-4);
+}
+.wb-sheet-title { margin: 0 0 var(--sp-2); font-size: var(--fs-l); }
+.wb-sheet-actions { margin-top: var(--sp-3); text-align: right; }
+
+/* Overlay toggles only exist in the 768-1023 band; the shut rails cover
+   every other width. */
+.wb-activity-overlay-toggle { display: none; }
+/* Band overlay toggles: a drawn chevron instead of a bare glyph (clip-path,
+   so the 1px side-stripe law holds). Closed, the chevron points right, where
+   the panel will appear; open, it points back toward the rail. Sized to the
+   activity box, currentColor in both themes; the ko/en label and title name
+   the action. */
+.wb-toggle-chevron {
+  display: block;
+  width: 12px;
+  height: 12px;
+  background: currentColor;
+  clip-path: polygon(33% 6%, 49% 6%, 94% 50%, 49% 94%, 33% 94%, 78% 50%);
+}
+.wb-toggle-chevron[data-open] { transform: scaleX(-1); }
+.wb-activity-sep { width: 24px; border-top: 1px solid var(--hairline); }
+.wb-explorer-shut {
+  grid-area: explorer;
+  display: flex;
+  align-items: flex-start;
+  padding: var(--sp-2);
+  background: var(--bg-deep);
+  border-right: 1px solid var(--hairline);
+}
+
+/* 768-1023 px: the dock and Explorer become overlays. The grid drops its
+   side columns; open panels float between the title and status bars while
+   the activity bar carries the toggles (shut rails stay hidden). */
+@media (min-width: 769px) and (max-width: 1023px) {
+  .wb-mid {
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "activity centre"
+      "activity panel";
+  }
+  .wb-activity-overlay-toggle { display: inline-flex; }
+  .wb-explorer,
+  .wb-dock {
+    position: fixed;
+    top: var(--tb-h);
+    bottom: var(--sb-h);
+    z-index: 60;
+    box-shadow: var(--elev-pop);
+    max-height: none;
+  }
+  .wb-explorer { left: var(--ab-w); width: min(320px, 72vw); border-right: 1px solid var(--hairline); }
+  .wb-dock { right: 0; width: min(384px, 80vw); border-left: 1px solid var(--hairline); }
+  .wb-explorer-shut,
+  .wb-dock-shut,
+  .wb-explorer-resizer,
+  .wb-dock-resizer { display: none; }
+}
+
+/* Band scrim: dims the mid frame while an overlay floats above it. It spans
+   title-to-status and rail-to-edge so the title bar, status bar and activity
+   rail stay interactive; z 50 sits below the drawers (60), and the approval
+   card rides inside the dock drawer above it. No P1 dim token exists yet, so
+   the dim reuses --bg-deep at reduced opacity on this childless layer. */
+.wb-scrim {
+  position: fixed;
+  top: var(--tb-h);
+  bottom: var(--sb-h);
+  left: var(--ab-w);
+  right: 0;
+  z-index: 50;
+  padding: 0;
+  border: 0;
+  background: var(--bg-deep);
+  opacity: 0.72;
+}
+
+/* Narrow viewports stack every region in focus order with a notice. */
+.wb-narrow-note { display: none; }
+@media (max-width: 768px) {
+  .wb-explorer-resizer,
+  .wb-dock-resizer,
+  .wb-panel-resizer { display: none; }
+  .wb-mid {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
+    grid-template-areas: "activity" "explorer" "centre" "dock" "panel";
+    overflow-y: auto;
+  }
+  /* At phone widths the page itself scrolls (title bar stays pinned), so no
+     pane sits clipped below an overflow-hidden ancestor. */
+  html, body { overflow: auto; height: auto; }
+  .wb { height: auto; min-height: 100dvh; }
+  .wb-mid { flex: none; overflow: visible; }
+  .wb-titlebar { position: sticky; top: 0; z-index: 70; }
+  /* The stack scrolls with the page: without a floor, auto tracks shrink the
+     overflow-hidden panes to a sliver and clip their text. */
+  .wb-mid { grid-auto-rows: auto; }
+  .wb-mid > .wb-explorer { min-height: 14rem; max-height: 45dvh; }
+  .wb-mid > .shell-main { min-height: 36rem; }
+  .wb-mid > .wb-dock { min-height: min(40rem, 100dvh); }
+  .wb-mid > .wb-panel { min-height: 10rem; }
+  .wb-activity { flex-direction: row; width: auto; border-right: 0; border-bottom: 1px solid var(--hairline); }
+  .wb-activity-indicator { display: none; }
+  .wb-activity .ui-iconbutton[aria-pressed="true"] { background: var(--select); }
+  .wb-explorer { width: auto; border-right: 0; border-bottom: 1px solid var(--hairline); }
+  .wb-dock { width: auto; border-left: 0; border-top: 1px solid var(--hairline); }
+  .wb-narrow-note { display: block; padding: var(--sp-2) var(--sp-4); font-size: var(--fs-xs); color: var(--mute); }
+  .workspace-popover { position: fixed; left: 10px; right: 10px; width: auto; max-height: calc(100dvh - 128px); }
+  /* Narrow title bar (todo 15 probe: at 320/390 the row crushed the case
+     chip to 26px and pushed body.scrollWidth to 562). The bar swipe-scrolls
+     inside itself so nothing crushes and the page never widens; every
+     target keeps its natural 44px hit area. No visual change at widths
+     where the row fits. */
+  .wb-titlebar { overflow-x: auto; overflow-y: hidden; scrollbar-width: thin; }
+  .wb-titlebar > .wordmark,
+  .wb-titlebar > .wb-crumb,
+  .wb-titlebar > .wb-spacer,
+  .wb-titlebar > .wb-title-actions { flex: none; }
+  .wb-crumb { max-width: 58vw; }
+  .wb-crumb .case-chip { width: auto; min-width: 120px; }
+}
+
+/* Chat head actions inherit the comfortable-density target (was a shell.css mobile pin). */
+.chat-head-actions .new-chat { min-height: var(--tgt); }
+
+/* Chat head keeps its copy/actions row inside the dock (was a shell.css flex row). */
+.chat-head { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-2); }
+.chat-head-copy { min-width: 0; }
+
+/* Dock gutter + no-clip: one token inset for the header, timeline and
+   composer; the chat shrinks inside the resizer and the actions wrap instead
+   of clipping the history trigger at the dock edge. */
+.wb-dock .chat { min-width: 0; max-width: 100%; }
+.wb-dock .chat-head { min-width: 0; flex-wrap: wrap; padding: var(--sp-3) var(--sp-6); }
+.wb-dock .chat-head-actions { flex: 1 1 auto; justify-content: flex-end; flex-wrap: wrap; min-width: 0; }
+
+/* ── Case surface (todo 8): Explorer tree, topology toolbar/split, Problems ── */
+
+.wb-explorer { display: flex; flex-direction: column; min-height: 0; }
+.wb-pane-head { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-2); }
+.wb-explorer-menu { border-top: 1px solid var(--hairline-soft); padding: var(--sp-2); }
+.wb-explorer-filter { padding: var(--sp-2); border-top: 1px solid var(--hairline-soft); }
+.wb-explorer-filter input {
+  width: 100%; min-height: var(--tgt); padding: 0 var(--sp-3);
+  border: 1px solid var(--hairline); border-radius: var(--r-input);
+  background: var(--panel); color: var(--ink); font-size: var(--fs-s);
+}
+.wb-explorer-tree { flex: 1 1 auto; min-width: 0; max-width: 100%; min-height: 0; overflow-y: auto; overflow-x: hidden; padding: 0 var(--sp-2) var(--sp-3); }
+.wb-explorer-group-head {
+  display: flex; align-items: baseline; justify-content: space-between;
+  margin: var(--sp-3) 0 var(--sp-1); font-size: var(--fs-xs); font-weight: 700;
+  text-transform: uppercase; letter-spacing: var(--track-label); color: var(--mute);
+}
+.wb-explorer-group ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; min-width: 0; }
+.wb-explorer-group li { position: relative; min-width: 0; max-width: 100%; }
+.wb-explorer-item {
+  display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto; align-items: center; gap: var(--sp-2);
+  width: 100%; min-width: 0; max-width: 100%; overflow: hidden;
+  min-height: var(--tgt); padding: 6px var(--sp-2);
+  border: 1px solid var(--clear); border-radius: var(--r-s);
+  background: var(--clear); color: var(--ink); cursor: pointer; text-align: left;
+}
+.wb-explorer-item:hover { background: var(--raised); border-color: var(--hairline-soft); }
+.wb-explorer-item[aria-current="true"] { background: var(--select); color: var(--on-select); }
+.wb-explorer-name { display: flex; min-width: 0; overflow: hidden; white-space: nowrap; overflow-wrap: normal; font-size: var(--fs-s); font-weight: 600; line-height: 1.35; color: var(--ink); }
+.wb-explorer-item[aria-current="true"] .wb-explorer-name { color: var(--on-select); }
+.wb-explorer-name-head { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.wb-explorer-name-tail { flex: 0 0 auto; white-space: nowrap; }
+.wb-explorer-ext { flex: 0 0 auto; white-space: nowrap; color: var(--mute); font-size: var(--fs-xs); font-family: var(--font-mono); }
+.wb-explorer-item[aria-current="true"] .wb-explorer-ext { color: var(--on-select-mute); }
+.wb-explorer-meta { flex: 0 0 auto; white-space: nowrap; font-size: var(--fs-xs); color: var(--mute); font-variant-numeric: tabular-nums; line-height: 1.35; }
+.wb-explorer-item[aria-current="true"] .wb-explorer-meta { color: var(--on-select-mute); }
+.wb-explorer-item-menu {
+  position: absolute; left: var(--sp-2); right: var(--sp-2); top: calc(100% + 2px); z-index: 20;
+  display: grid; gap: 2px; padding: var(--sp-1);
+  background: var(--panel); border: 1px solid var(--hairline); border-radius: var(--r-s);
+}
+.wb-explorer-item-menu button {
+  min-height: var(--tgt); padding: 0 var(--sp-3); text-align: left;
+  border: 0; border-radius: var(--r-s); background: var(--clear); color: var(--ink);
+  font-size: var(--fs-s); cursor: pointer;
+}
+.wb-explorer-item-menu button:hover { background: var(--raised); }
+
+/* Problems panel */
+.wb-problems { display: flex; flex-direction: column; min-height: 0; }
+.wb-problem-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--sp-1); overflow-y: auto; }
+.wb-problem {
+  border: 1px solid var(--hairline-soft); border-left: 1px solid var(--mute);
+  border-radius: var(--r-s); background: var(--panel); padding: var(--sp-2) var(--sp-3);
+}
+.wb-problem.is-error { border-left-color: var(--fail); }
+.wb-problem.is-warning { border-left-color: var(--warn); }
+.wb-problem.is-info { border-left-color: var(--info); }
+.wb-problem-link {
+  display: flex; align-items: center; gap: var(--sp-2); width: 100%; padding: 0;
+  border: 0; background: var(--clear); color: var(--ink); cursor: pointer; text-align: left;
+  min-height: var(--tgt);
+}
+.wb-problem-title { display: block; font-size: var(--fs-s); font-weight: 650; overflow-wrap: anywhere; }
+.wb-problem-detail { display: block; font-size: var(--fs-xs); color: var(--mute); font-family: var(--font-mono); overflow-wrap: anywhere; }
+.wb-problems-show-all {
+  margin-top: var(--sp-2); min-height: var(--tgt); align-self: flex-start;
+  border: 1px solid var(--hairline); border-radius: var(--r-pill);
+  background: var(--clear); color: var(--ink); padding: 0 var(--sp-4); cursor: pointer;
+  font-size: var(--fs-s); font-weight: 600;
+}
+.wb-problems-show-all:hover { background: var(--raised); }
+
+/* Topology toolbar, split view, minimap */
+.topo-toolbar {
+  display: flex; align-items: center; gap: var(--sp-1); flex-wrap: wrap;
+  min-height: var(--tgt); padding: var(--sp-1) var(--sp-2);
+  border-bottom: 1px solid var(--hairline-soft); background: var(--panel-2);
+}
+.topo-toolbar button {
+  min-height: 32px; min-width: 32px; padding: 0 var(--sp-2);
+  border: 1px solid var(--hairline); border-radius: var(--r-s);
+  background: var(--panel); color: var(--ink); font-size: var(--fs-s); font-weight: 650; cursor: pointer;
+}
+.topo-toolbar button:hover { border-color: var(--ink); }
+.topo-toolbar button[aria-pressed="true"] { background: var(--select); color: var(--on-select); }
+.topo-toolbar-hint { margin-left: auto; font-size: var(--fs-xs); color: var(--mute); }
+.topo-wrap.flowpath-split .topo-canvas { display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, 360px); gap: var(--sp-2); align-items: start; }
+.topo-minimap { display: block; width: 220px; height: auto; margin: var(--sp-1) var(--sp-2) 0 auto; border: 1px solid var(--hairline); border-radius: var(--r-s); background: var(--panel); }
+.topo-minimap rect { fill: var(--panel-2); stroke: var(--hairline); }
+.topo-minimap-view { fill: color-mix(in srgb, var(--info) 18%, transparent); stroke: var(--info); }
+
+/* Case-surface motion: edges are still lines (no marching dashes). Full only snaps node selection. */
+html[data-motion="full"] .topo-node { transition: transform var(--d-snap) var(--ease-snap); }
+html[data-motion="subtle"] .topo-node,
+html[data-motion="off"] .topo-node { transition: none; }
+/* The "scanning" cue is a still 2 px rule at the top of the map (no sweep). */
+.topo-scanner {
+  position: absolute; inset: 0 0 auto 0; height: 2px; pointer-events: none;
+  background: var(--info);
+}
+html[data-motion="full"] .wb-problem-list > li:nth-child(1) { animation: prob-row var(--d-enter) var(--ease-enter) both; }
+html[data-motion="full"] .wb-problem-list > li:nth-child(2) { animation: prob-row var(--d-enter) var(--ease-enter) 40ms both; }
+html[data-motion="full"] .wb-problem-list > li:nth-child(3) { animation: prob-row var(--d-enter) var(--ease-enter) 80ms both; }
+html[data-motion="full"] .wb-problem-list > li:nth-child(4) { animation: prob-row var(--d-enter) var(--ease-enter) 120ms both; }
+html[data-motion="full"] .wb-problem-list > li:nth-child(n+5) { animation: prob-row var(--d-enter) var(--ease-enter) 160ms both; }
+@keyframes prob-row { from { opacity: 0; transform: translateY(4px); } }
+html[data-motion="full"] .ui-tab-badge.tick { animation: badge-tick 300ms var(--ease-out) 1; }
+@keyframes badge-tick { 0% { transform: scale(1.35); } 100% { transform: scale(1); } }
+
+/* Rolling inspector numbers */
+.ui-rolling { display: inline-block; overflow: hidden; vertical-align: bottom; }
+.ui-rolling-strip { display: inline-flex; flex-direction: column; line-height: 1.2; }
+.ui-rolling-next { line-height: 1.2; }
+
+/* Stacked layout under the workbench breakpoint */
+@media (max-width: 760px) {
+  .topo-wrap.flowpath-split .topo-canvas { grid-template-columns: minmax(0, 1fr); }
+  .topo-toolbar-hint { display: none; }
+}

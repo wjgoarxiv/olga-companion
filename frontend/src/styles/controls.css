@@ -1,0 +1,184 @@
+/* Shared action, process-state, receipt, and loading primitives. Imported last. */
+:root {
+  /* One disabled triple for every action control. Muted ink on a raised
+     fill clears 4.5:1 in both themes; the border stays visible (no dash,
+     no whole-element fade) so a disabled control never reads as broken. */
+  --btn-disabled-bg: var(--raised);
+  --btn-disabled-text: var(--mute);
+  --btn-disabled-border: var(--mute);
+}
+.ui-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-width: 0;
+  min-height: 36px;
+  padding: 0 16px;
+  color: var(--ink);
+  background: var(--raised);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-pill);
+  font: 600 var(--fs-s)/1.25 var(--font-ui);
+  text-align: center;
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+}
+.ui-button:hover:not(:disabled) { background: var(--hairline-soft); border-color: var(--ink); }
+.ui-button:active:not(:disabled) { background: var(--hairline-soft); }
+.ui-button:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.ui-button-primary { color: var(--on-select); background: var(--select); border-color: var(--edge); }
+.ui-button-primary:hover:not(:disabled) { color: var(--accent-ink); background: var(--accent); border-color: var(--edge); }
+.ui-button-primary:active:not(:disabled) { color: var(--accent-ink); background: var(--accent); }
+.ui-button-quiet { background: transparent; border-color: transparent; }
+.ui-button:disabled {
+  color: var(--btn-disabled-text);
+  background: var(--btn-disabled-bg);
+  border: 1px solid var(--btn-disabled-border);
+  cursor: not-allowed;
+  opacity: 1;
+}
+/* Workbench chrome buttons share the same triple (no fork): the later
+   import wins over the workbench base without touching that file. */
+.wb-btn:disabled {
+  color: var(--btn-disabled-text);
+  background: var(--btn-disabled-bg);
+  border: 1px solid var(--btn-disabled-border);
+  cursor: not-allowed;
+  opacity: 1;
+}
+.ui-button[aria-busy="true"] { cursor: wait; }
+.ui-button-icon { display: inline-flex; flex: 0 0 auto; }
+.ui-button-label { display: grid; min-width: 0; white-space: nowrap; overflow-wrap: normal; line-height: 1; }
+.ui-button-label > span { grid-area: 1 / 1; }
+.ui-button-label-measure { visibility: hidden; }
+
+.operation-status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
+  padding: 10px 12px;
+  color: var(--ink);
+  background: var(--raised);
+  border: 1px solid var(--hairline-soft);
+  border-radius: var(--r-surface);
+}
+.operation-status-copy { display: grid; gap: 2px; min-width: 0; }
+.operation-status-copy strong { color: var(--ink); font-size: var(--fs-xs); line-height: 1.35; }
+.operation-status-copy span { color: var(--mute); font-size: var(--fs-xs); line-height: 1.4; overflow-wrap: anywhere; }
+.operation-status-busy .operation-status-copy strong,
+.operation-status-info .operation-status-copy strong { color: var(--info); }
+.operation-status-success .operation-status-copy strong { color: var(--pass); }
+.operation-status-error .operation-status-copy strong { color: var(--fail); }
+.operation-status-action { display: flex; flex: 0 0 auto; align-items: center; gap: 8px; }
+
+.native-context-surface { display: grid; gap: 8px; min-width: 0; }
+.native-context-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.native-context-actions .ui-button { width: 100%; }
+.native-save-action { display: grid; gap: 6px; min-width: min(100%, 190px); }
+.native-save-action > .ui-button { justify-self: start; }
+.native-save-action .operation-status, .native-save-action .receipt { min-width: min(100%, 300px); }
+
+.receipt {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 14px;
+  min-width: 0;
+  padding: 10px 12px;
+  color: var(--ink);
+  background: var(--raised);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-surface);
+}
+.receipt-copy { display: grid; gap: 2px; flex: 1 1 220px; min-width: 0; }
+.receipt-title { color: var(--ink); font-size: var(--fs-xs); }
+.receipt-meta { color: var(--mute); font-size: var(--fs-s); overflow-wrap: anywhere; }
+.receipt-body { flex: 1 1 100%; min-width: 0; }
+.receipt-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.receipt-actions a { display: inline-flex; align-items: center; gap: 4px; min-height: 36px; color: var(--info); font-size: var(--fs-xs); font-weight: 650; text-decoration: none; }
+.receipt-actions a:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+.ui-skeleton { display: grid; gap: 10px; width: 100%; min-width: 0; }
+.ui-skeleton-shape { display: grid; gap: 8px; width: 100%; padding: 0 2px; }
+.ui-skeleton-shape > span { position: relative; display: block; width: 100%; height: 7px; overflow: hidden; border-top: 1px solid var(--hairline-soft); }
+.ui-skeleton-shape > span::after {
+  position: absolute;
+  top: -1px;
+  left: 0;
+  width: 22%;
+  height: 2px;
+  background: var(--info);
+  content: "";
+  animation: ui-skeleton-scan calc(var(--dur-normal) * 5) steps(3, end) infinite;
+}
+.ui-skeleton-shape > span:nth-child(2n)::after { animation-delay: calc(var(--dur-normal) * -2); }
+.ui-skeleton-shape > span:nth-child(3n)::after { animation-delay: calc(var(--dur-normal) * -4); }
+.ui-skeleton-shape > span:last-child { width: 68%; }
+.ui-visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+@keyframes ui-skeleton-scan {
+  0% { transform: translateX(-110%); }
+  100% { transform: translateX(455%); }
+}
+
+.activity-loader {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  width: fit-content;
+  max-width: 100%;
+  min-width: 0;
+  padding: 8px 11px;
+  color: var(--mute);
+  background: color-mix(in srgb, var(--raised) 72%, transparent);
+  border: 1px solid var(--hairline-soft);
+  border-radius: var(--r-s);
+}
+.activity-loader-beacon {
+  width: 6px;
+  height: 6px;
+  flex: 0 0 auto;
+  border-radius: var(--r-s);
+  background: currentColor;
+}
+.activity-loader-copy {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+}
+.activity-loader-label {
+  min-width: 0;
+  color: var(--ink);
+  font-size: var(--fs-xs);
+  font-weight: 680;
+  overflow-wrap: anywhere;
+}
+.activity-loader-detail {
+  color: var(--mute);
+  font-size: var(--fs-s);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+@media (max-width: 760px), (pointer: coarse) {
+  .ui-button { min-height: 44px; }
+  .receipt-actions a { min-height: 44px; }
+  .operation-status { align-items: stretch; flex-direction: column; }
+  .operation-status-action { flex-wrap: wrap; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ui-button { transition: none; }
+  .ui-skeleton-shape > span::after { animation: none; opacity: .7; transform: translateX(178%); }
+}
+/* ── Glossary term trigger + popover (one shared component) ── */
+.glossary-term { position: relative; text-decoration: underline dotted; text-underline-offset: 2px; cursor: help; border-radius: var(--r-s); }
+.glossary-term:focus-visible { outline: 2px solid var(--focus); outline-offset: 1px; }
+.glossary-pop { position: absolute; z-index: 30; left: 0; top: calc(100% + 4px); display: grid; gap: 2px; min-width: 180px; max-width: 260px; padding: 8px 10px; border: 1px solid var(--hairline); border-radius: var(--r-s); background: var(--raised); color: var(--ink); font-size: var(--fs-xs); font-weight: 400; white-space: normal; box-shadow: var(--elev-pop); }
+.glossary-source { color: var(--mute); font-size: var(--fs-s); }
+@media (pointer: coarse) {
+  .glossary-term { display: inline-flex; align-items: center; min-height: 44px; }
+}

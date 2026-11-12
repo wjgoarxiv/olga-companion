@@ -1,0 +1,15 @@
+OLGA 2022.1.0 simulation log (synthetic fixture — validated against solver_diagnostics parsers)
+Reading input case simple_pipeline.genkey
+Integration started.
+--*++*-- Time: 0.0s. Step no: 1/100. Current step-size: 0.5s
+--*++*-- Time: 10.0s. Step no: 20/100. Current step-size: 0.5s
+--*++*-- Time: 20.0s. Step no: 40/100. Current step-size: 0.5s
+--*++*-- Time: 30.0s. Step no: 60/100. Current step-size: 0.5s
+--*++*-- Time: 40.0s. Step no: 80/100. Current step-size: 0.5s
+--*++*-- Time: 50.0s. Step no: 100/100. Current step-size: 0.5s
+Mass error information:
+GAS = 1.2e-05
+LIQUID = 3.4e-06
+
+TOTAL CPU USAGE: 42 %
+Integration finished normally.
