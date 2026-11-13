@@ -1,0 +1,41 @@
+{
+  "version": "2",
+  "nodes": [
+    {"label": "SOURCE", "kind": "source", "pressure_pa": 2000000.0, "temperature_c": 40.0, "gas_fraction": 0.2, "total_water_fraction": 0.4},
+    {"label": "SINK", "kind": "sink", "pressure_pa": 1000000.0, "temperature_c": 30.0, "gas_fraction": 0.15, "total_water_fraction": 0.35}
+  ],
+  "flowpaths": [
+    {
+      "label": "MAIN",
+      "from": "SOURCE",
+      "to": "SINK",
+      "pipes": [
+        {
+          "label": "PIPE_A",
+          "centerline_m": [[0.0, 0.0, 0.0], [100.0, 0.0, 0.0]],
+          "diameter_m": 0.1,
+          "roughness_m": 5e-5,
+          "sections": 10
+        }
+      ]
+    }
+  ],
+  "pvt_reference": "fluid.tab",
+  "fluid_label": "TEST_FLUID",
+  "thermal": {"model": "adiabatic"},
+  "integration": {"end_time_s": 3600.0},
+  "outputs": ["PT", "TM"],
+  "massflow_sources": [
+    {
+      "label": "FEED",
+      "flowpath": "MAIN",
+      "pipe": "PIPE_A",
+      "section": 1,
+      "time_s": 0.0,
+      "mass_flow_kg_s": 1.0,
+      "temperature_c": 40.0,
+      "gas_fraction": 0.25,
+      "total_water_fraction": 0.0
+    }
+  ]
+}

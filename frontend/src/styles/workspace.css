@@ -1,0 +1,138 @@
+/* ── Workspace view — case inspector: the Explorer owns the file list, so the
+   centre is a single-column topology canvas that takes the freed width. ── */
+.ws-view { display: block; height: 100%; min-height: 0; min-width: 0; }
+.ws-files { width: 244px; border-right: 1px solid var(--hairline); overflow-y: auto; padding: 12px 10px; background: var(--panel); }
+.ws-files.empty { background: var(--panel-2); }
+.ws-root { margin: 0 0 8px; padding: 0 8px; color: var(--mute); font-family: var(--font-ui); font-size: var(--fs-s); font-weight: 520; word-break: break-word; }
+.ws-files ul { list-style: none; padding: 0; margin: 0; }
+.ws-file {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 2px;
+  padding: 8px 10px;
+  border: none;
+  border-radius: var(--r-s);
+  background: none;
+  text-align: left;
+  cursor: pointer;
+}
+.ws-file:hover { background: var(--panel-2); }
+.ws-file.active { background: var(--select); color: var(--on-select); box-shadow: var(--state-inset); transform: translateY(1px); }
+.ws-file-name { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; min-width: 0; overflow: hidden; font-family: var(--font-ui); font-size: var(--fs-s); font-weight: 620; letter-spacing: -.01em; color: var(--ink); white-space: normal; overflow-wrap: break-word; }
+.ws-file-meta { display: flex; flex: 0 0 auto; align-items: baseline; gap: 6px; }
+.ws-file-kind { color: var(--mute); font-size: var(--fs-s); font-weight: 780; letter-spacing: var(--track-label); text-transform: uppercase; }
+.ws-file-kb { flex: 0 0 auto; font-size: var(--fs-s); color: var(--mute); }
+.ws-file.active .ws-file-name, .ws-file.active .ws-file-kind, .ws-file.active .ws-file-kb { color: var(--on-select); }
+/* PVT tables are previewable, so the row is interactive like a case row. */
+.ws-file-support { border: 1px solid var(--hairline-soft); background: var(--panel-2); cursor: pointer; }
+.ws-file-support:hover { background: var(--raised); }
+.ws-list-empty,
+.rv-list-empty {
+  display: grid;
+  gap: 3px;
+  padding: 10px;
+  border: 1px solid var(--hairline-soft);
+  border-radius: var(--r-s);
+  background: var(--panel);
+}
+.empty-list-label { font-size: var(--fs-xs); font-weight: 700; color: var(--ink); }
+.empty-list-meta { font-size: var(--fs-s); color: var(--mute); }
+.ws-canvas { display: flex; flex-direction: column; height: 100%; min-width: 0; min-height: 0; padding: 16px 20px; }
+.ws-canvas.empty { align-items: flex-start; justify-content: flex-start; padding: 32px 36px; overflow-y: auto; }
+.ws-canvas .ws-empty-state,
+.ws-canvas .ws-selection-state { margin: 0; align-self: flex-start; }
+.ws-canvas .workbench-prompt-hero { grid-template-columns: minmax(0, 1fr); align-items: start; }
+.ws-canvas .workbench-prompt-intro { align-content: start; }
+.ws-canvas .workbench-prompt-context { display: block; padding: 0; border: 0; background: transparent; border-radius: 0; }
+.ws-canvas .workbench-prompt-context span,
+.ws-canvas .ws-selection-state .workbench-prompt-context strong { display: none; }
+.ws-canvas .workbench-prompt-context em { display: block; white-space: normal; }
+.ws-canvas-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 10px; }
+.ws-canvas-name { font-family: var(--font-ui); font-size: var(--fs-l); font-weight: 680; letter-spacing: -.01em; word-break: break-word; }
+.ws-canvas-meta { flex: 0 0 auto; font-size: var(--fs-xs); color: var(--mute); }
+.ws-empty { margin: auto; color: var(--mute); font-size: var(--fs-m); }
+.empty-kicker {
+  margin: 0;
+  color: var(--mute);
+  font-size: var(--fs-s);
+  font-weight: 800;
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+}
+.ws-canvas .topo-wrap { flex: 1 1 auto; display: flex; flex-direction: column; min-height: 0; margin: 0; }
+/* The canvas gives up height first; the caption below it never shrinks away. */
+.ws-canvas .topo-canvas { flex: 1 1 auto; height: auto; min-height: 160px; }
+.ws-canvas .topo-meta { flex: none; }
+
+@media (max-height: 700px) {
+  .ws-canvas .topo-canvas { min-height: 140px; }
+}
+.ws-loading { max-width: 640px; padding: 16px 0; }
+.ws-operation-status { margin: 8px 0; }
+
+@media (max-width: 760px) {
+  .ws-view,
+  .ws-view.empty,
+  .ws-view.awaiting-selection {
+    display: block;
+  }
+  .ws-files {
+    border-right: none;
+    border-bottom: 1px solid var(--hairline);
+  }
+  .ws-files .ws-file { min-height: 44px; max-width: 100%; }
+  .ws-files.empty {
+    max-height: 112px;
+    overflow: hidden;
+  }
+  .ws-files.empty .ws-root,
+  .rv-files.empty .ws-root {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    word-break: normal;
+  }
+  .ws-canvas {
+    padding: 12px 16px 84px;
+    overflow-x: hidden;
+    scroll-padding-bottom: 84px;
+  }
+  .ws-canvas.empty {
+    padding: 14px 16px 84px;
+    overflow-y: auto;
+  }
+  .ws-canvas-head {
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 4px 10px;
+  }
+  .ws-canvas-name {
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    word-break: normal;
+  }
+  .ws-canvas-meta { flex: 1 1 100%; }
+  .ws-canvas .topo-canvas { min-height: 260px; }
+}
+
+/* ── PVT table preview ─────────────────────────────────────────────────────── */
+.ws-tab-preview { display: grid; gap: 10px; min-width: 0; align-content: start; }
+.ws-tab-summary {
+  margin: 0;
+  padding: 12px 14px;
+  overflow-x: auto;
+  color: var(--ink);
+  background: var(--panel);
+  border: 1px solid var(--hairline-soft);
+  border-radius: var(--r-s);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  line-height: 1.5;
+  white-space: pre;
+}
+.ws-tab-issues { display: grid; gap: 4px; margin: 0; padding-left: 18px; color: var(--ink); font-size: var(--fs-xs); }

@@ -1,0 +1,39 @@
+{
+  "name": "olga-companion",
+  "version": "0.1.8",
+  "private": true,
+  "type": "module",
+  "description": "Standalone OLGA Companion workbench",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "vite --config frontend/vite.config.ts --host 127.0.0.1 --port 5273 --strictPort",
+    "dev:app": "node scripts/dev-app.mjs",
+    "dev:sidecar": "uv run --extra results python -m olga_companion.sidecar --host 127.0.0.1 --port 8865",
+    "build": "vite build --config frontend/vite.config.ts",
+    "typecheck": "tsc -p frontend/tsconfig.json --noEmit",
+    "test:frontend": "node --experimental-strip-types --test frontend/tests/*.test.mjs",
+    "test:ux": "node --test frontend/tests/ux/pane-squeeze.mjs",
+    "test:backend": "uv run --extra results --group dev pytest -q",
+    "verify": "npm run test:frontend && npm run typecheck && npm run build && npm run test:backend",
+    "tauri:build": "tauri build"
+  },
+  "dependencies": {
+    "@dagrejs/dagre": "^1.1.8",
+    "@tauri-apps/api": "^2.11.1",
+    "@tauri-apps/plugin-process": "^2.3.1",
+    "@tauri-apps/plugin-updater": "^2.10.1",
+    "@vitejs/plugin-react": "latest",
+    "lucide-react": "^1.23.0",
+    "react": "latest",
+    "react-dom": "latest",
+    "typescript": "latest",
+    "vite": "latest"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.11.4",
+    "@types/react": "latest",
+    "@types/react-dom": "latest"
+  }
+}

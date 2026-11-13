@@ -1,0 +1,29 @@
+{
+  "examples": [
+    {
+      "id": "air-water-horizontal",
+      "demo": true,
+      "kind": "case_spec",
+      "spec": "tutorial/demo_case.json",
+      "stem": "air_water_horizontal",
+      "topology": "simple_pipeline",
+      "fluid": "AIR_WATER",
+      "title_ko": "공기-물 수평관",
+      "title_en": "Air-water horizontal pipe",
+      "description_ko": "500 m 수평관입니다. 입구 8 bar, 출구 2 bar. 값은 모두 합성입니다.",
+      "description_en": "A 500 m horizontal pipe. Inlet 8 bar, outlet 2 bar. Every value is synthetic."
+    },
+    {
+      "id": "simple-pipeline",
+      "demo": false,
+      "kind": "topology",
+      "topology": "simple_pipeline",
+      "stem": "simple_pipeline",
+      "fluid": "AIR_WATER",
+      "title_ko": "단순 배관",
+      "title_en": "Simple pipeline",
+      "description_ko": "입구와 출구가 있는 짧은 배관입니다. 압력과 온도는 범용 공기-물 표 범위 안입니다.",
+      "description_en": "A short pipe with an inlet and an outlet. Pressure and temperature stay inside the generic air-water table."
+    }
+  ]
+}
