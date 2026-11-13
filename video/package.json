@@ -1,0 +1,17 @@
+{
+  "name": "olga-companion-video",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Remotion composition for the README demo. Isolated from the app workspace so Remotion never enters the shipped dependency tree.",
+  "scripts": {
+    "studio": "remotion studio",
+    "render": "npm run fonts && remotion render Walkthrough out/demo.mp4",
+    "fonts": "node -e \"const{copyFileSync,mkdirSync}=require('fs');mkdirSync('public/fonts',{recursive:true});copyFileSync('../frontend/public/fonts/PretendardVariable.woff2','public/fonts/PretendardVariable.woff2');copyFileSync('../assets/fonts/MesloLGSNerdFontMono-Regular.ttf','public/fonts/MesloLGSNerdFontMono-Regular.ttf');copyFileSync('../frontend/public/fonts/MesloLGSNF-Bold.woff2','public/fonts/MesloLGSNF-Bold.woff2')\""
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.416",
+    "remotion": "4.0.416",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  }
+}

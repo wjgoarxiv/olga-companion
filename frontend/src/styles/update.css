@@ -1,0 +1,78 @@
+/* ── T6 update stage track + progress ring ────────────────────────────────────
+   Presentation only: the checking → … → restarting track, an SVG progress
+   ring next to the bar, rolling MB / MB-s figures, a version-number reveal
+   and expandable release notes. Transform/opacity only; every keyframe below
+   is neutralised under prefers-reduced-motion. */
+.update-stages {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  margin: 0 0 12px;
+  padding: 0;
+  list-style: none;
+}
+.update-stage { display: inline-flex; align-items: center; gap: 6px; color: var(--mute); font-size: var(--fs-xs); }
+.update-stage-dot { width: 8px; height: 8px; flex: none; background: var(--hairline-soft); }
+.update-stage-label { white-space: nowrap; }
+.update-stage.is-active { color: var(--ink); font-weight: 700; }
+.update-stage.is-active .update-stage-dot { background: var(--accent); }
+.update-stage.is-done { color: var(--ink-2); }
+.update-stage.is-done .update-stage-dot { background: var(--pass); }
+.update-stage.is-failed { color: var(--fail); font-weight: 700; }
+.update-stage.is-failed .update-stage-dot { background: var(--fail); }
+.update-stage.is-blocked { color: var(--warn); font-weight: 700; }
+.update-stage.is-blocked .update-stage-dot { background: var(--warn); }
+
+.update-progress-row { display: flex; align-items: center; gap: 10px; }
+.update-progress-row .update-progress-track { flex: 1 1 auto; min-width: 0; }
+.update-ring { width: 40px; height: 40px; flex: none; transform: rotate(-90deg); }
+.update-ring-track { fill: none; stroke: var(--hairline-soft); stroke-width: 4; }
+.update-ring-fill {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 4;
+  transition: stroke-dashoffset var(--dur-2, 160ms) var(--ease-out, steps(3, end));
+}
+.update-progress.is-complete .update-ring-fill { stroke: var(--pass); }
+
+.update-version-line { margin: 0 0 10px; }
+.update-version-reveal {
+  display: inline-block;
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: var(--fs-l);
+  font-weight: 700;
+  animation: update-version-in var(--dur-3, 240ms) var(--ease-out, steps(3, end)) backwards;
+}
+@keyframes update-version-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: none; }
+}
+
+.update-notes-wrap { display: grid; gap: 6px; margin: 10px 0 0; }
+.update-notes-toggle {
+  justify-self: start;
+  min-height: 36px;
+  padding: 0 12px;
+  color: var(--ink);
+  background: var(--raised);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-s);
+  font: 650 var(--fs-xs)/1 var(--font-ui);
+  cursor: pointer;
+}
+.update-notes-toggle:hover:not(:disabled) { background: var(--hairline-soft); }
+.update-notes-toggle:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.update-notes-wrap .update-notes { margin: 0; animation: update-version-in var(--dur-2, 160ms) var(--ease-out, steps(3, end)) backwards; }
+.update-notice-reveal { display: inline-block; animation: update-version-in var(--dur-2, 160ms) var(--ease-out, steps(3, end)) backwards; }
+
+@media (prefers-reduced-motion: reduce) {
+  .update-version-reveal,
+  .update-notes-wrap .update-notes,
+  .update-notice-reveal { animation: none; }
+  .update-ring-fill { transition: none; }
+}
+
+@media (max-width: 760px) {
+  .update-notes-toggle { min-height: 44px; }
+}

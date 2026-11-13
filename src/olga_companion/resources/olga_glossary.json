@@ -1,0 +1,901 @@
+[
+  {
+    "kind": "keyword",
+    "meaning": "Controls frequency of animation data output.",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 142
+    },
+    "term": "ANIMATE"
+  },
+  {
+    "kind": "parameter",
+    "meaning": "Case author name",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 45
+    },
+    "term": "AUTHOR"
+  },
+  {
+    "kind": "parameter",
+    "meaning": "Label of the POSITION marking the bottom of the reservoir interval",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 496
+    },
+    "term": "BOTTOMPOSITION"
+  },
+  {
+    "kind": "keyword",
+    "meaning": "Assigns a fluid system to this flowpath.",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 338
+    },
+    "term": "BRANCH"
+  },
+  {
+    "kind": "parameter",
+    "meaning": "Specific heat capacity",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 182
+    },
+    "term": "CAPACITY",
+    "unit": "heat capacity unit"
+  },
+  {
+    "kind": "keyword",
+    "meaning": "Case metadata.",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 41
+    },
+    "term": "CASE"
+  },
+  {
+    "kind": "keyword",
+    "meaning": "Set COMPOPTIONS keyword parameters.",
+    "source": {
+      "file": "genkey_builder.py",
+      "line": 375
+    },
+    "term": "COMPOPTIONS"
+  },
+  {
+    "kind": "parameter",
+    "meaning": "Enable compositional (multi-component) fluid tracking",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 28
+    },
+    "term": "COMPOSITIONAL"
+  },
+  {
+    "kind": "parameter",
+    "meaning": "Thermal conductivity",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 183
+    },
+    "term": "CONDUCTIVITY",
+    "unit": "conductivity unit"
+  },
+  {
+    "kind": "keyword",
+    "meaning": "Wires a node terminal to a flowpath end, establishing the network topology.",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 296
+    },
+    "term": "CONNECTION"
+  },
+  {
+    "kind": "parameter",
+    "meaning": "Material density",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 184
+    },
+    "term": "DENSITY",
+    "unit": "density unit"
+  },
+  {
+    "kind": "parameter",
+    "meaning": "Inner diameter",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 439
+    },
+    "term": "DIAMETER",
+    "unit": "length"
+  },
+  {
+    "kind": "parameter",
+    "meaning": "Enable drilling fluid model",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 29
+    },
+    "term": "DRILLING"
+  },
+  {
+    "kind": "parameter",
+    "meaning": "Time interval between output file writes",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 97
+    },
+    "term": "DTOUT",
+    "unit": "time"
+  },
+  {
+    "kind": "parameter",
+    "meaning": "Time interval between trend data points",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 112
+    },
+    "term": "DTPLOT",
+    "unit": "time"
+  },
+  {
+    "kind": "parameter",
+    "meaning": "Initial timestep size",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 82
+    },
+    "term": "DTSTART",
+    "unit": "time"
+  },
+  {
+    "kind": "parameter",
+    "meaning": "Simulation end time",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 79
+    },
+    "term": "ENDTIME",
+    "unit": "time"
+  },
+  {
+    "kind": "parameter",
+    "meaning": "Flash model for the valve: FROZEN (no flash) or EQUILIBRIUM",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 544
+    },
+    "term": "EQUILIBRIUMMODEL"
+  },
+  {
+    "kind": "parameter",
+    "meaning": "Thermal expansion coefficient. Used when RADIATION=YES.",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 188
+    },
+    "term": "EXPANSION",
+    "unit": "1/temperature"
+  },
+  {
+    "kind": "keyword",
+    "meaning": "References to external data files required by the simulation.",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 59
+    },
+    "term": "FILES"
+  },
+  {
+    "kind": "parameter",
+    "meaning": "Select the multiphase flow model",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 30
+    },
+    "term": "FLOWMODEL"
+  },
+  {
+    "kind": "keyword",
+    "meaning": "Each FLOWPATH TAG must appear in at least one CONNECTION",
+    "source": {
+      "file": "validation-rules.md",
+      "line": 17
+    },
+    "term": "FLOWPATH"
+  },
+  {
+    "kind": "parameter",
+    "meaning": "Fluid system index (references a fluid defined in the PVT file; 1 for the first/only fluid)",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 342
+    },
+    "term": "FLUID"
+  },
+  {
+    "kind": "keyword",
+    "meaning": "Defines a non-Darcy (Forchheimer) inflow performance relationship (IPR) model for a reservoir contact.",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 231
+    },
+    "term": "FORCHHEIMER"
+  },
+  {
+    "kind": "parameter",
+    "meaning": "The mass fraction of gas within the gas and oil that enters here. Enter -1 and OLGA takes the equilibrium value from the PVT table.",
+    "source": {
+      "file": "OLGA 2022.1 NODEkeyinfo.txt",
+      "line": 13
+    },
+    "term": "GASFRACTION",
+    "unit": "- (dimensionless)"
+  },
+  {
+    "kind": "parameter",
+    "meaning": "Gas injection productivity index at each time point",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 501
+    },
+    "term": "GASINJ",
+    "unit": "flow rate / pressure"
+  },
+  {
+    "kind": "keyword",
+    "meaning": "Sets the spatial start coordinates for the flowpath (i.e., the inlet end location).",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 353
+    },
+    "term": "GEOMETRY"
+  },
+  {
+    "kind": "output_variable",
+    "meaning": "총 질량 유량",
+    "source": {
+      "file": "resultPresentation.ts",
+      "line": 16
+    },
+    "term": "GT"
+  },
+  {
+    "kind": "parameter",
+    "meaning": "Ambient (outer) heat transfer coefficient",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 381
+    },
+    "term": "HAMBIENT",
+    "unit": "heat transfer coeff unit"
+  },
+  {
+    "kind": "keyword",
+    "meaning": "Defines the heat transfer model applied across a set of pipes within the flowpath.",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 371
+    },
+    "term": "HEATTRANSFER"
+  },
+  {
+    "kind": "parameter",
+    "meaning": "Minimum inner wall heat transfer coefficient",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 378
+    },
+    "term": "HMININNERWALL",
+    "unit": "heat transfer coeff unit"
+  },
+  {
+    "kind": "output_variable",
+    "meaning": "액체 홀드업",
+    "source": {
+      "file": "resultPresentation.ts",
+      "line": 15
+    },
+    "term": "HOL"
+  },
+  {
+    "kind": "parameter",
+    "meaning": "Outer boundary option: HGIVEN (heat transfer coefficient given), UVALUE, etc.",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 379
+    },
+    "term": "HOUTEROPTION"
+  },
+  {
+    "kind": "keyword",
+    "meaning": "Check CONNECTION TERMINALS for both INLET and OUTLET per FLOWPATH",
+    "source": {
+      "file": "validation-rules.md",
+      "line": 18
+    },
+    "term": "INLET"
+  },
+  {
+    "kind": "parameter",
+    "meaning": "Emissivity of inner surface (0–1). Used when RADIATION=YES.",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 186
+    },
+    "term": "INNEREMISSIVITY"
+  },
+  {
+    "kind": "keyword",
+    "meaning": "Time integration control parameters.",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 74
+    },
+    "term": "INTEGRATION"
+  },
+  {
+    "kind": "parameter",
+    "meaning": "Interpolation method: SECTIONWISE or OFF",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 377
+    },
+    "term": "INTERPOLATION"
+  },
+  {
+    "kind": "parameter",
+    "meaning": "YES / NO — whether reservoir fluid enters at constant temperature",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 494
+    },
+    "term": "ISOTHERMAL"
+  },
+  {
+    "kind": "parameter",
+    "meaning": "Unique name for this material",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 180
+    },
+    "term": "LABEL"
+  },
+  {
+    "kind": "keyword",
+    "meaning": "Defines a linear (Darcy-only) IPR model for injection.",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 254
+    },
+    "term": "LINEAR"
+  },
+  {
+    "kind": "parameter",
+    "meaning": "Length of each segment; tuple must have NSEGMENT elements",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 435
+    },
+    "term": "LSEGMENT",
+    "unit": "length"
+  },
+  {
+    "kind": "keyword",
+    "meaning": "Defines the thermal properties of a wall layer material (solid or fluid annulus).",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 176
+    },
+    "term": "MATERIAL"
+  },
+  {
+    "kind": "parameter",
+    "meaning": "Maximum allowable timestep",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 80
+    },
+    "term": "MAXDT",
+    "unit": "time"
+  },
+  {
+    "kind": "parameter",
+    "meaning": "Minimum allowable timestep",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 81
+    },
+    "term": "MINDT",
+    "unit": "time"
+  },
+  {
+    "kind": "parameter",
+    "meaning": "Flow rate basis: VOLUME (volumetric) or MASS",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 237
+    },
+    "term": "MODELOPTION"
+  },
+  {
+    "kind": "keyword",
+    "meaning": "Every TAG in CONNECTION must match a defined NETWORKCOMPONENT",
+    "source": {
+      "file": "validation-rules.md",
+      "line": 19
+    },
+    "term": "NETWORKCOMPONENT"
+  },
+  {
+    "kind": "keyword",
+    "meaning": "Every TAG in CONNECTION must match a defined NETWORKCOMPONENT",
+    "source": {
+      "file": "validation-rules.md",
+      "line": 19
+    },
+    "term": "NODE"
+  },
+  {
+    "kind": "parameter",
+    "meaning": "Number of computational segments in this pipe",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 434
+    },
+    "term": "NSEGMENT"
+  },
+  {
+    "kind": "parameter",
+    "meaning": "Oil injection productivity index at each time point",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 502
+    },
+    "term": "OILINJ",
+    "unit": "flow rate / pressure"
+  },
+  {
+    "kind": "parameter",
+    "meaning": "Valve opening fraction (0 = fully closed, 1 = fully open)",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 546
+    },
+    "term": "OPENING"
+  },
+  {
+    "kind": "keyword",
+    "meaning": "Simulation mode flags.",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 23
+    },
+    "term": "OPTIONS"
+  },
+  {
+    "kind": "parameter",
+    "meaning": "Emissivity of outer surface (0–1). Used when RADIATION=YES.",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 187
+    },
+    "term": "OUTEREMISSIVITY"
+  },
+  {
+    "kind": "keyword",
+    "meaning": "Check CONNECTION TERMINALS for both INLET and OUTLET per FLOWPATH",
+    "source": {
+      "file": "validation-rules.md",
+      "line": 18
+    },
+    "term": "OUTLET"
+  },
+  {
+    "kind": "keyword",
+    "meaning": "Controls frequency of the main output file (.res / .genkey_out).",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 93
+    },
+    "term": "OUTPUT"
+  },
+  {
+    "kind": "keyword",
+    "meaning": "Specifies which OLGA output variables to write for all positions in this flowpath.",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 395
+    },
+    "term": "OUTPUTDATA"
+  },
+  {
+    "kind": "parameter",
+    "meaning": "Ordered list of pipe labels this heat transfer spec applies to (must match PIPE LABEL values)",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 376
+    },
+    "term": "PIPE"
+  },
+  {
+    "kind": "keyword",
+    "meaning": "Defines a named observation point at a specific section boundary within a pipe.",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 454
+    },
+    "term": "POSITION"
+  },
+  {
+    "kind": "parameter",
+    "meaning": "Reservoir pressure at each time point",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 498
+    },
+    "term": "PRESSURE",
+    "unit": "pressure"
+  },
+  {
+    "kind": "parameter",
+    "meaning": "Label of the FORCHHEIMER or LINEAR model used for production IPR",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 495
+    },
+    "term": "PRODIPR"
+  },
+  {
+    "kind": "keyword",
+    "meaning": "Controls frequency of profile plot data (spatial snapshots along flowpaths).",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 125
+    },
+    "term": "PROFILE"
+  },
+  {
+    "kind": "keyword",
+    "meaning": "Specifies which OLGA variables to include in spatial profile output for this flowpath.",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 472
+    },
+    "term": "PROFILEDATA"
+  },
+  {
+    "kind": "parameter",
+    "meaning": "Project identifier",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 46
+    },
+    "term": "PROJECT"
+  },
+  {
+    "kind": "output_variable",
+    "meaning": "압력",
+    "source": {
+      "file": "resultPresentation.ts",
+      "line": 13
+    },
+    "term": "PT"
+  },
+  {
+    "kind": "parameter",
+    "meaning": "Path to the PVT fluid properties table (.tab file). Path is relative to the .genkey file location.",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 63
+    },
+    "term": "PVTFILE"
+  },
+  {
+    "kind": "output_variable",
+    "meaning": "총 액체 체적 유량",
+    "source": {
+      "file": "resultPresentation.ts",
+      "line": 18
+    },
+    "term": "QLT"
+  },
+  {
+    "kind": "output_variable",
+    "meaning": "총 체적 유량",
+    "source": {
+      "file": "resultPresentation.ts",
+      "line": 17
+    },
+    "term": "QT"
+  },
+  {
+    "kind": "parameter",
+    "meaning": "Enable radiative heat transfer (YES/NO). Applicable to FLUID type only.",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 185
+    },
+    "term": "RADIATION"
+  },
+  {
+    "kind": "keyword",
+    "meaning": "Defines a reservoir inflow/outflow boundary within the flowpath, using a named IPR model to compute fluid exchange between the reservoir and the wellbore.",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 487
+    },
+    "term": "RESERVOIRCONTACT"
+  },
+  {
+    "kind": "parameter",
+    "meaning": "Inner wall absolute roughness",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 433
+    },
+    "term": "ROUGHNESS",
+    "unit": "length"
+  },
+  {
+    "kind": "parameter",
+    "meaning": "Section boundary index within the pipe (1 = inlet end of first segment)",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 460
+    },
+    "term": "SECTION"
+  },
+  {
+    "kind": "parameter",
+    "meaning": "Section boundary index within the pipe where the valve is located",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 543
+    },
+    "term": "SECTIONBOUNDARY"
+  },
+  {
+    "kind": "parameter",
+    "meaning": "Simulation start time (usually 0)",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 78
+    },
+    "term": "STARTTIME",
+    "unit": "time"
+  },
+  {
+    "kind": "parameter",
+    "meaning": "Run a steady-state initialisation before transient simulation",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 27
+    },
+    "term": "STEADYSTATE"
+  },
+  {
+    "kind": "parameter",
+    "meaning": "Ambient temperature at each pipe segment",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 380
+    },
+    "term": "TAMBIENT",
+    "unit": "temperature"
+  },
+  {
+    "kind": "parameter",
+    "meaning": "Reservoir temperature at each time point",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 499
+    },
+    "term": "TEMPERATURE",
+    "unit": "temperature"
+  },
+  {
+    "kind": "keyword",
+    "meaning": "Check CONNECTION TERMINALS for both INLET and OUTLET per FLOWPATH",
+    "source": {
+      "file": "validation-rules.md",
+      "line": 18
+    },
+    "term": "TERMINALS"
+  },
+  {
+    "kind": "parameter",
+    "meaning": "Radial thickness of each layer, ordered from innermost to outermost",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 212
+    },
+    "term": "THICKNESS",
+    "unit": "length"
+  },
+  {
+    "kind": "parameter",
+    "meaning": "Time points at which the following coefficients apply",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 236
+    },
+    "term": "TIME",
+    "unit": "time"
+  },
+  {
+    "kind": "parameter",
+    "meaning": "Human-readable case title",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 47
+    },
+    "term": "TITLE"
+  },
+  {
+    "kind": "output_variable",
+    "meaning": "온도",
+    "source": {
+      "file": "resultPresentation.ts",
+      "line": 14
+    },
+    "term": "TM"
+  },
+  {
+    "kind": "parameter",
+    "meaning": "Label of the POSITION marking the top of the reservoir interval",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 497
+    },
+    "term": "TOPPOSITION"
+  },
+  {
+    "kind": "parameter",
+    "meaning": "The mass fraction of total water in the whole fluid at the boundary. Enter -1 and OLGA takes it from the PVT table. WATERFRACTION is the alternative to this key.",
+    "source": {
+      "file": "OLGA 2022.1 NODEkeyinfo.txt",
+      "line": 15
+    },
+    "term": "TOTALWATERFRACTION",
+    "unit": "- (dimensionless)"
+  },
+  {
+    "kind": "keyword",
+    "meaning": "Controls frequency of trend plot data (time-series at specific positions).",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 108
+    },
+    "term": "TREND"
+  },
+  {
+    "kind": "keyword",
+    "meaning": "Places a choke or valve element at a section boundary within a pipe of the flowpath.",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 536
+    },
+    "term": "VALVE"
+  },
+  {
+    "kind": "parameter",
+    "meaning": "OLGA output variable name (e.g., LIQC, PT, HOL)",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 161
+    },
+    "term": "VARIABLE"
+  },
+  {
+    "kind": "parameter",
+    "meaning": "Dynamic viscosity. Applicable to FLUID type only.",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 189
+    },
+    "term": "VISCOSITY",
+    "unit": "viscosity unit"
+  },
+  {
+    "kind": "keyword",
+    "meaning": "Defines a layered pipe wall configuration by referencing a sequence of MATERIAL labels and their corresponding layer thicknesses.",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 207
+    },
+    "term": "WALL"
+  },
+  {
+    "kind": "parameter",
+    "meaning": "The mass fraction of free water in the whole fluid at the boundary. TOTALWATERFRACTION is the alternative to this key.",
+    "source": {
+      "file": "OLGA 2022.1 NODEkeyinfo.txt",
+      "line": 14
+    },
+    "term": "WATERFRACTION",
+    "unit": "- (dimensionless)"
+  },
+  {
+    "kind": "parameter",
+    "meaning": "Water injection productivity index at each time point",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 503
+    },
+    "term": "WATINJ",
+    "unit": "flow rate / pressure"
+  },
+  {
+    "kind": "parameter",
+    "meaning": "Water-gas ratio at each time point",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 500
+    },
+    "term": "WGR",
+    "unit": "volume/volume"
+  },
+  {
+    "kind": "parameter",
+    "meaning": "X coordinate of the pipe outlet end",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 436
+    },
+    "term": "XEND",
+    "unit": "length"
+  },
+  {
+    "kind": "parameter",
+    "meaning": "X coordinate of the flowpath inlet",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 358
+    },
+    "term": "XSTART",
+    "unit": "length"
+  },
+  {
+    "kind": "parameter",
+    "meaning": "Y coordinate of the pipe outlet end",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 437
+    },
+    "term": "YEND",
+    "unit": "length"
+  },
+  {
+    "kind": "parameter",
+    "meaning": "Y coordinate (negative = below surface/mudline)",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 359
+    },
+    "term": "YSTART",
+    "unit": "length"
+  },
+  {
+    "kind": "parameter",
+    "meaning": "Z coordinate of the pipe outlet end",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 438
+    },
+    "term": "ZEND",
+    "unit": "length"
+  },
+  {
+    "kind": "parameter",
+    "meaning": "Z coordinate (azimuth offset; often 0)",
+    "source": {
+      "file": "genkey-keywords.md",
+      "line": 360
+    },
+    "term": "ZSTART",
+    "unit": "length"
+  }
+]
