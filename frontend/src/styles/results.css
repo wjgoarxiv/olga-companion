@@ -1,0 +1,353 @@
+/* ── Results view — result file list + variable picker + interactive trend chart ── */
+.rv-view { display: grid; grid-template-columns: auto 8px minmax(0, 1fr); height: 100%; min-height: 0; }
+.rv-view.empty { grid-template-columns: auto 8px minmax(0, 1fr); }
+.rv-files { width: 268px; padding: 12px 10px; overflow-y: auto; background: var(--panel); border-right: 1px solid var(--hairline); }
+.rv-files.empty { background: var(--panel-2); }
+.rv-files-head { position: sticky; z-index: 2; top: -12px; display: grid; gap: 8px; margin: -12px -10px 8px; padding: 17px 14px 13px; background: var(--panel); border-bottom: 1px solid var(--hairline); }
+.rv-files-heading { display: grid; gap: 4px; }
+.rv-files-kicker { color: var(--info); font-size: var(--fs-s); font-weight: 850; letter-spacing: 0.04em; white-space: nowrap; }
+.rv-files-title { color: var(--ink); font-size: var(--fs-l); font-weight: 740; letter-spacing: -.02em; white-space: nowrap; }
+.rv-files-head .ws-root { margin: 0; padding: 0; overflow: hidden; color: var(--mute); font-size: var(--fs-s); font-weight: 520; line-height: 1.35; text-overflow: ellipsis; white-space: nowrap; }
+.rv-filter-note { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; margin: 0; color: var(--mute); font-size: var(--fs-s); }
+.rv-filter-note > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rv-filter-note .rv-clear-filter { min-height: 44px; }
+.rv-files-actions { display: flex; align-items: center; }
+.rv-files-head .ui-button { min-height: 44px; padding: 0 13px; border-radius: var(--r-s); }
+/* 768px lands between the desktop rail and the 760px phone query: the 34px
+   base rules would still apply, so this narrow band carries just the 44px
+   touch minimum — no layout restacking here. */
+@media (max-width: 768px) {
+  .rv-files-head .ui-button { min-height: 44px; }
+}
+.rv-files ul { margin: 0; padding: 0 4px; list-style: none; }
+.rv-files li { border-bottom: 1px solid var(--hairline-soft); }
+.rv-file-label { display: grid; flex: 1 1 auto; min-width: 0; gap: 3px; }
+.rv-file-context { overflow: hidden; color: var(--mute); font-size: var(--fs-s); font-weight: 480; text-overflow: ellipsis; white-space: nowrap; }
+.rv-files .ws-file { position: relative; min-height: 55px; padding: 9px 10px; border-radius: var(--r-s); color: var(--ink); }
+.rv-files .ws-file-kb { align-self: flex-end; }
+.rv-files .ws-file.active { box-shadow: var(--state-inset); }
+.rv-files .ws-file-name { font-family: var(--font-ui); font-size: var(--fs-xs); font-weight: 650; }
+.rv-files .ws-file-kb { font-size: var(--fs-s); font-variant-numeric: tabular-nums; }
+.ws-file.active .rv-file-context { color: var(--on-select-mute); }
+.rv-clear-filter { justify-self: start; min-height: 34px; margin-top: 5px; }
+.rv-main { display: flex; flex-direction: column; min-width: 0; min-height: 0; padding: 16px 20px; overflow-y: auto; }
+.rv-main.empty { align-items: flex-start; justify-content: flex-start; overflow-y: auto; padding: 32px 36px; }
+.rv-main .rv-empty,
+.rv-main .rv-selection-state { margin: 0; align-self: flex-start; }
+.rv-main .workbench-prompt-hero { grid-template-columns: minmax(0, 1fr); align-items: start; }
+.rv-main .workbench-prompt-intro { align-content: start; }
+.rv-main .workbench-prompt-context { display: block; padding: 0; border: 0; background: transparent; border-radius: 0; }
+.rv-main .workbench-prompt-context span,
+.rv-main .rv-selection-state .workbench-prompt-context strong { display: none; }
+.rv-main .workbench-prompt-context em { display: block; white-space: normal; }
+.rv-main.empty .ui-skeleton { grid-column: 1 / -1; width: 100%; }
+/* Narrow Results pane (explorer + dock open at 1024-1920): stack the file
+   list above the detail so the file name never breaks per letter and the
+   lineage chips wrap instead of clipping. Container query, not viewport
+   media, so it reacts to the width the pane actually gets. Stacked, the pane
+   scrolls as one column: a fixed list row left the detail a ~160px window of
+   its own, and the chart sat below it, under the list. .rv-view is the only
+   scroller here; a capped, scrolling list inside it drew twin scrollbars. */
+@container (max-width: 900px) {
+  .rv-view { grid-template-columns: minmax(0, 1fr); grid-template-rows: max-content auto; overflow-y: auto; }
+  .rv-view.empty { grid-template-columns: minmax(0, 1fr); }
+  .rv-view > .panel-resizer { display: none; }
+  .rv-files { width: auto; max-width: none; max-height: none; overflow-y: visible; border-right: none; border-bottom: 1px solid var(--hairline); }
+  .rv-main { min-width: 0; min-height: auto; overflow-x: clip; overflow-y: visible; }
+}
+.rv-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 12px; min-width: 0; margin-bottom: 10px; }
+.rv-head .ws-canvas-name { min-width: 0; word-break: normal; overflow-wrap: anywhere; }
+.result-lineage { display: flex; flex-wrap: wrap; gap: 6px; min-width: 0; margin: -2px 0 10px; overflow-wrap: anywhere; }
+.result-lineage span { min-width: 0; padding: 5px 8px; color: var(--ink); background: var(--panel-2); border: 1px solid var(--hairline); border-radius: var(--r-pill); font-size: var(--fs-s); }
+.result-lineage strong { margin-right: 5px; color: var(--mute); font-size: var(--fs-s); letter-spacing: var(--track-label); text-transform: uppercase; }
+.rv-filter {
+  height: 34px;
+  padding: 0 14px;
+  margin-bottom: 12px;
+  font: inherit;
+  font-size: var(--fs-s);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-s);
+  background: var(--raised);
+}
+.rv-filter:focus { border-color: var(--focus); }
+.rv-filter:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.rv-filter-field { display: grid; gap: 4px; margin-bottom: 12px; color: var(--mute); font-size: var(--fs-s); font-weight: 750; letter-spacing: var(--track-label); text-transform: uppercase; }
+.rv-filter-field .rv-filter { width: 100%; min-width: 0; margin: 0; text-transform: none; }
+
+/* Findings panel — beginner verdicts with cited series. */
+.findings-panel { display: grid; gap: 10px; margin-top: 18px; padding: 16px; background: var(--panel); border: 1px solid var(--hairline); border-radius: var(--r-surface); }
+.findings-title { margin: 0; font-size: var(--fs-l); }
+.findings-lede { margin: 0; color: var(--mute); font-size: var(--fs-s); }
+.findings-field { display: grid; gap: 4px; max-width: 420px; font-size: var(--fs-xs); color: var(--mute); }
+.findings-field select,
+.findings-field input { min-height: 36px; padding: 0 10px; color: var(--ink); background: var(--raised); border: 1px solid var(--hairline); border-radius: var(--r-s); font-size: var(--fs-s); }
+.findings-actions { display: flex; }
+.findings-note { margin: 0; color: var(--mute); font-size: var(--fs-s); }
+.findings-error { margin: 0; color: var(--fail); font-size: var(--fs-s); }
+.findings-verdict { display: grid; gap: 4px; padding: 10px 12px; border: 1px solid var(--hairline); border-radius: var(--r-s); font-size: var(--fs-s); }
+.findings-verdict strong { font-size: var(--fs-l); }
+.findings-pass strong { color: var(--pass); }
+.findings-fail strong { color: var(--fail); }
+.rv-overlay-hint { margin: -4px 0 10px; color: var(--mute); font-size: var(--fs-s); line-height: 1.4; }
+.rv-body { display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 16px; flex: none; align-items: start; }
+.rv-vars { list-style: none; padding: 0; margin: 0; max-height: 320px; overflow-y: auto; border: 1px solid var(--hairline-soft); border-radius: var(--r-s); }
+.rv-var {
+  width: 100%;
+  height: auto;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 8px;
+  align-items: baseline;
+  padding: 7px 10px;
+  border: none;
+  border-bottom: 1px solid var(--hairline);
+  border-radius: 0;
+  background: var(--raised);
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+}
+.rv-var:hover { background: var(--panel-2); }
+.rv-var:disabled { color: var(--mute); cursor: not-allowed; opacity: 0.62; }
+.rv-var.active { background: var(--select); box-shadow: var(--state-inset); }
+.rv-var.active .rv-var-name, .rv-var.active .rv-var-pos, .rv-var.active .rv-var-unit { color: var(--on-select); }
+.rv-var-name { font-family: var(--font-ui); font-size: var(--fs-xs); font-weight: 650; color: var(--ink); }
+.rv-var-pos { font-size: var(--fs-s); color: var(--mute); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rv-var-unit { font-size: var(--fs-s); color: var(--mute); }
+.rv-chart { display: flex; flex-direction: column; align-items: stretch; justify-content: flex-start; min-width: 0; min-height: 320px; overflow-x: auto; border: 1px solid var(--hairline-soft); border-radius: var(--r-s); padding: 8px; }
+.rv-empty-error { margin: auto; max-width: 420px; }
+
+.calibration-rail { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 8px 12px; margin: 0 0 8px; padding: 8px 10px 10px; background: var(--panel-2); border: 1px solid var(--hairline); border-radius: var(--r-s); font-family: var(--font-ui); }
+.calibration-title { display: grid; align-self: stretch; align-content: center; min-width: 150px; padding-right: 4px; border-right: 1px solid var(--hairline); color: var(--ink); font-size: var(--fs-xs); font-weight: 750; }
+.calibration-source { display: block; max-width: 220px; overflow: hidden; color: var(--mute); font-size: var(--fs-s); font-weight: 500; text-overflow: ellipsis; white-space: nowrap; }
+.calibration-field { display: grid; gap: 3px; color: var(--mute); font-size: var(--fs-s); font-weight: 650; }
+.calibration-field select { min-width: 104px; min-height: 40px; padding: 0 28px 0 10px; color: var(--ink); background: var(--raised); border: 1px solid var(--hairline); border-radius: var(--r-s); font: inherit; font-size: var(--fs-xs); }
+.calibration-field select:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.calibration-field select:disabled { color: var(--mute); background: var(--panel-2); cursor: not-allowed; }
+.calibration-segment { min-width: 0; padding: 0; margin: 0; border: 0; }
+.calibration-segment legend { margin-bottom: 3px; color: var(--mute); font-size: var(--fs-s); font-weight: 650; }
+.calibration-segment > div { display: flex; }
+.calibration-segment button { min-height: 40px; padding: 0 10px; color: var(--ink); background: var(--raised); border: 1px solid var(--hairline); border-right: 0; border-radius: 0; font: inherit; font-size: var(--fs-s); font-weight: 600; cursor: pointer; }
+.calibration-segment button:first-child { border-radius: 0; }
+.calibration-segment button:last-child { border-right: 1px solid var(--hairline); border-radius: 0; }
+.calibration-segment button[aria-pressed="true"] { color: var(--on-select); background: var(--select); border-color: var(--select); box-shadow: var(--state-inset); }
+.calibration-segment button:focus-visible { position: relative; outline: 2px solid var(--focus); outline-offset: 2px; z-index: 1; }
+.calibration-segment button:disabled { cursor: wait; opacity: 0.58; }
+.calibration-reason { flex: 1 1 100%; margin: -1px 0 0; color: var(--mute); font-size: var(--fs-s); line-height: 1.4; }
+
+.trend-wrap { position: relative; width: 100%; min-width: 0; font-family: var(--font-ui); }
+.trend-head { display: flex; align-items: baseline; gap: 10px; min-width: 0; padding: 5px 7px 7px; border-bottom: 1px solid var(--hairline-soft); }
+.trend-var { color: var(--ink); font-size: var(--fs-s); font-weight: 750; }
+.trend-pos { min-width: 0; overflow: hidden; color: var(--mute); font-size: var(--fs-s); text-overflow: ellipsis; white-space: nowrap; }
+.trend-sample-count { margin-left: auto; color: var(--ink); font-size: var(--fs-s); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.trend-legend { display: flex; flex-wrap: wrap; gap: 6px; padding: 7px; border-bottom: 1px solid var(--hairline-soft); }
+.trend-legend button { display: grid; grid-template-columns: 10px auto; column-gap: 6px; align-items: center; min-width: 0; padding: 5px 8px; color: inherit; background: var(--raised); border: 1px solid var(--hairline); border-radius: var(--r-s); cursor: pointer; text-align: left; }
+.trend-legend button > span { grid-row: 1 / 3; width: 8px; height: 8px; border-radius: var(--r-s); background: currentColor; }
+.trend-legend button strong { overflow: hidden; color: var(--ink); font: 650 var(--fs-s)/1.2 var(--font-ui); text-overflow: ellipsis; white-space: nowrap; }
+
+.trend-legend button small { overflow: hidden; color: var(--mute); font-size: var(--fs-s); text-overflow: ellipsis; white-space: nowrap; }
+.trend-legend button[aria-pressed="true"] { border-color: currentColor; box-shadow: var(--state-inset); background: var(--hairline-soft); }
+.trend-legend button:focus-visible { outline: 2px solid var(--info); outline-offset: 2px; }
+.trend-viewport { width: 100%; min-width: 0; overflow-x: auto; }
+.trend-svg { display: block; width: 100%; height: auto; min-width: 360px; background: var(--panel); border-bottom: 1px solid var(--hairline); cursor: crosshair; touch-action: pan-y; }
+.trend-svg:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
+.trend-line { fill: none; stroke: var(--info); stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.75; vector-effect: non-scaling-stroke; }
+.trend-grid { stroke: var(--hairline-soft); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.trend-axis { stroke: var(--hairline); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.trend-tick { fill: var(--mute); font-size: var(--fs-xs); font-variant-numeric: tabular-nums; }
+.trend-axis-label { fill: var(--mute); font-size: var(--fs-s); font-weight: 650; }
+.trend-cross { stroke: var(--mute); stroke-dasharray: 3 3; stroke-width: 1; vector-effect: non-scaling-stroke; }
+.trend-cross-horizontal { opacity: 0.56; }
+.trend-dot { fill: var(--canvas); stroke: var(--info); stroke-width: 2.5; vector-effect: non-scaling-stroke; }
+.trend-tip-bg { fill: var(--ink); }
+.trend-tip-t, .trend-tip-v { fill: var(--bg); font-size: var(--fs-s); font-variant-numeric: tabular-nums; }
+.trend-tip-v { font-weight: 650; }
+.trend-keyboard-hint { margin: 5px 7px 2px; color: var(--mute); font-size: var(--fs-s); }
+.trend-mobile-hint { display: none; }
+.trend-live { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.result-analysis { display: grid; gap: 8px; padding: 10px 8px 4px; border-top: 1px solid var(--hairline-soft); font-family: var(--font-ui); }
+.result-analysis-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; color: var(--ink); font-size: var(--fs-xs); font-weight: 700; }
+.result-analysis-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; }
+.result-export { display: inline-flex; align-items: center; gap: 6px; min-height: 30px; padding: 0 10px; }
+.result-analysis dl { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; margin: 0; background: var(--hairline-soft); border: 1px solid var(--hairline-soft); }
+.result-analysis dl div { min-width: 0; padding: 7px 9px; background: var(--raised); }
+.result-analysis dt { margin-bottom: 3px; color: var(--mute); font-size: var(--fs-s); }
+.result-analysis dd { margin: 0; overflow: hidden; color: var(--ink); font-size: var(--fs-s); font-variant-numeric: tabular-nums; text-overflow: ellipsis; white-space: nowrap; }
+.result-analysis p { margin: 0; color: var(--mute); font-size: var(--fs-s); }
+.result-export-receipts { display: grid; gap: 8px; }
+.result-downloads { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 8px; color: var(--mute); font-size: var(--fs-s); }
+.result-downloads a { display: inline-flex; align-items: center; gap: 4px; color: var(--info); font-size: var(--fs-s); font-weight: 650; text-decoration: underline; }
+
+@media (max-width: 760px) {
+  .rv-view { grid-template-columns: 1fr; grid-template-rows: minmax(120px, 34vh) minmax(0, 1fr); }
+  .rv-view.empty { grid-template-columns: 1fr; grid-template-rows: auto minmax(0, 1fr); }
+  .rv-files { max-height: 260px; overflow-y: auto; border-right: none; border-bottom: 1px solid var(--hairline); }
+  /* The header (title, filter, case toggle, refresh) is taller than a short phone's rail: pinned, it would cover every result. */
+  .rv-files-head { position: static; }
+  .rv-files.empty { max-height: 112px; overflow: hidden; }
+  .rv-main { overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; padding: 12px 12px 84px; scroll-padding-bottom: 84px; }
+  .rv-main.empty { padding: 14px 16px 84px; }
+  .rv-body { display: flex; flex-direction: column; flex: 0 0 auto; min-height: 0; }
+  .rv-filter, .rv-vars, .rv-chart, .rv-empty { min-width: 0; max-width: 100%; }
+  .rv-plot { grid-template-columns: minmax(0, 1fr); }
+  .rv-chip button { min-height: 44px; }
+  .rv-vars { flex: 0 0 auto; max-height: min(34vh, 260px); overflow-y: auto; }
+  .rv-chart { flex: 0 0 auto; width: 100%; min-height: 360px; overflow: visible; box-sizing: border-box; }
+  .rv-var { min-height: 44px; }
+  .rv-filter { min-height: 44px; box-sizing: border-box; }
+  .rv-files-head .ui-button { min-height: 44px; }
+  .rv-clear-filter { min-height: 44px; }
+  .result-export { min-height: 44px; }
+  .result-analysis-actions { width: 100%; max-width: 100%; justify-content: flex-start; }
+  .result-downloads { max-width: 100%; justify-content: flex-start; }
+  .result-downloads a { min-height: 44px; padding: 0 6px; }
+  .calibration-rail { align-items: stretch; gap: 8px; padding: 8px; }
+  .calibration-title { flex: 1 1 100%; min-height: 38px; border-right: 0; border-bottom: 1px solid var(--hairline); }
+  .calibration-field { flex: 1 1 120px; }
+  .calibration-field select { width: 100%; min-height: 44px; }
+  .calibration-segment { flex: 1 1 100%; }
+  .calibration-segment button { flex: 1 1 auto; min-height: 44px; }
+  .trend-head { flex-wrap: wrap; }
+  .trend-pos { flex: 1 1 100%; order: 3; }
+  .trend-viewport {
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scrollbar-gutter: stable;
+  }
+  .trend-svg {
+    width: 920px;
+    min-width: 920px;
+    max-width: none;
+    height: 380px;
+    min-height: 380px;
+    touch-action: pan-x pan-y;
+  }
+  .trend-mobile-hint { display: block; margin: 5px 7px 1px; color: var(--mute); font-size: var(--fs-s); }
+  .result-analysis dl { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* ── PPL spatial profile ───────────────────────────────────────────────────── */
+.rv-profile-controls { display: flex; flex-wrap: wrap; gap: 12px; margin: 0 0 10px; min-width: 0; }
+.rv-profile-controls label { display: grid; gap: 4px; min-width: 0; color: var(--mute); font-size: var(--fs-s); font-weight: 750; letter-spacing: var(--track-label); text-transform: uppercase; }
+.rv-profile-controls select {
+  min-width: 0;
+  max-width: 260px;
+  min-height: 34px;
+  padding: 0 28px 0 10px;
+  color: var(--ink);
+  background: var(--raised);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-s);
+  font: 650 var(--fs-xs)/1 var(--font-ui);
+  text-transform: none;
+}
+.profile-chart { display: grid; gap: 6px; margin: 0; min-width: 0; overflow-x: auto; }
+.profile-chart svg { width: 100%; min-width: 360px; height: auto; overflow: visible; }
+.profile-grid { stroke: var(--hairline-soft); stroke-width: 1; }
+.profile-axis { stroke: var(--ink); stroke-width: 1; }
+.profile-axis-label { fill: var(--mute); font-size: var(--fs-xs); font-variant-numeric: tabular-nums; }
+.profile-axis-title { fill: var(--ink-2); font-size: var(--fs-xs); font-weight: 700; }
+.profile-line { stroke: var(--series-1); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.profile-point { fill: var(--series-1); }
+.profile-caption { color: var(--mute); font-size: var(--fs-s); }
+.rv-case-only { display: flex; align-items: center; gap: 8px; min-height: 44px; color: var(--ink); font-size: var(--fs-s); cursor: pointer; }
+.rv-case-only input { width: 18px; height: 18px; accent-color: var(--ink); }
+.rv-var-plain { color: var(--ink); font-size: var(--fs-xs); font-weight: 500; }
+
+/* ── Result plot tab (todo 9): picker, chips, readout, virtual table ────────
+   New rules read the todo-6 theme tokens only (both themes, text ≥ 4.5:1).
+   Motion below is transform/opacity; Reduced/Off fall back to static. */
+.rv-plot { display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 16px; align-items: start; min-width: 0; }
+.rv-plot-side { display: grid; gap: 10px; min-width: 0; align-content: start; }
+.rv-picker { display: grid; gap: 8px; min-width: 0; padding: 10px; background: var(--panel); border: 1px solid var(--hairline); }
+.rv-picker-search { display: grid; gap: 4px; color: var(--mute); font-size: var(--fs-s); font-weight: 750; letter-spacing: var(--track-label); text-transform: uppercase; }
+.rv-picker-search .rv-filter { width: 100%; min-width: 0; margin: 0; text-transform: none; }
+.rv-picker .rv-vars { max-height: min(38vh, 300px); }
+.rv-picker-more { min-height: 44px; padding: 0 12px; color: var(--ink); background: var(--raised); border: 1px solid var(--hairline); font: inherit; font-size: var(--fs-xs); font-weight: 650; cursor: pointer; }
+.rv-picker-more:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.rv-picker-more:disabled { color: var(--mute); cursor: default; }
+.rv-picker-empty { margin: 0; color: var(--mute); font-size: var(--fs-xs); }
+.rv-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.rv-chip button { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; max-width: 100%; padding: 4px 8px; color: var(--ink); background: var(--raised); border: 1px solid var(--hairline); font: inherit; font-size: var(--fs-s); cursor: pointer; }
+.rv-chip button:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.rv-chip button[aria-pressed="true"] { color: var(--on-select); background: var(--select); border-color: var(--select); }
+.rv-chip-dot { width: 8px; height: 8px; flex: 0 0 auto; }
+.rv-chip { animation: rv-chip-in var(--d-snap) var(--ease-snap); }
+@keyframes rv-chip-in { from { opacity: 0; transform: scale(0.6); } to { opacity: 1; transform: scale(1); } }
+.rv-chart-wrap { animation: rv-chart-in var(--d-enter) var(--ease-enter); }
+@keyframes rv-chart-in { from { opacity: 0; } to { opacity: 1; } }
+.rv-chart-loading { padding: 12px 4px; }
+.rv-zoom-reset { margin: 8px 0 0; }
+.trend-readout { display: inline-block; margin: 6px 7px 2px; padding: 5px 10px; color: var(--on-select); background: var(--select); border: 1px solid var(--hairline); font-size: var(--fs-xs); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.trend-crosshair { stroke: var(--ink-2); stroke-dasharray: 3 3; stroke-width: 1; transition: transform var(--d-ui) var(--ease-ui); }
+.trend-brush { fill: var(--ink); opacity: 0.12; }
+.trend-draw { stroke-dasharray: 1; stroke-dashoffset: 1; animation: trend-draw-in 600ms var(--ease-enter) forwards; }
+@keyframes trend-draw-in { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+.trend-inspect { fill: var(--raised); stroke: var(--info); stroke-width: 2.5; }
+html[data-motion="subtle"] .trend-draw,
+html[data-motion="off"] .trend-draw,
+html[data-motion="subtle"] .rv-chip,
+html[data-motion="off"] .rv-chip,
+html[data-motion="subtle"] .rv-chart-wrap,
+html[data-motion="off"] .rv-chart-wrap { animation: none; }
+html[data-motion="subtle"] .trend-draw,
+html[data-motion="off"] .trend-draw { stroke-dashoffset: 0; }
+@media (prefers-reduced-motion: reduce) {
+  :root:not([data-motion]) .trend-draw,
+  :root:not([data-motion]) .rv-chip,
+  :root:not([data-motion]) .rv-chart-wrap { animation: none; }
+  :root:not([data-motion]) .trend-draw { stroke-dashoffset: 0; }
+}
+.profile-y-title { fill: var(--ink-2); font-size: var(--fs-xs); font-weight: 700; }
+.evidence-series { display: grid; gap: 8px; min-width: 0; }
+.evidence-table-viewport { max-height: 420px; overflow-y: auto; background: var(--panel); border: 1px solid var(--hairline); }
+.evidence-table-viewport:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
+.evidence-table-viewport table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.evidence-table-viewport caption { padding: 8px 10px; color: var(--ink); font-size: var(--fs-xs); font-weight: 700; text-align: left; }
+.evidence-table-viewport th { position: sticky; top: 0; padding: 7px 10px; color: var(--mute); background: var(--raised); border-bottom: 1px solid var(--hairline); font-size: var(--fs-s); font-weight: 750; text-align: left; white-space: nowrap; }
+/* Unit codes keep their display casing (Pa, °C, kg/s) in the Results table. */
+.rv-series-table .evidence-table-viewport th { text-transform: none; letter-spacing: 0; }
+
+/* ── Plot tab fit (fix-up): with dock + bottom panel open the whole chart —
+   both axes, crosshair readout and zoom reset — fits without scrolling.
+   The chart wrap takes a formula height from the centre-panel size container
+   (100cqh minus the chrome above the svg and the readout below it), so the
+   svg is never pushed below the fold however long the analysis block grows.
+   The svg fills the wrap (meet + letterbox-tolerant pointer math), the rail
+   sits below the chart next to the analysis, and the picker side column caps
+   itself with an internal scroll. Table/verdict tabs are untouched. Desktop
+   only: the ≤760px rules keep their stacked layout untouched. */
+@media (min-width: 761px) {
+  .rv-main-tab-plot { --rv-plot-chrome: 170px; }
+  .rv-main { container-type: inline-size; container-name: rv-main; }
+  .rv-main-tab-plot .rv-chart-wrap {
+    display: flex;
+    flex-direction: column;
+    height: calc(100cqh - var(--rv-plot-chrome));
+    min-height: 220px;
+  }
+  .rv-main-tab-plot .rv-chart-wrap > .rv-zoom-reset { flex: none; }
+  .rv-main-tab-plot .trend-wrap { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+  .rv-main-tab-plot .trend-viewport { flex: 1; min-height: 0; overflow: hidden; display: flex; justify-content: center; }
+  .rv-main-tab-plot .trend-svg { width: 100%; height: auto; max-height: 100%; min-width: 0; margin-inline: auto; }
+  .rv-main-tab-plot .profile-chart { display: flex; flex-direction: column; height: calc(100cqh - var(--rv-plot-chrome)); min-height: 220px; }
+  .rv-main-tab-plot .profile-chart svg { width: 100%; height: auto; max-height: 100%; min-width: 0; margin-inline: auto; }
+  .rv-main-tab-plot .profile-chart .profile-caption { flex: none; }
+  .rv-main-tab-plot .rv-plot-side { max-height: calc(100cqh - 160px); overflow-y: auto; }
+}
+/* Short viewports also compact the picker list so the side column fits. */
+@media (min-width: 761px) and (max-height: 850px) {
+  .rv-main-tab-plot .rv-picker .rv-vars { max-height: 180px; }
+}
+/* Narrow centre columns cannot fit the 300px picker beside a readable chart,
+ * so the chart renders first and the full picker follows below it: the axes,
+ * readout and reset stay visible without scrolling, and no control is lost
+ * (wide columns keep the picker beside the chart). */
+@container rv-main (max-width: 720px) {
+  .rv-main-tab-plot .rv-plot { grid-template-columns: minmax(0, 1fr); }
+  .rv-main-tab-plot .rv-chart { order: -1; }
+  .rv-main-tab-plot .rv-plot-side { width: auto; max-height: none; }
+}
+.evidence-table-viewport td { padding: 6px 10px; color: var(--ink); border-bottom: 1px solid var(--hairline); font-size: var(--fs-xs); }
+.evidence-series-summary, .evidence-series-analysis { margin: 0; color: var(--mute); font-size: var(--fs-s); }
