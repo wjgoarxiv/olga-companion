@@ -1,0 +1,35 @@
+# Generic air-water PVT table: CPA, 0-80 C, 0.5-20 bar, label AIR_WATER. Air is N2 0.79 / O2 0.21,
+# mixed with water 0.5 mole fraction (amounts 0.5 0.395 0.105). Run it in Multiflash to write air_water_cpa.tab.
+# Derived from the vendor OLGA.MFL CPA template (Multiflash 4.2.03); hydrate and ice phases removed.
+remove all;
+units temperature K pressure Pa enthalpy J/mol entropy J/mol/K volume m3/mol
+amounts mol viscosity Pas thcond W/m/K surten N/m diffusion m2/s;
+datum enthalpy compound entropy compound; set fractions;
+puredata INFODATA ;
+components overwrite
+1 WATER
+2 NITROGEN
+3 OXYGEN ;
+chardata INFOCHAR TBSOEREIDE ;
+bipset ASSOCBIP 1 quadratic eos none ;
+bipset ASSOCBIP-2 1 constant association J/mol ;
+bipdata erase ;
+model MASSOC ASSOC PSAT ASSOCBIP ASSOCBIP-2;
+model MPDVISC PDVISC LFIT;
+model MSTRAPP SPTHCOND;
+model MMCSMASSOC MCS MASSOC;
+bipdata OILANDGAS4 INFOBIPS ;
+pd GAS gas MASSOC MASSOC MASSOC MPDVISC MSTRAPP;
+pd LIQUID1 liquid MASSOC MASSOC MASSOC MPDVISC MSTRAPP MMCSMASSOC;
+key LIQUID1 not 007732-18-5#WATER#;
+pd WATER liquid MASSOC MASSOC MASSOC MPDVISC MSTRAPP MMCSMASSOC;
+key WATER 007732-18-5#WATER#;
+amounts 0.5 0.395 0.105;
+units temperature degC pressure bar enthalpy J/mol entropy J/mol/K volume m3/mol
+amounts mole viscosity Pas thcond W/m/K surten N/m diffusion m2/s;
+set physprops 1VCS;
+table olga "air_water_cpa.tab" title "AIR_WATER" temperatures 0 10 20 25 30 40 50 60
+  70 80 ; pressures
+  0.5 0.8 1.01325 1.2 1.5
+  2 3 5 8 12
+  16 20 ; ;

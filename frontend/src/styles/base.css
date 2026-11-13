@@ -1,0 +1,587 @@
+/* OLGA Companion — workbench design tokens (see docs/design-contract.md).
+   Terminalcore theme (2026-11): the owner's "woojin-go-terminalcore" brand,
+   static only. Day is #e1e2e7 canvas with #1f2335 ink; Night is #16161e canvas
+   with #c0caf5 ink (Tokyo Night). Four colour families per view: blue, green,
+   cyan and red (ochre only for warnings). Square corners, 2 px frames, no
+   gradients, blur or glow, stepped motion. Every colour, type size, spacing
+   step and duration is a token; new CSS reads tokens, never raw values.
+   Roles keep their names: --select is the filled/selected blue (text on it is
+   --on-select); --accent / --signal are the signal blue and --accent-2 is the
+   phosphor green; --focus is the focus ring (blue in Day, cyan in Night).
+   --hairline is the 1 px control border, --edge the 2 px compartment rule,
+   --hairline-soft a quiet divider. The app follows the OS colour scheme; the
+   Settings toggle writes data-theme to override it. */
+
+/* Self-hosted Pretendard (OFL, bundled in /public/fonts) — a modern KR+Latin
+   variable face. Self-hosted, never a CDN, so the Tauri `default-src 'self'`
+   CSP still holds. It carries Korean text and display type. */
+@font-face {
+  font-family: "Pretendard Variable";
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+  src: url("/fonts/PretendardVariable.woff2") format("woff2-variations");
+}
+
+/* Self-hosted Meslo LGS NF (Apache 2.0, Nerd Fonts patch MIT; Regular and
+   Bold, bundled in /public/fonts) carries body text, labels, coordinates,
+   numbers, units, variable codes and file names. It has no Hangul, so Korean
+   falls back to Pretendard. */
+@font-face {
+  font-family: "Meslo LGS NF";
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  src: url("/fonts/MesloLGSNF-Regular.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Meslo LGS NF";
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+  src: url("/fonts/MesloLGSNF-Bold.woff2") format("woff2");
+}
+
+:root {
+  color-scheme: light;
+  --font-ui: "Meslo LGS NF", "Pretendard Variable", Pretendard, "Noto Sans KR", "Malgun Gothic", ui-monospace, Consolas, monospace;
+  --font-mono: "Meslo LGS NF", ui-monospace, "SFMono-Regular", Menlo, Consolas, "Pretendard Variable", monospace;
+  --font-display: "Pretendard Variable", Pretendard, "Noto Sans KR", "Malgun Gothic", system-ui, sans-serif;
+  /* Labels: uppercase mono tracked 0.08em (Hangul is exempt, see :lang(ko)). */
+  --track-label: 0.08em;
+  /* One root variable scales type, spacing and control tokens (Settings
+     "Text size / UI scale", 80-130 %). Panes, sashes and breakpoints stay
+     in CSS px, so pointer maths never changes (no CSS zoom). */
+  --ui-scale: 1;
+  /* Type scale tokens; nothing renders below 12px at 100 %. A user-chosen
+     80-90 % scale may go below the floor on purpose. */
+  --fs-xs: calc(12px * var(--ui-scale));
+  --fs-s: calc(12px * var(--ui-scale));
+  --fs-m: calc(13px * var(--ui-scale));
+  --fs-l: calc(14px * var(--ui-scale));
+  --fs-xl: calc(17px * var(--ui-scale));
+  --fs-2xl: calc(20px * var(--ui-scale));
+  /* Terminalcore Day (light): canvas #e1e2e7, ink #1f2335, signal blue
+     #2459c9, phosphor green #3d6b1f. */
+  --bg: #e1e2e7;
+  --bg-deep: #d0d5e3;
+  --panel: #eceef3;
+  --panel-2: #e1e2e7;
+  --raised: #eceef3;
+  --hairline: #5d6aa3;
+  --hairline-soft: #b6bdd3;
+  --edge: #3760bf;
+  --ink: #1f2335;
+  --ink-2: #343b58;
+  --mute: #4c5585;
+  --accent: #2459c9;
+  --accent-ink: #fbfcff;
+  --accent-soft: #d5e1f7;
+  --accent-2: #3d6b1f;
+  --accent-2-ink: #fbfcff;
+  --signal: #2459c9;
+  --signal-ink: #fbfcff;
+  --pass: #3d6b1f;
+  --warn: #7a5200;
+  --fail: #c0174a;
+  --info: #006a8e;
+  --info-ink: #f6fcff;
+  /* Selected/pressed fills are the signal blue in both themes. */
+  --select: #2459c9;
+  --on-select: #fbfcff;
+  --focus: #2459c9;
+  /* The blue fill is 4.85:1 or better against every surface, so a selected
+     state needs no extra edge. */
+  --select-edge: inset 0 0 0 0 transparent;
+  --select-line: var(--select);
+  --grid: #d0d5e3;
+  /* Chart series palette (both themes hold >= 3:1 data lines). */
+  --s1: #2459c9;
+  --s2: #b15c00;
+  --s3: #3d6b1f;
+  --s4: #9854f1;
+  --s5: #1f2335;
+  --node: #eceef3;
+  --node-sel: #d5e1f7;
+  --node-stroke: var(--ink);
+  --film: #eceef3;
+  --film-line: #d0d5e3;
+  --film-line-strong: #b6bdd3;
+  /* The kit's 32 px plot grid (160 px majors): a hard-stop 1 px line pattern,
+     used only on the app background and the geometry plot, never under
+     running text. This is the one place a gradient may appear. */
+  --c-line: #b6bdd3;
+  --plot-grid: linear-gradient(color-mix(in srgb, var(--c-line) 50%, transparent) 1px, transparent 1px), linear-gradient(90deg, color-mix(in srgb, var(--c-line) 50%, transparent) 1px, transparent 1px), linear-gradient(color-mix(in srgb, var(--c-line) 85%, transparent) 1px, transparent 1px), linear-gradient(90deg, color-mix(in srgb, var(--c-line) 85%, transparent) 1px, transparent 1px);
+  --plot-grid-size: 32px 32px, 32px 32px, 160px 160px, 160px 160px;
+  --clear: transparent;
+  /* Square law (kit): radius 0 everywhere, no shadows. */
+  --r-s: 0;
+  --r-m: 0;
+  /* Floating layers get the kit's 1 px ink ring, never a soft shadow. */
+  --elev-pop: 0 0 0 1px var(--ink);
+  --elev-card: none;
+  /* Workbench frame metrics. */
+  --tb-h: 46px;
+  --sb-h: max(26px, calc(26px * var(--ui-scale)));
+  --ab-w: 48px;
+  /* Spacing steps; the compact density (default) tightens the first two. */
+  --sp-1: calc(2px * var(--ui-scale));
+  --sp-2: calc(6px * var(--ui-scale));
+  --sp-3: calc(12px * var(--ui-scale));
+  --sp-4: calc(16px * var(--ui-scale));
+  --sp-6: calc(24px * var(--ui-scale));
+  --sp-8: calc(32px * var(--ui-scale));
+  --sp-10: calc(40px * var(--ui-scale));
+  /* Density: compact is the default (32px targets, above the WCAG 2.2 AA
+     24px floor); comfortable restores 44px targets and 4/8px spacing. */
+  --ctl-h: calc(32px * var(--ui-scale));
+  --tgt: calc(32px * var(--ui-scale));
+  /* Motion presets (Settings: Off / Subtle / Full, subtle by default).
+     --mo scales every duration, --mo-move the distance of rises,
+     --fx gates the Full-only effects. Easing is stepped only
+     (steps(3, end)); durations are the kit's 80 / 120 / 240 / 100 ms. */
+  --mo: .7;
+  --mo-move: .4;
+  --fx: 0;
+  --ease-ui: steps(3, end);
+  --ease-enter: steps(3, end);
+  --ease-exit: steps(3, end);
+  --ease-snap: steps(3, end);
+  --d-ui: calc(120ms * var(--mo));
+  --d-enter: calc(240ms * var(--mo));
+  --d-exit: calc(100ms * var(--mo));
+  --d-snap: calc(80ms * var(--mo));
+  /* Chrome stays still: hover does not shift controls. */
+  --lift: 0px;
+  --rise: calc(8px * var(--mo-move));
+  /* Legacy roles for the current shell and screens. */
+  --canvas: #e1e2e7;
+  --cloud: #d0d5e3;
+  --charcoal: #343b58;
+  --stone: #4c5585;
+  --band: #eceef3;
+  --band-deep: #e1e2e7;
+  --surface-raised: #eceef3;
+  --hover: #d0d5e3;
+  /* Secondary text on the select fill. */
+  --on-select-mute: #dbe5fb;
+  /* Text on the inverse ink fill (title bars, tooltips). */
+  --on-ink-body: #e1e2e7;
+  --on-ink-mute: #a9b1d6;
+  --on-ink-line: rgba(225, 226, 231, 0.35);
+  --on-ink-subtle: rgba(225, 226, 231, 0.68);
+  /* The user's chat bubble is a flat wash with a 2 px blue frame. */
+  --bubble-user: #d5e1f7;
+  --on-bubble-user: #1f2335;
+  --series-1: #2459c9;
+  --pipe-1: #006a8e;
+  --pipe-2: #b15c00;
+  --pipe-3: #9854f1;
+  --pipe-4: #2459c9;
+  --pipe-5: #c0174a;
+  --pipe-6: #3d6b1f;
+  --pipe-7: #5d6aa3;
+  --r-surface: 0;
+  --r-input: 0;
+  --r-pill: 0;
+  /* Pressed state: a hard 2 px inner edge, no blur. */
+  --state-inset: inset 0 2px 0 rgba(31, 35, 53, 0.28);
+  --state-inset-light: inset 0 2px 0 rgba(31, 35, 53, 0.14);
+  --ease-out: steps(3, end);
+  --ease-emphasized: steps(3, end);
+  --dur-fast: 80ms;
+  --dur-normal: 240ms;
+  /* Kit type and rule tokens. */
+  --bw-rule: 3px;
+  --bw-surface: 2px;
+  color: var(--ink);
+  background: var(--canvas);
+  font-family: var(--font-ui);
+  font-size: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Korean text (and display type) sets in Pretendard: Meslo has no Hangul, so
+   mono-width gaps between Pretendard glyphs would read as a broken face. */
+:root:lang(ko) { --font-ui: "Pretendard Variable", Pretendard, "Noto Sans KR", "Malgun Gothic", system-ui, sans-serif; }
+
+/* Night (dark scheme): canvas #16161e, ink #c0caf5. Explicit [data-theme]
+   wins; otherwise the OS preference decides. The Settings toggle writes
+   data-theme via appearance. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #16161e;
+    --bg-deep: #101018;
+    --panel: #1a1b26;
+    --panel-2: #16161e;
+    --raised: #1a1b26;
+    --surface-raised: #1a1b26;
+    --hairline: #636c99;
+    --hairline-soft: #292e42;
+    --edge: #636c99;
+    --ink: #c0caf5;
+    --ink-2: #a9b1d6;
+    --mute: #8089b3;
+    --accent: #7aa2f7;
+    --accent-ink: #16161e;
+    --accent-soft: #1f2a4a;
+    --accent-2: #9ece6a;
+    --accent-2-ink: #16161e;
+    --signal: #7aa2f7;
+    --signal-ink: #16161e;
+    --pass: #9ece6a;
+    --warn: #e0af68;
+    --fail: #f7768e;
+    --info: #7dcfff;
+    --info-ink: #0f1b24;
+    --select: #7aa2f7;
+    --on-select: #16161e;
+    --on-select-mute: #16161e;
+    --focus: #7dcfff;
+    --select-edge: inset 0 0 0 0 transparent;
+    --select-line: var(--select);
+    --grid: #292e42;
+    --film: #101018;
+    --film-line: #292e42;
+    --film-line-strong: #3b4261;
+    --c-line: #292e42;
+    --clear: transparent;
+    --s1: #7aa2f7;
+    --s2: #ff9e64;
+    --s3: #9ece6a;
+    --s4: #bb9af7;
+    --s5: #c0caf5;
+    --node: #1a1b26;
+    --node-sel: #1f2a4a;
+    --node-stroke: var(--ink);
+    --canvas: #16161e;
+    --cloud: #101018;
+    --charcoal: #a9b1d6;
+    --stone: #8089b3;
+    --band: #1a1b26;
+    --band-deep: #16161e;
+    --hover: #1f2335;
+    --on-ink-body: #16161e;
+    --on-ink-mute: #343b58;
+    --on-ink-line: rgba(22, 22, 30, 0.30);
+    --on-ink-subtle: rgba(22, 22, 30, 0.68);
+    --bubble-user: #1f2a4a;
+    --on-bubble-user: #c0caf5;
+    --series-1: #7aa2f7;
+    --pipe-1: #7dcfff;
+    --pipe-2: #ff9e64;
+    --pipe-3: #bb9af7;
+    --pipe-4: #7aa2f7;
+    --pipe-5: #f7768e;
+    --pipe-6: #9ece6a;
+    --pipe-7: #8089b3;
+    --state-inset: inset 0 2px 0 rgba(0, 0, 0, 0.45);
+    --state-inset-light: inset 0 2px 0 rgba(0, 0, 0, 0.3);
+  }
+}
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #e1e2e7;
+  --bg-deep: #d0d5e3;
+  --panel: #eceef3;
+  --panel-2: #e1e2e7;
+  --raised: #eceef3;
+  --hairline: #5d6aa3;
+  --hairline-soft: #b6bdd3;
+  --edge: #3760bf;
+  --ink: #1f2335;
+  --ink-2: #343b58;
+  --mute: #4c5585;
+  --accent: #2459c9;
+  --accent-ink: #fbfcff;
+  --accent-soft: #d5e1f7;
+  --accent-2: #3d6b1f;
+  --accent-2-ink: #fbfcff;
+  --signal: #2459c9;
+  --signal-ink: #fbfcff;
+  --pass: #3d6b1f;
+  --warn: #7a5200;
+  --fail: #c0174a;
+  --info: #006a8e;
+  --info-ink: #f6fcff;
+  --select: #2459c9;
+  --on-select: #fbfcff;
+  --on-select-mute: #dbe5fb;
+  --focus: #2459c9;
+  --select-edge: inset 0 0 0 0 transparent;
+  --select-line: var(--select);
+  --grid: #d0d5e3;
+  --s1: #2459c9;
+  --s2: #b15c00;
+  --s3: #3d6b1f;
+  --s4: #9854f1;
+  --s5: #1f2335;
+  --node: #eceef3;
+  --node-sel: #d5e1f7;
+  --node-stroke: var(--ink);
+  --film: #eceef3;
+  --film-line: #d0d5e3;
+  --film-line-strong: #b6bdd3;
+  --c-line: #b6bdd3;
+  --clear: transparent;
+  --canvas: #e1e2e7;
+  --cloud: #d0d5e3;
+  --charcoal: #343b58;
+  --stone: #4c5585;
+  --band: #eceef3;
+  --band-deep: #e1e2e7;
+  --surface-raised: #eceef3;
+  --hover: #d0d5e3;
+  --on-ink-body: #e1e2e7;
+  --on-ink-mute: #a9b1d6;
+  --on-ink-line: rgba(225, 226, 231, 0.35);
+  --on-ink-subtle: rgba(225, 226, 231, 0.68);
+  --bubble-user: #d5e1f7;
+  --on-bubble-user: #1f2335;
+  --series-1: #2459c9;
+  --pipe-1: #006a8e;
+  --pipe-2: #b15c00;
+  --pipe-3: #9854f1;
+  --pipe-4: #2459c9;
+  --pipe-5: #c0174a;
+  --pipe-6: #3d6b1f;
+  --pipe-7: #5d6aa3;
+  --state-inset: inset 0 2px 0 rgba(31, 35, 53, 0.28);
+  --state-inset-light: inset 0 2px 0 rgba(31, 35, 53, 0.14);
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #16161e;
+  --bg-deep: #101018;
+  --panel: #1a1b26;
+  --panel-2: #16161e;
+  --raised: #1a1b26;
+  --surface-raised: #1a1b26;
+  --hairline: #636c99;
+  --hairline-soft: #292e42;
+  --edge: #636c99;
+  --ink: #c0caf5;
+  --ink-2: #a9b1d6;
+  --mute: #8089b3;
+  --accent: #7aa2f7;
+  --accent-ink: #16161e;
+  --accent-soft: #1f2a4a;
+  --accent-2: #9ece6a;
+  --accent-2-ink: #16161e;
+  --signal: #7aa2f7;
+  --signal-ink: #16161e;
+  --pass: #9ece6a;
+  --warn: #e0af68;
+  --fail: #f7768e;
+  --info: #7dcfff;
+  --info-ink: #0f1b24;
+  --select: #7aa2f7;
+  --on-select: #16161e;
+  --on-select-mute: #16161e;
+  --focus: #7dcfff;
+  --select-edge: inset 0 0 0 0 transparent;
+  --select-line: var(--select);
+  --grid: #292e42;
+  --s1: #7aa2f7;
+  --s2: #ff9e64;
+  --s3: #9ece6a;
+  --s4: #bb9af7;
+  --s5: #c0caf5;
+  --node: #1a1b26;
+  --node-sel: #1f2a4a;
+  --node-stroke: var(--ink);
+  --film: #101018;
+  --film-line: #292e42;
+  --film-line-strong: #3b4261;
+  --c-line: #292e42;
+  --clear: transparent;
+  --canvas: #16161e;
+  --cloud: #101018;
+  --charcoal: #a9b1d6;
+  --stone: #8089b3;
+  --band: #1a1b26;
+  --band-deep: #16161e;
+  --hover: #1f2335;
+  --on-ink-body: #16161e;
+  --on-ink-mute: #343b58;
+  --on-ink-line: rgba(22, 22, 30, 0.30);
+  --on-ink-subtle: rgba(22, 22, 30, 0.68);
+  --bubble-user: #1f2a4a;
+  --on-bubble-user: #c0caf5;
+  --series-1: #7aa2f7;
+  --pipe-1: #7dcfff;
+  --pipe-2: #ff9e64;
+  --pipe-3: #bb9af7;
+  --pipe-4: #7aa2f7;
+  --pipe-5: #f7768e;
+  --pipe-6: #9ece6a;
+  --pipe-7: #8089b3;
+  --state-inset: inset 0 2px 0 rgba(0, 0, 0, 0.45);
+  --state-inset-light: inset 0 2px 0 rgba(0, 0, 0, 0.3);
+}
+
+/* Comfortable density (opt-in): 44px targets and the wider 4/8px steps.
+   Compact is the :root default, so it needs no block of its own. */
+[data-density="comfortable"] {
+  --tgt: calc(44px * var(--ui-scale));
+  --sp-1: calc(4px * var(--ui-scale));
+  --sp-2: calc(8px * var(--ui-scale));
+}
+
+/* UI scale steps (Settings). The attribute sits on the root element. */
+[data-ui-scale="80"] { --ui-scale: 0.8; }
+[data-ui-scale="90"] { --ui-scale: 0.9; }
+[data-ui-scale="100"] { --ui-scale: 1; }
+[data-ui-scale="110"] { --ui-scale: 1.1; }
+[data-ui-scale="120"] { --ui-scale: 1.2; }
+[data-ui-scale="130"] { --ui-scale: 1.3; }
+
+/* Motion presets: explicit data-motion wins, otherwise the OS decides
+   (prefers-reduced-motion starts at Off, anything else at Subtle). Subtle
+   shortens and softens; Full adds stepped wipes and the pixel loader (no flicker, glitch or scan); Off
+   cancels every transition and animation. */
+html[data-motion="off"] { --mo: 0; --mo-move: 0; --fx: 0; }
+html[data-motion="subtle"] { --mo: .7; --mo-move: .4; --fx: 0; }
+html[data-motion="full"] { --mo: 1; --mo-move: 1; --fx: 1; }
+@media (prefers-reduced-motion: reduce) {
+  :root:not([data-motion]) { --mo: 0; --mo-move: 0; --fx: 0; }
+  :root:not([data-motion]) *,
+  :root:not([data-motion]) *::before,
+  :root:not([data-motion]) *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+html[data-motion="off"] *,
+html[data-motion="off"] *::before,
+html[data-motion="off"] *::after {
+  transition: none !important;
+  animation: none !important;
+}
+
+/* Hangul does not use Latin tracking. The locale is stamped on <html>. */
+:lang(ko) :is(
+  .approval-head,
+  .approval-stamp,
+  .capability strong,
+  .case-context-label,
+  .empty-kicker,
+  .env-popover-head,
+  .evidence-metrics dt,
+  .evidence-table-viewport th,
+  .flowpath-axis-caption,
+  .flowpath-studio-eyebrow,
+  .inspection-kicker,
+  .inspection-state,
+  .language-control,
+  .numeric-display-control,
+  .pvt-composition h5,
+  .pvt-metrics dt,
+  .result-lineage strong,
+  .run-console-sim strong,
+  .run-eyebrow,
+  .run-output-suffix,
+  .run-preview-facts strong,
+  .run-progress dt,
+  .run-receipt strong,
+  .run-runtime-field,
+  .run-terminal small,
+  .runtime-nav-status-label,
+  .rv-files-kicker,
+  .rv-filter-field,
+  .rv-picker-search,
+  .rv-profile-controls label,
+  .settings-current-row > span,
+  .sweep-parameter-field,
+  .sweep-range-grid label,
+  .sweep-status-card strong,
+  .topo-detail-eyebrow,
+  .topo-touch-kind,
+  .wb-explorer-group-head,
+  .wb-pane-head,
+  .wb-status-head,
+  .wb-status-model-kicker,
+  .wordmark-secondary,
+  .workbench-prompt-context span,
+  .workbench-prompt-kicker,
+  .ws-file-kind
+) {
+  letter-spacing: 0;
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  min-width: 0;
+  background: var(--canvas);
+  font-synthesis: none;
+  line-height: 1.5;
+}
+button, input, select, textarea { font-family: var(--font-ui); }
+h1, h2, h3, p, dl { margin-top: 0; }
+
+/* Numbers, units, codes and identifiers read the mono token with tabular
+   figures; Hangul inside falls back to Pretendard. */
+.mono, code, .num, kbd {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+:focus { outline: none; }
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: var(--r-s);
+}
+/* Selected blue fills: the edge token is empty in both themes (the blue fill
+   is >= 4.85:1 on every surface). :root lifts these above the component
+   rules; the focus rings below tie at the same weight and come later, so a
+   focused control keeps its rings. */
+:root .step-cell.is-highlighted .step-open,
+:root .wb-activity .ui-iconbutton[aria-pressed="true"],
+:root .wb-explorer-item[aria-current="true"],
+:root .rv-chip button[aria-pressed="true"],
+:root .sweep-value-add button,
+:root .topo-toolbar button[aria-pressed="true"],
+:root .update-actions .update-go {
+  box-shadow: var(--select-edge);
+}
+:root .ws-file.active,
+:root .rv-var.active,
+:root .session-item.current,
+:root .session-rail-toggle[aria-expanded="true"],
+:root .calibration-segment button[aria-pressed="true"],
+:root .sweep-value-mode button[aria-pressed="true"],
+:root .flowpath-toolbar button.active {
+  box-shadow: var(--select-edge), var(--state-inset);
+}
+/* Blue-filled controls (--select): the outer --focus ring can land on the fill
+   itself (a selected step inside its cell, the rail item on its block), so
+   each also draws a ring inside its fill, one band in from the edge, in the
+   on-select colour (>= 6:1 on the fill). */
+.step-cell.is-highlighted .step-open:focus-visible,
+.wb-activity .ui-iconbutton[aria-pressed="true"]:focus-visible,
+.wb-explorer-item[aria-current="true"]:focus-visible,
+.ws-file.active:focus-visible,
+.rv-var.active:focus-visible,
+.ui-button-primary:focus-visible,
+.wb-btn-primary:focus-visible,
+.settings-sections button[aria-current="page"]:focus-visible,
+.session-item.current:focus-visible,
+.session-rail-toggle[aria-expanded="true"]:focus-visible,
+.calibration-segment button[aria-pressed="true"]:focus-visible,
+.rv-chip button[aria-pressed="true"]:focus-visible,
+.sweep-value-mode button[aria-pressed="true"]:focus-visible,
+.sweep-value-add button:focus-visible,
+.flowpath-toolbar button.active:focus-visible,
+.topo-toolbar button[aria-pressed="true"]:focus-visible,
+.update-actions .update-go:focus-visible {
+  box-shadow: inset 0 0 0 2px var(--select), inset 0 0 0 4px var(--on-select);
+}
+/* One placeholder colour for every field: --mute holds 4.5:1 on each surface. */
+::placeholder { color: var(--mute); opacity: 1; }
+::selection { background: var(--select); color: var(--on-select); }

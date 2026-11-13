@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Workbench primitives gallery (dev only)</title>
+<link rel="stylesheet" href="/src/styles/base.css">
+<link rel="stylesheet" href="/src/styles/primitives.css">
+<script>
+try {
+  var q = new URLSearchParams(location.search).get('theme');
+  if (q === 'dark' || q === 'light') document.documentElement.setAttribute('data-theme', q);
+} catch (e) {}
+</script>
+<style>
+.gal { background: var(--bg); color: var(--ink); font-family: var(--font-ui); font-size: 14px; padding: 32px; max-width: 1100px; margin: 0 auto; }
+.gal h1 { font-size: var(--fs-2xl); margin: 0 0 8px; }
+.gal h2 { font-size: var(--fs-l); margin: 32px 0 12px; border-top: 3px solid var(--hairline); padding-top: 12px; }
+.gal .row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin: 12px 0; }
+.gal .type-row { display: flex; gap: 16px; align-items: baseline; flex-wrap: wrap; }
+.gal section { margin-bottom: 8px; }
+.gal .swatches { display: flex; gap: 8px; flex-wrap: wrap; }
+.gal .sw { width: 72px; height: 44px; border: 1px solid var(--hairline); display: flex; align-items: flex-end; font-family: var(--font-mono); font-size: 10px; padding: 2px 4px; }
+.gal .icons { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.gal .icons img { border: 1px solid var(--hairline); background: var(--panel); }
+.gal .menu-abs { position: relative; min-height: 220px; border: 1px dashed var(--hairline); }
+.gal .menu-abs .ui-menu { position: absolute; left: 8px; top: 8px; }
+.gal .pop-abs { position: relative; min-height: 120px; border: 1px dashed var(--hairline); }
+.gal .pop-abs .ui-popover { left: 8px; top: 8px; width: 280px; }
+.gal .pal-abs { position: relative; min-height: 340px; border: 1px dashed var(--hairline); }
+.gal .pal-abs .ui-palette-overlay { position: absolute; padding-top: 12px; }
+</style>
+</head>
+<body>
+<div class="gal">
+<h1>Workbench primitives</h1>
+<p>Light and dark renders of every todo-6 primitive, straight from the token set.</p>
+
+<h2>Type scale</h2>
+<div class="type-row">
+<span style="font-size:var(--fs-2xs)">11 ag</span>
+<span style="font-size:var(--fs-xs)">12 ag</span>
+<span style="font-size:var(--fs-s)">13 ag</span>
+<span style="font-size:var(--fs-m)">14 ag</span>
+<span style="font-size:var(--fs-l)">16 ag</span>
+<span style="font-size:var(--fs-xl)">20 ag</span>
+<span style="font-size:var(--fs-2xl)">24 ag</span>
+</div>
+<div class="row"><span class="num">PT 62.0 bar · HOL 0.42 · 11:15:00</span></div>
+
+<h2>Colour roles</h2>
+<div class="swatches">
+<span class="sw" style="background:var(--bg)">bg</span>
+<span class="sw" style="background:var(--bg-deep)">deep</span>
+<span class="sw" style="background:var(--panel)">panel</span>
+<span class="sw" style="background:var(--panel-2)">p2</span>
+<span class="sw" style="background:var(--raised)">raised</span>
+<span class="sw" style="background:var(--accent);color:var(--accent-ink)">accent</span>
+<span class="sw" style="background:var(--accent-soft)">soft</span>
+<span class="sw" style="background:var(--pass)">pass</span>
+<span class="sw" style="background:var(--warn)">warn</span>
+<span class="sw" style="background:var(--fail)">fail</span>
+<span class="sw" style="background:var(--info)">info</span>
+<span class="sw" style="background:var(--s1)">s1</span>
+<span class="sw" style="background:var(--s2)">s2</span>
+<span class="sw" style="background:var(--s3)">s3</span>
+<span class="sw" style="background:var(--s4)">s4</span>
+<span class="sw" style="background:var(--s5)">s5</span>
+</div>
+
+<h2>Tabs</h2>
+<section>
+<div class="ui-tabs">
+<div class="ui-tablist" role="tablist" aria-label="Gallery tabs">
+<button class="ui-tab" role="tab" aria-selected="true" tabindex="0">Case</button>
+<button class="ui-tab" role="tab" aria-selected="false" tabindex="-1">Result</button>
+<button class="ui-tab" role="tab" aria-selected="false" tabindex="-1">Run</button>
+</div>
+<div class="ui-tabpanel" role="tabpanel" tabindex="0">Selected panel body.</div>
+</div>
+</section>
+
+<h2>Segmented</h2>
+<div class="row">
+<div class="ui-segmented" role="radiogroup" aria-label="Gallery density">
+<button class="ui-segmented-option" role="radio" aria-checked="true" tabindex="0">Comfortable</button>
+<button class="ui-segmented-option" role="radio" aria-checked="false" tabindex="-1">Compact</button>
+</div>
+</div>
+
+<h2>Field + Select</h2>
+<section>
+<div class="ui-field">
+<label class="ui-field-label" for="gal-select">Variable</label>
+<select class="ui-select" id="gal-select" aria-describedby="gal-select-hint">
+<option>PT — pressure</option><option>HOL — holdup</option>
+</select>
+<p class="ui-field-hint" id="gal-select-hint">Units render from the display helper.</p>
+</div>
+</section>
+
+<h2>Table</h2>
+<section>
+<table class="ui-table" aria-label="Gallery series">
+<caption class="ui-table-caption">Two plotted series.</caption>
+<thead><tr><th scope="col">Variable</th><th scope="col" class="ui-num">Value</th></tr></thead>
+<tbody>
+<tr><td><span class="mono">PT</span> pressure</td><td class="ui-num">62.0 bar</td></tr>
+<tr><td><span class="mono">HOL</span> holdup</td><td class="ui-num">0.42 -</td></tr>
+</tbody>
+</table>
+</section>
+
+<h2>Toolbar + IconButton + Badge + Kbd</h2>
+<section>
+<div class="ui-toolbar" role="toolbar" aria-label="Gallery tools">
+<span class="ui-toolbar-group">
+<button class="ui-iconbutton" aria-label="Fit view" title="Fit view"><span aria-hidden="true" class="ui-iconbutton-glyph">⤢</span></button>
+<button class="ui-iconbutton" aria-label="Zoom in" aria-pressed="true" title="Zoom in"><span aria-hidden="true" class="ui-iconbutton-glyph">+</span></button>
+</span>
+<span class="ui-toolbar-sep" aria-hidden="true"></span>
+<span class="ui-toolbar-group">
+<span class="ui-badge ui-badge-pass">PASS</span>
+<span class="ui-badge ui-badge-warn">WARN</span>
+<span class="ui-badge ui-badge-fail">FAIL</span>
+<span class="ui-badge ui-badge-info">INFO</span>
+<kbd class="ui-kbd">Ctrl+K</kbd>
+</span>
+</div>
+</section>
+
+<h2>Panel</h2>
+<section>
+<div class="ui-panel">
+<div class="ui-panel-head"><div class="ui-panel-title">Inspector</div>
+<div class="ui-panel-actions"><button class="ui-iconbutton" aria-label="Close panel"><span aria-hidden="true" class="ui-iconbutton-glyph">×</span></button></div></div>
+<div class="ui-panel-body">Panel body at 14px with 1.5 line height.</div>
+</div>
+</section>
+
+<h2>Menu + Popover</h2>
+<div class="menu-abs">
+<div class="ui-menu" role="menu" aria-label="Gallery menu">
+<button class="ui-menuitem" role="menuitem" tabindex="0">Open case</button>
+<button class="ui-menuitem" role="menuitem" tabindex="-1">Reveal in folder</button>
+<button class="ui-menuitem" role="menuitem" tabindex="-1" disabled>Delete (disabled)</button>
+</div>
+</div>
+<div class="pop-abs" style="margin-top:12px">
+<div class="ui-popover" role="dialog" aria-label="Gallery popover" tabindex="-1">
+<div class="ui-panel-body">Popover body: runtime is online.</div>
+</div>
+</div>
+
+<h2>Command palette</h2>
+<div class="pal-abs">
+<div class="ui-palette-overlay">
+<div class="ui-palette" role="dialog" aria-modal="true" aria-label="Gallery palette">
+<input class="ui-palette-input" role="combobox" aria-expanded="true" aria-controls="ui-palette-list" aria-activedescendant="ui-palette-option-g2" aria-autocomplete="list" aria-label="Gallery palette" placeholder="Type a command…" value="run">
+<ul class="ui-palette-list" role="listbox" id="ui-palette-list" aria-label="Gallery palette">
+<li class="ui-palette-option" role="option" id="ui-palette-option-g1" aria-selected="false"><span>Preview run</span><span class="ui-palette-hint">F5</span></li>
+<li class="ui-palette-option" role="option" id="ui-palette-option-g2" aria-selected="true" data-active><span>Run sweep</span><span class="ui-palette-hint">tab</span></li>
+</ul>
+</div>
+</div>
+</div>
+
+<h2>3D icons</h2>
+<div class="icons">
+<img src="/icons/light/settings-64.png" data-icon="settings" width="48" height="48" alt="">
+<img src="/icons/light/run-64.png" data-icon="run" width="48" height="48" alt="">
+<img src="/icons/light/validate-64.png" data-icon="validate" width="48" height="48" alt="">
+<img src="/icons/light/success-64.png" data-icon="success" width="48" height="48" alt="">
+<img src="/icons/light/warning-64.png" data-icon="warning" width="48" height="48" alt="">
+<img src="/icons/light/error-64.png" data-icon="error" width="48" height="48" alt="">
+<img src="/icons/light/pvt-64.png" data-icon="pvt" width="48" height="48" alt="">
+<img src="/icons/light/results-96.png" data-icon="results" width="48" height="48" alt="">
+</div>
+</div>
+<script>
+try {
+  var q = new URLSearchParams(location.search).get('theme');
+  if (q === 'dark' || q === 'light') {
+    document.querySelectorAll('[data-icon]').forEach(function (img) {
+      img.src = '/icons/' + q + '/' + img.getAttribute('data-icon') + (img.getAttribute('data-icon') === 'results' ? '-96.png' : '-64.png');
+    });
+  }
+} catch (e) {}
+</script>
+</body>
+</html>
