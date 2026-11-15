@@ -1,0 +1,192 @@
+/* T7 guided tutorial: spotlight veil, ring, bubble, welcome card. Only
+   transform and opacity move; everything is instant under
+   prefers-reduced-motion. */
+
+.tutorial-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  pointer-events: none;
+}
+
+.tutorial-veil {
+  position: absolute;
+  inset: 0;
+  background: var(--bg-deep);
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.tutorial-ring {
+  position: absolute;
+  border: 2px solid var(--focus);
+  border-radius: var(--r-s);
+  transition: left var(--dur-2) var(--ease-out), top var(--dur-2) var(--ease-out), width var(--dur-2) var(--ease-out), height var(--dur-2) var(--ease-out);
+}
+
+.tutorial-bubble {
+  position: absolute;
+  width: 320px;
+  max-width: calc(100vw - 16px);
+  padding: 16px 18px;
+  background: var(--raised);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-m);
+  pointer-events: auto;
+  transition: opacity var(--dur-2) var(--ease-out), transform var(--dur-2) var(--ease-out);
+}
+
+.tutorial-bubble.is-centered {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.tutorial-bubble h2 {
+  margin: 0 0 8px;
+  font-size: var(--fs-m);
+  line-height: 1.4;
+}
+
+.tutorial-bubble p {
+  margin: 0 0 12px;
+  color: var(--ink);
+  font-size: var(--fs-m);
+  line-height: 1.6;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+.tutorial-progress {
+  margin: 0 0 4px;
+  color: var(--mute);
+  font-size: var(--fs-s);
+  font-weight: 600;
+}
+
+.tutorial-examples {
+  margin: 0 0 12px;
+  padding-inline-start: 20px;
+  color: var(--mute);
+  font-size: var(--fs-s);
+  line-height: 1.6;
+}
+
+.tutorial-bubble-actions,
+.tutorial-welcome-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.tutorial-primary,
+.tutorial-ghost {
+  min-height: 36px;
+  padding: 8px 14px;
+  border-radius: var(--r-s);
+  font: inherit;
+  font-size: var(--fs-s);
+  cursor: pointer;
+}
+
+.tutorial-primary {
+  border: 1px solid transparent;
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+.tutorial-ghost {
+  border: 1px solid var(--hairline);
+  background: transparent;
+  color: var(--ink);
+}
+
+.tutorial-bubble :is(button, [tabindex]):focus-visible,
+.tutorial-welcome :is(button, [tabindex]):focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.tutorial-welcome {
+  position: fixed;
+  inset-inline-end: 16px;
+  bottom: 16px;
+  z-index: 300;
+  width: 320px;
+  max-width: calc(100vw - 32px);
+  padding: 16px 18px;
+  background: var(--raised);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-m);
+}
+
+.tutorial-welcome h2 {
+  margin: 0 0 8px;
+  font-size: var(--fs-m);
+  line-height: 1.4;
+}
+
+.tutorial-welcome p {
+  margin: 0 0 12px;
+  font-size: var(--fs-m);
+  line-height: 1.6;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+.tutorial-resume {
+  position: fixed;
+  top: 48px;
+  right: 16px;
+  z-index: 300;
+  min-height: 32px;
+  padding: 6px 12px;
+  border: 1px solid var(--focus);
+  border-radius: var(--r-s);
+  background: var(--raised);
+  color: var(--ink);
+  font: inherit;
+  font-size: var(--fs-s);
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.tutorial-resume:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.tutorial-btn {
+  position: relative;
+}
+
+.tutorial-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-inline-start: 8px;
+  vertical-align: baseline;
+  border-radius: var(--r-s);
+  background: var(--accent);
+}
+
+.settings-replay-tutorial {
+  margin-top: 12px;
+  min-height: 36px;
+  padding: 8px 14px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-s);
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: var(--fs-s);
+  cursor: pointer;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tutorial-ring,
+  .tutorial-bubble {
+    transition: none;
+  }
+}

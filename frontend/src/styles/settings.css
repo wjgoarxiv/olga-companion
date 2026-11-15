@@ -1,0 +1,273 @@
+/* ── Settings view ─────────────────────────────────────────────────────────── */
+.settings-view { width: 100%; max-width: 1040px; margin-inline: auto; padding: 24px 28px; overflow-y: auto; }
+.settings-hero { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; margin-bottom: 18px; }
+.settings-layout { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 16px; align-items: start; }
+.settings-sections ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.settings-sections button { display: flex; align-items: center; min-height: 44px; width: 100%; padding: 6px 12px; color: var(--ink-2); background: var(--panel); border: 1px solid var(--hairline); border-radius: var(--r-s); font: 600 var(--fs-s)/1.3 var(--font-ui); text-align: left; cursor: pointer; }
+.settings-sections button:hover { color: var(--ink); border-color: var(--ink); }
+.settings-sections button[aria-current="page"] { color: var(--on-select); background: var(--select); border-color: var(--on-select); font-weight: 750; }
+.settings-sections button:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.settings-section-panel { display: grid; gap: 16px; min-width: 0; align-content: start; }
+/* Every settings control stays inside its card: grid/flex children may not
+   force their intrinsic width, and inputs/selects fill their track. */
+.settings-section-panel .ui-field,
+.settings-section-panel .language-control,
+.settings-section-panel .numeric-display-control,
+.settings-section-panel .display-control { min-width: 0; }
+.settings-section-panel input,
+.settings-section-panel select { width: 100%; min-width: 0; box-sizing: border-box; }
+.settings-card { min-width: 0; padding: 16px; border: 1px solid var(--hairline-soft); border-radius: var(--r-s); background: var(--panel); }
+.settings-h { margin: 0 0 4px; font-size: var(--fs-l); font-weight: 650; }
+.settings-note { margin: 0 0 12px; font-size: var(--fs-s); color: var(--mute); line-height: 1.5; }
+.provider-card .provider-control { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; }
+.provider-card .ui-select { width: 100%; max-width: 100%; min-width: 0; }
+.provider-notice { margin: 0; font-size: var(--fs-s); color: var(--fail); line-height: 1.5; }
+.provider-divider { margin: 12px 0 0; border: 0; border-top: 1px solid var(--hairline-soft); }
+.provider-accounts { display: grid; gap: 8px; margin-top: 12px; }
+.provider-accounts-h { margin: 0; font-size: var(--fs-s); font-weight: 700; color: var(--ink); }
+.provider-account-list { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.provider-account-row { display: grid; gap: 8px; padding: 10px 12px; border: 1px solid var(--hairline-soft); border-radius: var(--r-s); }
+.provider-account-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: var(--fs-s); }
+.provider-account-status { color: var(--mute); font-size: var(--fs-xs); }
+.provider-account-status.is-connected { color: var(--pass); font-weight: 650; }
+.provider-account-hint { margin: 0; font-size: var(--fs-s); color: var(--mute); line-height: 1.5; }
+.provider-account-row .xai-connect { margin-top: 0; padding-top: 0; border-top: 0; }
+.settings-current-row { display: grid; grid-template-columns: 74px minmax(0, 1fr); align-items: center; gap: 10px; margin-bottom: 10px; }
+.settings-current-row > span { color: var(--mute); font-size: var(--fs-s); font-weight: 750; text-transform: uppercase; letter-spacing: var(--track-label); }
+.settings-current {
+  margin: 0;
+  max-width: 100%;
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.workspace-card .native-context-surface { margin-top: 12px; }
+.numeric-display-card { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+.numeric-display-card .settings-note { margin-bottom: 0; }
+.numeric-display-control { display: grid; flex: 0 0 220px; gap: 5px; color: var(--mute); font-size: var(--fs-s); font-weight: 750; letter-spacing: var(--track-label); text-transform: uppercase; }
+.numeric-display-control select { width: 100%; min-height: 40px; padding: 0 34px 0 12px; color: var(--ink); background: var(--raised); border: 1px solid var(--hairline); border-radius: var(--r-s); font: 650 var(--fs-xs)/1 var(--font-ui); text-transform: none; }
+.numeric-display-control select:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.language-card { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+.language-card .settings-note { margin-bottom: 0; }
+.language-control { display: grid; flex: 0 0 220px; gap: 5px; color: var(--mute); font-size: var(--fs-s); font-weight: 750; letter-spacing: var(--track-label); text-transform: uppercase; }
+.language-control select { width: 100%; min-height: 40px; padding: 0 34px 0 12px; color: var(--ink); background: var(--raised); border: 1px solid var(--hairline); border-radius: var(--r-s); font: 650 var(--fs-xs)/1 var(--font-ui); text-transform: none; }
+.language-control select:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.xai-connect { display: grid; gap: 8px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--hairline-soft); }
+.xai-connect .operation-status { margin: 0; }
+.xai-connect-code { display: grid; gap: 6px; min-width: 0; }
+.xai-connect-code code { font: 650 calc(18px * var(--ui-scale)) var(--font-mono); letter-spacing: 0.08em; user-select: all; }
+.xai-connect-code a { font-size: var(--fs-s); }
+.xai-connect-url { font: var(--fs-xs) var(--font-mono); color: var(--mute); overflow-wrap: anywhere; user-select: all; }
+.xai-connect .ui-button { justify-self: stretch; justify-content: center; min-height: 44px; }
+.update-card { grid-column: 1 / -1; }
+.update-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+.update-actions button { min-height: 36px; padding: 0 14px; color: var(--ink); background: var(--raised); border: 1px solid var(--hairline); border-radius: var(--r-s); font: 650 var(--fs-xs)/1 var(--font-ui); cursor: pointer; }
+.update-actions button:hover:not(:disabled) { background: var(--hairline-soft); }
+.update-actions button:disabled { color: var(--btn-disabled-text); background: var(--btn-disabled-bg); border: 1px solid var(--btn-disabled-border); cursor: default; opacity: 1; }
+.update-actions button:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+/* Download and install are each the committing action of their own step. */
+.update-actions .update-go { color: var(--on-select); background: var(--select); border-color: var(--select); }
+.update-actions .update-go:hover:not(:disabled) { opacity: .86; background: var(--select); }
+.update-actions .update-go:disabled { color: var(--btn-disabled-text); background: var(--btn-disabled-bg); border: 1px solid var(--btn-disabled-border); cursor: not-allowed; opacity: 1; }
+
+/* ── Download progress ──────────────────────────────────────────────────────
+   ~70 MB over a site connection is a real wait, so the bar has to report
+   honestly: determinate when the server sends a content length, and an
+   explicit sweeping state when it does not, rather than a bar frozen at 0%. */
+.update-progress { margin: 2px 0 12px; }
+.update-progress-track {
+  position: relative;
+  height: 8px;
+  border-radius: var(--r-s);
+  background: var(--hairline-soft);
+  border: 1px solid var(--hairline-soft);
+  overflow: hidden;
+}
+.update-progress-fill {
+  position: relative;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--select);
+  /* Emphasized easing so a burst of chunks reads as acceleration, not a jump. */
+  transition: width 260ms var(--ease-emphasized), background-color var(--dur-normal) var(--ease-out);
+  will-change: width;
+}
+.update-progress.is-complete .update-progress-fill {
+  background: var(--pass);
+}
+
+/* No sheen over the fill: the bar's width is the whole signal. */
+.update-progress-sheen { display: none; }
+
+/* No content length: sweep a short bar so the wait still reads as progress. */
+.update-progress.is-indeterminate .update-progress-fill {
+  width: 32% !important;
+  transition: none;
+  animation: update-indeterminate 1.25s var(--ease-emphasized) infinite;
+}
+@keyframes update-indeterminate {
+  0%   { transform: translateX(-105%); }
+  100% { transform: translateX(320%); }
+}
+
+.update-progress-meta {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 7px;
+}
+.update-progress-figure {
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: var(--fs-s);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.update-progress.is-complete .update-progress-figure { color: var(--pass); }
+.update-progress-detail {
+  color: var(--mute);
+  font-family: var(--font-mono);
+  font-size: var(--fs-s);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Keep the bar truthful, drop the decoration. */
+  .update-progress-fill { transition: none; }
+  .update-progress.is-active .update-progress-sheen { animation: none; opacity: 0; }
+  .update-progress.is-indeterminate .update-progress-fill { animation: none; width: 100% !important; opacity: .45; }
+}
+.update-status { margin: 0; color: var(--mute); font-size: var(--fs-xs); line-height: 1.5; }
+.update-launch-toggle { display: flex; justify-content: flex-start; align-items: center; gap: 8px; width: 100%; margin-top: 14px; color: var(--ink); font-size: var(--fs-xs); text-align: left; cursor: pointer; }
+.update-launch-toggle input { flex: none; width: auto; height: auto; margin: 0; accent-color: var(--accent); }
+.update-launch-toggle span { flex: 1; min-width: 0; }
+
+/* Launch-check notice: one item inside the status bar row, so it never covers the composer. */
+.update-notice { display: inline-flex; align-items: center; gap: 6px; align-self: stretch; min-width: 0; padding-left: var(--sp-2); border-left: 1px solid var(--hairline); color: var(--accent); font-size: var(--fs-xs); white-space: nowrap; }
+.update-notice-live { display: inline-flex; align-self: stretch; min-width: 0; }
+.update-notice-text { overflow: hidden; text-overflow: ellipsis; }
+.update-notice-open, .update-notice-dismiss { align-self: stretch; min-height: 24px; }
+.update-notice-dismiss { min-width: 24px; }
+.update-notice-open { padding: 0 6px; border: 1px solid var(--accent); border-radius: var(--r-s); background: var(--accent); color: var(--accent-ink); font: inherit; font-weight: 600; cursor: pointer; }
+.update-notice-dismiss { padding: 0 4px; border: 0; border-radius: var(--r-s); background: transparent; color: var(--mute); font: inherit; cursor: pointer; }
+.update-notice-dismiss:hover, .update-notice-dismiss:focus-visible { background: var(--accent-soft); color: var(--ink); }
+
+.update-notes { margin: 10px 0 0; padding: 10px 12px; max-height: 160px; overflow: auto; background: var(--raised); border: 1px solid var(--hairline-soft); border-radius: var(--r-s); color: var(--ink); font-family: var(--font-mono); font-size: var(--fs-xs); white-space: pre-wrap; }
+
+/* Narrow desktop: stack the section list above the panel before the pair
+   gets cramped. */
+@media (min-width: 761px) and (max-width: 900px) {
+  .settings-layout { grid-template-columns: minmax(0, 1fr); }
+  .settings-sections ul { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
+}
+
+@media (max-width: 760px) {
+  .settings-view .ui-button,
+  .xai-connect .ui-button,
+  .xai-connect-code a { display: inline-flex; align-items: center; }
+  .xai-connect .ui-button,
+  .xai-connect-code a { min-height: 44px; }
+  .xai-connect .ui-button { justify-self: stretch; justify-content: center; }
+  .settings-view .ui-button,
+  .settings-view .update-actions button { min-height: 44px; }
+  .settings-view {
+    width: 100%;
+    max-width: 100%;
+    padding: 20px 18px 84px;
+    overflow-x: hidden;
+    scroll-padding-bottom: 84px;
+  }
+  .settings-hero {
+    display: grid;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+    .settings-layout {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .settings-card {
+    padding: 12px 14px;
+  }
+  .numeric-display-card { display: grid; gap: 10px; }
+  .numeric-display-control { width: 100%; }
+  .numeric-display-control select { min-height: 44px; }
+  .language-card { display: grid; gap: 10px; }
+  .language-control { width: 100%; }
+  .language-control select { min-height: 44px; }
+  .settings-note {
+    margin-bottom: 10px;
+    line-height: 1.45;
+  }
+  .provider-control {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 7px;
+  }
+  .provider-control .ui-select {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+  .native-context-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 768px) {
+  /* controls.css loads later; these selectors stay more specific than .ui-button. */
+  .settings-view .provider-card .ui-select,
+  .settings-view .numeric-display-control select,
+  .settings-view .language-control select,
+  .settings-view .ui-button,
+  .settings-view .update-actions button {
+    min-height: 44px;
+    height: 44px;
+  }
+}
+.settings-note code { font: var(--fs-xs) var(--font-mono); padding: 0 4px; background: var(--panel); border-radius: var(--r-s); }
+/* ── API key connections: secrets stay in the password field only ── */
+.apikey-connections { display: grid; gap: 12px; }
+.apikey-list { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.apikey-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; padding: 10px 12px; border: 1px solid var(--hairline-soft); border-radius: var(--r-s); }
+.apikey-meta { display: grid; gap: 2px; font-size: var(--fs-s); min-width: 0; }
+.apikey-meta span { color: var(--mute); overflow-wrap: anywhere; }
+.apikey-verified { color: var(--pass); font-weight: 650; }
+.apikey-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.apikey-form { display: grid; gap: 8px; }
+.apikey-form .ui-field input { min-height: 44px; padding: 0 12px; color: var(--ink); background: var(--raised); border: 1px solid var(--hairline); border-radius: var(--r-s); font-size: var(--fs-m); }
+.apikey-form .ui-select { width: 100%; }
+.apikey-connections .ui-button { min-height: 44px; }
+.apikey-error { margin: 0; color: var(--fail); font-size: var(--fs-s); }
+.apikey-notice { margin: 0; font-size: var(--fs-s); }
+/* Display card: theme and motion segmented controls. */
+.display-card { display: grid; gap: 12px; }
+.display-control { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; }
+.display-label { font-size: var(--fs-s); font-weight: 600; color: var(--ink-2); }
+.display-sound-range { display: flex; flex: 1 1 160px; align-items: center; gap: 10px; min-width: 0; max-width: 280px; }
+.display-sound-range input[type='range'] { flex: 1 1 auto; min-width: 0; height: 24px; margin: 0; accent-color: var(--ink-2); }
+.display-sound-range input[type='range']:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.display-sound-range input[type='range']:disabled { opacity: 0.55; }
+.display-sound-value { min-width: 4ch; text-align: right; font-size: var(--fs-s); font-variant-numeric: tabular-nums; color: var(--ink-2); }
+
+/* The section panel is narrower than the old full-width grid: while the tab
+   sits narrow, stack the label/control rows of the General cards instead of
+   crushing them side by side. */
+@container (max-width: 760px) {
+  .settings-section-panel .language-card,
+  .settings-section-panel .numeric-display-card { display: grid; gap: 10px; }
+  .settings-section-panel .language-control,
+  .settings-section-panel .numeric-display-control { flex: 1 1 auto; width: 100%; }
+}
+
+/* The 220px section list must yield when the TAB panel itself is narrow
+   (wide viewport with the dock and explorer open still leaves ~340px at
+   1024): stack the list above the cards instead of crushing the panel. */
+@container (max-width: 560px) {
+  .settings-layout { grid-template-columns: minmax(0, 1fr); }
+  .settings-sections ul { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
+}

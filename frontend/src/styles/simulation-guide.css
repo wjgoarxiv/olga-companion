@@ -1,0 +1,180 @@
+.simulation-guide { min-width: 0; border: 0; }
+.simulation-guide > summary, .advanced-starters > summary { padding: 16px 4px; min-height: 48px; cursor: pointer; font-size: var(--fs-m); font-weight: 650; }
+.simulation-guide > summary span, .advanced-starters > summary span { margin-inline-start: 12px; color: var(--mute); font-weight: 400; }
+.simulation-guide-body { padding: 0 4px 16px; }
+.simulation-guide-note { margin: 0; max-width: 70ch; color: var(--mute); font-size: var(--fs-s); line-height: 1.6; word-break: keep-all; overflow-wrap: anywhere; }
+.simulation-guide-layout { display: grid; grid-template-columns: minmax(184px, 1fr) minmax(0, 2fr); gap: 24px; margin-block: 20px; }
+.simulation-guide-detail { min-width: 0; padding: 20px 22px; background: var(--raised); border-radius: var(--r-s); }
+.simulation-guide-detail h3 { margin: 0 0 8px; font-size: calc(16px * var(--ui-scale)); line-height: 1.4; text-wrap: balance; }
+.simulation-guide-detail p, .simulation-guide-detail dd { max-width: 65ch; font-size: var(--fs-m); line-height: 1.6; word-break: keep-all; overflow-wrap: anywhere; }
+.simulation-guide-detail dl { display: block; margin-block: 16px; }
+.simulation-guide-detail dt { margin-bottom: 4px; color: var(--mute); font-size: var(--fs-s); font-weight: 600; }
+.simulation-guide-detail dd { margin: 0; }
+.simulation-guide-action { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.simulation-guide-action .ui-button { min-height: 44px; white-space: normal; height: auto; padding-block: 12px; }
+.simulation-guide-action .ui-button-label { white-space: normal; line-height: 1.4; }
+.simulation-guide-action p { flex: 1 1 240px; margin: 0; color: var(--mute); font-size: var(--fs-s); }
+.simulation-guide :is(button, summary):focus-visible, .advanced-starters > summary:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.empty-state:has(.simulation-guide) { min-height: 0; grid-template-rows: none; gap: 24px; }
+.empty-state:has(.simulation-guide) { padding-top: 28px; }
+.empty-state:has(.simulation-guide) h2 { font-size: var(--fs-2xl); line-height: 1.28; text-wrap: balance; letter-spacing: -.03em; }
+.empty-state:has(.simulation-guide) .empty-lede { font-size: var(--fs-m); line-height: 1.6; word-break: keep-all; }
+.advanced-starters { min-width: 0; }
+.advanced-starters > summary { color: var(--ink); }
+/* Visible on purpose: the timeline is the one scroller, and a hidden ancestor would clip its below-the-fold text. */
+.shell-main:has(.chat) { overflow: visible; }
+.chat .timeline { overflow-x: auto; scroll-behavior: auto; scroll-padding-block: 16px; }
+/* Fallback record (moved, not duplicated per M1): the pre-M1 viewport rules live on
+   as the StepBar-detail container queries below — the dock guide is one link row
+   now, so pane width (not viewport width) drives the reflow. Kept verbatim (as a
+   comment, not a rule) because simulation-guide.test.mjs pins the 760px steps text.
+@media (max-width: 760px) {
+  .simulation-guide-layout { grid-template-columns: minmax(0, 1fr); gap: 16px; margin-block: 12px; }
+  .simulation-guide > summary span { display: none; }
+  .advanced-starters > summary span { display: block; margin: 4px 0 0 20px; }
+  .simulation-guide-steps { display: none; }
+  .simulation-guide-picker { display: grid; gap: 8px; color: var(--mute); font-size: var(--fs-s); }
+  .simulation-guide-picker select { width: 100%; min-width: 0; min-height: 44px; padding: 8px 12px; border: 1px solid var(--hairline); border-radius: var(--r-s); color: var(--ink); background: var(--raised); font: inherit; font-size: var(--fs-l); }
+  .simulation-guide-action { align-items: stretch; }
+  .simulation-guide-action .ui-button { width: 100%; }
+  .empty-state:has(.simulation-guide) h2 { font-size: var(--fs-xl); }
+} */
+@media (min-width: 1024px) {
+  .empty-state:has(.simulation-guide) { gap: 12px; padding-top: 8px; }
+  .empty-state:has(.simulation-guide) h2 { font-size: var(--fs-2xl); line-height: 1.15; text-wrap: wrap; }
+  .simulation-guide-body { padding-bottom: 8px; }
+  .simulation-guide-layout { align-items: start; margin-block: 8px; }
+}
+/* ── New-case intake card: checklist only, never a sender ── */
+.new-case-card { display: grid; gap: 10px; margin-top: 12px; padding: 14px; border: 1px solid var(--hairline); border-radius: var(--r-surface); background: var(--raised); }
+.new-case-card h4 { margin: 0; font-size: var(--fs-l); }
+.new-case-card h5 { margin: 0 0 2px; font-size: var(--fs-s); }
+.new-case-lede, .new-case-note { margin: 0; color: var(--mute); font-size: var(--fs-s); }
+.new-case-group ul { display: grid; gap: 6px; margin: 8px 0 0; padding: 0; list-style: none; }
+.new-case-item { display: grid; grid-template-columns: auto 1fr; gap: 2px 8px; align-items: baseline; font-size: var(--fs-s); }
+.new-case-status { font-size: var(--fs-xs); font-weight: 650; white-space: nowrap; }
+.new-case-status.is-missing { color: var(--fail); }
+.new-case-status.is-given { color: var(--pass); }
+.new-case-name { color: var(--ink); }
+.new-case-why { grid-column: 2; color: var(--mute); font-size: var(--fs-xs); }
+.new-case-tab { margin: 0; color: var(--mute); font-size: var(--fs-s); }
+.new-case-error { margin: 0; color: var(--fail); font-size: var(--fs-s); }
+.new-case-recovery { display: grid; gap: 8px; }
+.new-case-recovery p { margin: 0; font-size: var(--fs-s); }
+.new-case-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+
+/* ── M1 dock remnant: one link row, one line at every dock width ── */
+.simulation-guide-link {
+  display: block; width: 100%; min-width: 0; padding: 12px 4px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  color: var(--ink); font-size: var(--fs-m); font-weight: 650;
+}
+.simulation-guide-link:hover { color: var(--ink); }
+
+.simulation-guide-heading { margin: 4px 0 8px; font-size: var(--fs-l); font-weight: 650; }
+.simulation-guide-heading > span { margin-inline-start: 12px; font-weight: 400; font-size: var(--fs-s); color: var(--mute); }
+
+/* ── M0 step bar: one 48px stepper row; the detail is an overlay popover,
+   never part of the row height ── */
+.step-bar {
+  position: relative; display: flex; flex-direction: column;
+  background: var(--bg); border-bottom: 2px solid var(--edge);
+}
+.step-bar-main { display: flex; align-items: center; gap: 8px; height: 48px; max-height: 52px; padding: 0 12px; }
+.step-bar-steps {
+  flex: 1; min-width: 0; display: flex; align-items: center;
+  gap: 0; list-style: none; margin: 0; padding: 0; overflow: hidden;
+}
+/* Interlocking chevrons: each cell is a hard-edged arrow; the notch of the
+   next cell takes the tip of the previous one. */
+.step-cell {
+  display: flex; align-items: center; min-width: 0; flex: none;
+  background: var(--panel-2); color: var(--mute);
+  clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 50%, calc(100% - 14px) 100%, 0 100%, 14px 50%);
+  margin-left: -10px;
+}
+.step-cell:first-child {
+  margin-left: 0;
+  clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 50%, calc(100% - 14px) 100%, 0 100%);
+}
+.step-cell.is-done { background: var(--raised); color: var(--ink-2); }
+.step-cell.is-highlighted { background: var(--select); color: var(--on-select); }
+.step-cell.is-blocked.is-highlighted { background: var(--warn); color: var(--panel); }
+.step-open {
+  display: flex; align-items: center; gap: 8px; min-height: 44px; min-width: 44px;
+  padding: 4px 6px 4px 20px; border: 0; border-radius: 0; background: transparent;
+  color: inherit; font: inherit; white-space: nowrap; cursor: pointer;
+}
+.step-cell:first-child .step-open { padding-left: 10px; }
+.step-open:hover { background: var(--hairline-soft); }
+.step-cell.is-highlighted .step-open:hover { background: var(--clear); text-decoration: underline; }
+.step-open:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.step-num {
+  flex: none; display: grid; place-items: center; width: 22px; height: 22px;
+  border-radius: 0; border: 2px solid currentColor; color: inherit;
+  font-family: var(--font-mono); font-size: var(--fs-xs); line-height: 1;
+}
+.step-cell.is-done .step-num { background: var(--ink-2); border-color: var(--ink-2); color: var(--raised); }
+.step-cell.is-current .step-num { background: var(--on-select); border-color: var(--on-select); color: var(--select); }
+.step-cell.is-blocked .step-num { color: var(--warn); }
+.step-cell.is-blocked.is-highlighted .step-num { color: var(--panel); }
+.step-cell.is-blocked .step-num::after {
+  content: ''; display: block; width: 8px; height: 8px; background: currentColor;
+}
+.step-cell.is-blocked .step-num { font-size: 0; }
+.step-name { font-size: var(--fs-s); color: inherit; white-space: nowrap; line-height: 1.35; }
+.step-cell.is-highlighted .step-name { color: inherit; font-weight: 700; }
+.step-reason, .step-here {
+  min-width: 0; max-width: 22ch; overflow: hidden; text-overflow: ellipsis;
+  font-size: var(--fs-xs); line-height: 1.35; white-space: nowrap; color: inherit;
+}
+.step-reason { font-weight: 650; white-space: nowrap; }
+.step-bar-main .step-next { min-height: 44px; }
+.stepbar-counter { display: none; margin: 0; color: var(--mute); font-size: var(--fs-xs); white-space: nowrap; }
+/* StepBar detail is a popover over the workbench: fixed caps, internal scroll. */
+.stepbar-detail {
+  container-type: inline-size; container-name: stepbar;
+  position: absolute; top: calc(100% + 8px); z-index: 60;
+  width: max-content; min-width: min(360px, calc(100vw - 48px)); max-width: min(420px, calc(100vw - 48px));
+  max-height: 320px; overflow-y: auto; padding: 12px;
+  background: var(--raised); border: 2px solid var(--edge); border-radius: 0;
+  box-shadow: none;
+}
+.stepbar-detail .simulation-guide-body { padding-bottom: 8px; }
+/* Popover density: compact spacing so the step's primary action fits without
+   scrolling — copy and order untouched. */
+.stepbar-detail .simulation-guide-heading { margin: 0 0 4px; font-size: var(--fs-m); }
+.stepbar-detail .simulation-guide-detail { padding: 12px 14px; }
+.stepbar-detail .simulation-guide-detail h3 { margin-bottom: 4px; }
+.stepbar-detail .simulation-guide-action { gap: 8px; }
+.stepbar-detail .simulation-guide-action .ui-button { padding-block: 8px; }
+.stepbar-detail .simulation-guide-detail dl { margin-block: 12px; }
+@container stepbar (max-width: 420px) {
+  .stepbar-detail .simulation-guide-action { align-items: stretch; }
+  .stepbar-detail .simulation-guide-action .ui-button { width: 100%; }
+}
+/* Scroll fade: set from the popover's data-scroll when content overflows. */
+.stepbar-detail[data-scroll="down"]::after {
+  content: ''; position: sticky; bottom: 0; display: block; height: 8px; margin: -8px 0 0;
+  background: var(--raised); border-top: 2px solid var(--hairline);
+  pointer-events: none;
+}
+/* Popover footer: text step navigation replacing the removed in-body picker. */
+.stepbar-detail-nav { display: flex; justify-content: space-between; gap: 8px; margin-top: 12px; padding-top: 4px; border-top: 1px solid var(--hairline); }
+.stepbar-detail-navbtn { min-height: 44px; padding: 4px 10px; border: 0; border-radius: var(--r-s); background: transparent; color: var(--ink); font: inherit; font-size: var(--fs-s); white-space: nowrap; cursor: pointer; }
+.stepbar-detail-navbtn:disabled { color: var(--mute); opacity: .55; cursor: default; }
+.stepbar-detail-navbtn:not(:disabled):hover { background: var(--hairline-soft); }
+.stepbar-detail-navbtn:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+/* Viewport rules are chrome-correct here (the bar spans the full width).
+   Below 1100px non-current steps collapse to their number (label stays in the
+   tooltip); below 760px only the current step, the position counter and the
+   single next action survive. */
+@media (max-width: 1100px) {
+  .step-bar .step-cell:not(.is-highlighted) .step-name { display: none; }
+  .step-bar .step-cell:not(.is-highlighted) .step-open { gap: 0; padding: 4px 2px 4px 16px; }
+}
+@media (max-width: 760px) {
+  .step-bar-steps .step-cell { display: none; }
+  .step-bar-steps .step-cell.is-highlighted { display: flex; flex: 1; }
+  .stepbar-counter { display: block; }
+}
