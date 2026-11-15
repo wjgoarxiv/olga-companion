@@ -1,0 +1,6 @@
+! Synthetic structural fixture; these values are not qualified fluid properties.
+PVTTABLE LABEL = FLUID-A, PHASE = THREE, \
+COMPONENTS = ( H2O, N2 ), MOLES = ( .5, .5 ), \
+MESHTYPE = STANDARD, \
+ENTHALPY = ( 1, 2 ) J/KG, \
+COLUMNS = ( ENTHALPY, ROG )

@@ -1,0 +1,272 @@
+/* Workbench primitives. Every size and duration reads a token from base.css;
+   no raw font sizes, no side stripes wider than 1px (design contract). */
+
+.ui-segmented {
+  display: inline-flex;
+  flex-wrap: wrap;
+  max-width: 100%;
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-s);
+  overflow: hidden;
+  background: var(--panel);
+}
+.ui-segmented-option {
+  border: 0;
+  background: var(--clear);
+  color: var(--mute);
+  padding: 0 var(--sp-3);
+  min-height: var(--tgt);
+  font-size: var(--fs-s);
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: transform var(--d-ui) var(--ease-ui), background-color var(--d-ui) var(--ease-ui), color var(--d-ui) var(--ease-ui);
+}
+.ui-segmented-option:hover { color: var(--ink); }
+.ui-segmented-option:active { transform: translate(1px, 1px); }
+.ui-segmented-option[aria-checked="true"] {
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 600;
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+
+.ui-tabs { display: flex; flex-direction: column; min-height: 0; }
+.ui-tablist {
+  display: flex;
+  align-items: stretch;
+  gap: var(--sp-1);
+  border-bottom: 1px solid var(--hairline);
+  padding: 0 var(--sp-2);
+  overflow-x: auto;
+  background: var(--bg-deep);
+}
+.ui-tab {
+  border: 0;
+  border-bottom: 2px solid var(--clear);
+  background: var(--clear);
+  color: var(--mute);
+  padding: 0 var(--sp-2);
+  min-height: var(--tgt);
+  font-size: var(--fs-s);
+  font-weight: 500;
+  line-height: 1.35;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color var(--d-ui) var(--ease-ui), border-color var(--d-ui) var(--ease-ui);
+}
+.ui-tab:hover { color: var(--ink); }
+.ui-tab[aria-selected="true"] {
+  color: var(--ink);
+  border-bottom-color: var(--accent);
+  font-weight: 600;
+}
+.ui-tabpanel { padding: var(--sp-4); background: var(--panel); min-height: 0; }
+.ui-tab-badge {
+  display: inline-block; min-width: 20px; margin-left: var(--sp-1); padding: 1px 6px;
+  border-radius: var(--r-pill); background: var(--warn); color: var(--accent-ink);
+  font-size: var(--fs-xs); font-weight: 700; font-variant-numeric: tabular-nums; text-align: center;
+}
+
+.ui-field { display: flex; flex-direction: column; gap: var(--sp-1); }
+.ui-field-label { font-size: var(--fs-s); font-weight: 600; color: var(--ink-2); }
+.ui-field-hint { margin: 0; font-size: var(--fs-xs); color: var(--mute); }
+.ui-field-error { margin: 0; font-size: var(--fs-xs); color: var(--fail); }
+
+.ui-select {
+  height: var(--ctl-h);
+  min-height: var(--tgt);
+  background: var(--panel-2);
+  color: var(--ink);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-s);
+  padding: 0 var(--sp-2);
+  font-size: var(--fs-s);
+}
+
+.ui-table { width: 100%; border-collapse: collapse; font-size: var(--fs-s); }
+.ui-table th {
+  text-align: left;
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  color: var(--ink-2);
+  padding: var(--sp-2) var(--sp-3);
+  border-bottom: 1px solid var(--hairline);
+}
+.ui-table td {
+  padding: var(--sp-2) var(--sp-3);
+  border-bottom: 1px solid var(--hairline-soft);
+  vertical-align: top;
+}
+.ui-table .ui-num, .ui-table td.ui-num, .ui-table th.ui-num {
+  text-align: right;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+.ui-table-caption { text-align: left; font-size: var(--fs-s); color: var(--mute); padding-bottom: var(--sp-2); }
+
+.ui-iconbutton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  min-width: var(--ctl-h);
+  min-height: var(--ctl-h);
+  background: var(--clear);
+  color: var(--ink-2);
+  border: 1px solid var(--clear);
+  border-radius: var(--r-s);
+  cursor: pointer;
+  transition: transform var(--d-ui) var(--ease-ui), background-color var(--d-ui) var(--ease-ui), color var(--d-ui) var(--ease-ui), border-color var(--d-ui) var(--ease-ui);
+}
+.ui-iconbutton:hover { background: var(--raised); border-color: var(--hairline); color: var(--ink); }
+.ui-iconbutton:active { transform: translate(1px, 1px); }
+.ui-iconbutton[aria-pressed="true"] { background: var(--accent-soft); color: var(--accent); border-color: var(--hairline); }
+.ui-iconbutton:disabled { opacity: 0.45; cursor: not-allowed; }
+.ui-iconbutton-glyph { display: inline-flex; }
+/* The 32px chrome buttons keep their visual size but expose a 44px hit
+   area in both densities (vertical expansion only, so neighbours never
+   lose their own targets). */
+.ui-iconbutton::after {
+  content: "";
+  position: absolute;
+  inset: -6px 0;
+}
+
+.ui-toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  flex-wrap: wrap;
+  padding: var(--sp-3) var(--sp-4);
+  border-bottom: 1px solid var(--hairline-soft);
+  background: var(--panel);
+}
+.ui-toolbar-group { display: inline-flex; align-items: center; gap: var(--sp-1); }
+.ui-toolbar-sep { width: 1px; align-self: stretch; background: var(--hairline); }
+
+.ui-panel {
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-m);
+  background: var(--panel);
+}
+.ui-panel-head {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-3) var(--sp-4);
+  border-bottom: 1px solid var(--hairline-soft);
+}
+.ui-panel-title { font-size: var(--fs-s); font-weight: 600; color: var(--ink-2); }
+.ui-panel-actions { margin-left: auto; display: inline-flex; gap: var(--sp-1); }
+.ui-panel-body { padding: var(--sp-4); font-size: var(--fs-m); line-height: 1.5; }
+
+.ui-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  padding: var(--sp-1) var(--sp-2);
+  border-radius: var(--r-s);
+  border: 1px solid var(--hairline);
+  color: var(--ink-2);
+}
+.ui-badge-pass { color: var(--pass); border-color: var(--pass); }
+.ui-badge-warn { color: var(--warn); border-color: var(--warn); }
+.ui-badge-fail { color: var(--fail); border-color: var(--fail); }
+.ui-badge-info { color: var(--info); border-color: var(--info); }
+
+.ui-kbd {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-xs);
+  color: var(--ink-2);
+  border: 1px solid var(--hairline);
+  border-bottom-width: 2px;
+  border-radius: var(--r-s);
+  padding: 0 var(--sp-1);
+  background: var(--panel);
+  white-space: nowrap;
+}
+
+.ui-popover {
+  position: absolute;
+  z-index: 40;
+  min-width: 192px;
+  background: var(--raised);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-s);
+  padding: var(--sp-1);
+}
+
+.ui-menu {
+  display: flex;
+  flex-direction: column;
+  padding: var(--sp-1);
+  background: var(--raised);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-s);
+}
+.ui-menuitem {
+  border: 0;
+  background: var(--clear);
+  color: var(--ink);
+  text-align: left;
+  padding: 0 var(--sp-3);
+  min-height: var(--tgt);
+  font-size: var(--fs-s);
+  font-weight: 500;
+  border-radius: var(--r-s);
+  cursor: pointer;
+}
+.ui-menuitem:hover { background: var(--panel-2); }
+.ui-menuitem:focus-visible { background: var(--accent-soft); color: var(--accent); }
+.ui-menuitem:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.ui-palette-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 12vh;
+}
+.ui-palette {
+  width: min(560px, calc(100vw - var(--sp-8)));
+  background: var(--raised);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-s);
+}
+.ui-palette-input {
+  width: 100%;
+  height: var(--tgt);
+  border: 0;
+  border-bottom: 1px solid var(--hairline);
+  background: var(--clear);
+  color: var(--ink);
+  padding: 0 var(--sp-4);
+  font-size: var(--fs-m);
+}
+.ui-palette-list {
+  list-style: none;
+  margin: 0;
+  padding: var(--sp-1);
+  max-height: 320px;
+  overflow: auto;
+}
+.ui-palette-option {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-2);
+  padding: var(--sp-2) var(--sp-3);
+  min-height: var(--tgt);
+  font-size: var(--fs-s);
+  border-radius: var(--r-s);
+  cursor: pointer;
+}
+.ui-palette-option[data-active] { background: var(--accent-soft); color: var(--accent); }
+.ui-palette-hint { margin-left: auto; font-size: var(--fs-xs); color: var(--mute); }
+
+.ui-icon { display: inline-block; flex: none; vertical-align: middle; }
