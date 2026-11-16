@@ -1,0 +1,212 @@
+/* ── Chat surface: the timeline is the ONLY scroll region ─────────────────── */
+.chat { position: relative; display: grid; grid-template-rows: minmax(0, 1fr) auto; min-height: 0; }
+
+.timeline {
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: var(--sp-6);
+  scroll-behavior: smooth;
+}
+.timeline.empty { padding-top: 0; }
+/* Flex items with overflow hidden can shrink to their border box; tool cards
+   collapse their own details instead, so timeline rows always keep height. */
+.timeline > * { flex-shrink: 0; }
+
+/* ── Empty state: a context-led operation deck ───────────────────────────── */
+.empty-state { width: min(920px, 100%); margin: 0 auto; padding: 0 0 24px; display: grid; gap: 16px; align-self: flex-start; }
+.empty-hero { display: grid; grid-template-columns: minmax(0, 1fr); }
+.empty-intro { display: grid; gap: 7px; align-content: center; max-width: 680px; padding: 8px 0; }
+.empty-state h2 { margin: 0; font-size: var(--fs-2xl); font-weight: 780; letter-spacing: -0.035em; line-height: 1.05; }
+.empty-lede { margin: 0; max-width: 62ch; color: var(--ink); font-size: var(--fs-s); line-height: 1.55; text-wrap: pretty; }
+.starter-groups { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; text-align: left; }
+.starter-group {
+  min-width: 0;
+  display: grid;
+  gap: 10px;
+  align-content: start;
+  padding: 14px;
+  border: 1px solid var(--hairline-soft);
+  border-radius: var(--r-s);
+  background: var(--raised);
+}
+.starter-group-head { display: flex; align-items: center; gap: 10px; min-height: 36px; }
+.starter-group-index {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 auto;
+  place-items: center;
+  color: var(--on-select);
+  background: var(--select);
+  border-radius: var(--r-s);
+  font-size: var(--fs-s);
+  font-weight: 800;
+  letter-spacing: .06em;
+}
+.starter-group-head > span:last-child { display: grid; gap: 2px; min-width: 0; }
+.starter-group-title { color: var(--ink); font-size: var(--fs-xs); font-weight: 780; line-height: 1.1; }
+.starter-group-note { color: var(--mute); font-size: var(--fs-s); font-style: normal; line-height: 1.2; }
+.starter-list { display: grid; gap: 8px; }
+.starter {
+  height: auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  padding: 12px 14px;
+  color: var(--ink);
+  background: var(--raised);
+  border: 1px solid var(--hairline-soft);
+  border-radius: var(--r-s);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color var(--dur-fast) var(--ease-out);
+}
+.starter:hover:not(:disabled) {
+  border-color: var(--ink);
+}
+.starter:disabled { cursor: default; color: var(--mute); }
+.starter-copy { display: grid; gap: 4px; min-width: 0; }
+.starter-label { font-size: var(--fs-m); font-weight: 700; }
+.starter-prompt { font-size: var(--fs-xs); color: var(--mute); line-height: 1.4; }
+.starter-arrow {
+  display: grid;
+  width: 24px;
+  height: 24px;
+  place-items: center;
+  color: var(--mute);
+  border: 1px solid var(--hairline-soft);
+  border-radius: var(--r-s);
+  font-size: var(--fs-s);
+}
+.starter:hover:not(:disabled) .starter-arrow { color: var(--on-select); background: var(--select); border-color: var(--select); }
+
+@media (min-width: 761px) {
+  .empty-state {
+    width: min(1080px, 100%);
+    min-height: min(500px, calc(100dvh - 270px));
+    padding-bottom: 36px;
+    grid-template-rows: auto minmax(0, 1fr);
+    align-self: stretch;
+    align-content: start;
+  }
+  .starter-groups {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr) minmax(0, 0.95fr);
+    min-height: 280px;
+    align-items: stretch;
+  }
+  .starter-group { grid-template-rows: auto minmax(0, 1fr); }
+  .starter-list { grid-auto-rows: minmax(82px, 1fr); align-content: stretch; }
+  .starter { min-height: 82px; }
+}
+
+/* Narrow desktop: the nav rail leaves too little room for three workflow
+   columns, so starters compress to ~150px, titles break onto two lines and the
+   group cards fall badly out of balance. Let the groups reflow instead — the
+   track count follows the space actually available. */
+@media (min-width: 761px) and (max-width: 1000px) {
+  .starter-groups {
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    min-height: 0;
+  }
+}
+
+/* ── Messages ────────────────────────────────────────────────────────────── */
+.bubble {
+  max-width: 68ch;
+  padding: 12px 16px;
+  border-radius: var(--r-s);
+  font-size: var(--fs-m);
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+.bubble.user { align-self: flex-end; background: var(--bubble-user); color: var(--on-bubble-user); border: 2px solid var(--accent); word-break: keep-all; text-wrap: pretty; }
+/* --surface-raised is canvas 82% / cloud 18% as a token, so contrast tools and dark scheme read the real surface. No shadow: the hairline already separates it. */
+.bubble.assistant { background: var(--surface-raised); color: var(--ink); border: 1px solid var(--hairline-soft); }
+
+/* Rendered markdown (assistant + thinking) — block structure, so reset the
+   bubble's pre-wrap; code/tables get contrast against the cloud bubble. */
+.md { white-space: normal; }
+.md > :first-child { margin-top: 0; }
+.md > :last-child { margin-bottom: 0; }
+.md p { margin: 0 0 8px; line-height: 1.5; }
+.bubble.assistant .md p { word-break: keep-all; overflow-wrap: anywhere; text-wrap: pretty; }
+.bubble.assistant .md li { word-break: keep-all; overflow-wrap: anywhere; text-wrap: pretty; }
+.md a { overflow-wrap: anywhere; }
+.bubble.assistant .md code { overflow-wrap: anywhere; word-break: normal; }
+.msg > .bubble { min-width: 0; max-width: 100%; }
+.md h3, .md h4, .md h5, .md h6 { margin: 14px 0 6px; font-weight: 700; line-height: 1.3; }
+.md h3 { font-size: var(--fs-l); }
+.md h4 { font-size: var(--fs-l); }
+.md h5, .md h6 { font-size: var(--fs-m); }
+.md ul, .md ol { margin: 0 0 8px; padding-left: 20px; }
+.md li { margin: 2px 0; line-height: 1.5; }
+.md li > ul, .md li > ol { margin: 2px 0; }
+.md a { color: var(--info); text-underline-offset: 2px; }
+.md code { font-family: var(--font-mono); font-size: var(--fs-s); font-variant-ligatures: none; background: var(--panel); border: 1px solid var(--hairline-soft); border-radius: var(--r-s); padding: 1px 5px; }
+.md pre { margin: 0 0 8px; background: var(--panel); max-width: 100%; overflow-x: auto; }
+.md pre code { background: none; border: none; padding: 0; font-size: var(--fs-s); }
+.md blockquote { margin: 0 0 8px; padding-left: 12px; border-left: 1px solid var(--hairline); color: var(--mute); }
+.md-table-wrap { max-width: 100%; overflow-x: auto; margin: 0 0 8px; }
+.md table { border-collapse: collapse; font-size: var(--fs-s); }
+/* Table code would compute to 11.96px (0.92em of 13px): pin the 12px floor. */
+.md td code, .md th code { font-size: var(--fs-xs); }
+.md th, .md td { border: 1px solid var(--hairline-soft); padding: 5px 10px; text-align: left; overflow-wrap: normal; word-break: normal; }
+.md th { font-weight: 700; background: var(--panel); }
+/* thinking body markdown stays muted and small */
+.thinking-body .md p, .thinking-body .md li { line-height: 1.5; }
+
+.msg { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; max-width: 100%; animation: message-resolve 240ms var(--ease-emphasized) backwards; /* backwards: nothing is held after the entrance */ }
+.msg.user { align-items: flex-end; }
+@keyframes message-resolve {
+  0% { opacity: 0; transform: translateY(8px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+.msg-actions {
+  display: flex;
+  gap: 8px;
+  padding-left: 4px;
+  opacity: 0;
+  transition: opacity var(--dur-fast) var(--ease-out);
+}
+.msg:hover .msg-actions, .msg-actions:focus-within { opacity: 1; }
+.msg-action {
+  height: auto;
+  padding: 2px 8px;
+  font-size: var(--fs-s);
+  font-weight: 600;
+  color: var(--mute);
+  background: none;
+  border: none;
+  border-radius: 0;
+  cursor: pointer;
+}
+.msg-action:hover:not(:disabled) { color: var(--ink); background: none; }
+
+/* Thinking — quiet, collapsed reasoning */
+.thinking { align-self: flex-start; max-width: 68ch; padding: 10px 12px; background: var(--panel); border: 1px solid var(--hairline-soft); border-radius: var(--r-surface); }
+.thinking summary { font-size: var(--fs-xs); font-weight: 600; letter-spacing: var(--track-label); text-transform: uppercase; color: var(--mute); cursor: pointer; list-style: none; }
+.thinking summary::-webkit-details-marker { display: none; }
+.thinking summary::before { content: '▸ '; }
+.thinking[open] summary::before { content: '▾ '; }
+.thinking-body { margin-top: 8px; font-size: var(--fs-s); line-height: 1.5; color: var(--mute); white-space: pre-wrap; overflow-wrap: anywhere; }
+
+/* Answer in progress — a closed, unconfirmed draft; plain text that scrolls on its own. */
+.draft-toggle { align-self: flex-start; max-width: 68ch; width: 100%; padding: 10px 12px; background: var(--panel); border: 1px solid var(--hairline-soft); border-radius: var(--r-surface); }
+.draft-toggle summary { font-size: var(--fs-s); font-weight: 600; line-height: 1.35; color: var(--ink); cursor: pointer; }
+.draft-note { margin: 6px 0 0; font-size: var(--fs-s); line-height: 1.35; color: var(--mute); }
+.draft-body { margin-top: 6px; max-height: 160px; overflow-y: auto; font-size: var(--fs-s); line-height: 1.5; color: var(--ink); white-space: pre-wrap; overflow-wrap: anywhere; }
+.draft-body:focus-visible { outline: 2px solid var(--info); outline-offset: 2px; }
+
+/* No hover on touch: message actions stay visible and meet the 44px touch target. */
+@media (max-width: 760px), (pointer: coarse) {
+  .msg-actions { opacity: 1; }
+  .msg-action { min-height: 44px; }
+}

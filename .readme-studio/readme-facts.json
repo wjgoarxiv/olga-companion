@@ -1,0 +1,41 @@
+{
+  "claims": [
+    {"id": "product-name", "value": "OLGA Companion", "source": "src-tauri/tauri.conf.json"},
+    {"id": "version", "value": "0.1.1", "source": "package.json"},
+    {"id": "installers", "value": "NSIS setup.exe and MSI", "source": "src-tauri/tauri.conf.json"},
+    {"id": "webview2-bootstrapper", "value": "WebView2 fetched by the installer when missing (downloadBootstrapper)", "source": "src-tauri/tauri.conf.json"},
+    {"id": "unsigned-installer", "value": "No code-signing certificate configured", "source": "src-tauri/tauri.conf.json"},
+    {"id": "updater-endpoint", "value": "releases/latest/download/latest.json, signature verified against the built-in public key", "source": "src-tauri/tauri.conf.json"},
+    {"id": "update-check-on-launch", "value": "One check shortly after launch, on by default, can be turned off in Settings → Updates; notice in the status bar; never downloads or installs", "source": "frontend/src/updateAutoCheck.mjs"},
+    {"id": "providers", "value": "OpenAI (Codex), GitHub Copilot, Antigravity (Gemini), xAI (Grok), API key", "source": "src/olga_companion/agent/chat.py"},
+    {"id": "provider-labels", "value": "Provider display names", "source": "frontend/src/ProviderPanel.tsx"},
+    {"id": "apikey-openai-compatible", "value": "API key connections use OpenAI Responses or Chat protocols at a base URL", "source": "src/olga_companion/llm/api_key_connections.py"},
+    {"id": "approval-single-use-ttl", "value": "Approval tokens are single-use and expire after 600 s", "source": "src/olga_companion/agent/approvals.py"},
+    {"id": "generic-table", "value": "Generic air-water table, CPA, 0–80 °C, 0.5–20 bar, label AIR_WATER", "source": "src/olga_companion/starter_fluids.py"},
+    {"id": "pipe-table-formats", "value": "Pipe tables from .csv or .xlsx", "source": "src/olga_companion/agent/pipe_table_tools.py"},
+    {"id": "pipe-table-draft", "value": "Draft reviewed before any save; save uses the approval card", "source": "frontend/src/i18n/en.ts"},
+    {"id": "profile-reader", "value": "results_profile reads one variable along a .ppl branch", "source": "src/olga_companion/agent/tool_read_tools.py"},
+    {"id": "tested-olga", "value": "Behaviour checked against OLGA 2022.1.0", "source": "src/olga_companion/case_compiler.py"},
+    {"id": "korean-ui", "value": "English and Korean UI", "source": "frontend/src/i18n/ko.ts"},
+    {"id": "node-engine", "value": "Node.js >= 22.12.0", "source": "package.json"},
+    {"id": "python", "value": "Python >= 3.11, results extra, dev group", "source": "pyproject.toml"},
+    {"id": "scripts", "value": "npm run verify, npm run dev:app", "source": "package.json"},
+    {"id": "license", "value": "Apache-2.0; pvt_engine MIT", "source": "LICENSE"},
+    {"id": "pvt-engine-license", "value": "MIT", "source": "src/olga_companion/pvt_engine/LICENSE"},
+    {"id": "safety-doc", "value": "Safety Gates", "source": "docs/SAFETY_GATES.md"},
+    {"id": "architecture-doc", "value": "Architecture", "source": "docs/ARCHITECTURE.md"},
+    {"id": "packaging-doc", "value": "Packaging runbook", "source": "docs/PACKAGING.md"},
+    {"id": "demo-proposal", "value": "4.05 kg/s feed, water fraction 0.987654, roughness 4.5e-5 m, 50 sections, 3600 s, generic table", "source": ".litclaude/evidence/distribution-v2/demo-transcript-01.txt"},
+    {"id": "demo-result", "value": "47492.8 Pa drop, 447916.6 / 400423.8 Pa, PVT Verify session 2026-11-11", "source": ".litclaude/evidence/distribution-v2/demo-transcript-08.txt"},
+    {"id": "update-check-default-on", "value": "Launch check is on unless the stored choice is off", "source": "frontend/src/updateAutoCheck.mjs"},
+    {"id": "release-checksums", "value": "SHA256SUMS.txt is built with the installers and attached to the release (POST_PUBLICATION_UNVERIFIED)", "source": "README.md"},
+    {"id": "default-branch", "value": "master", "source": ".git/HEAD"}
+  ],
+  "badges": [
+    {"label": "Latest release (POST_PUBLICATION_UNVERIFIED until v0.1.1 is released)", "url": "https://img.shields.io/github/v/release/wjgoarxiv/olga-companion?label=release&color=7aa2f7", "source": "package.json"},
+    {"label": "Apache-2.0", "url": "https://img.shields.io/badge/license-Apache--2.0-blue", "source": "LICENSE"},
+    {"label": "Windows x64", "url": "https://img.shields.io/badge/platform-Windows%20x64-0a7ea4", "source": "src-tauri/tauri.conf.json"},
+    {"label": "Tested with OLGA 2022.1", "url": "https://img.shields.io/badge/tested%20with-OLGA%202022.1-2ac3de", "source": "src/olga_companion/case_compiler.py"},
+    {"label": "English and Korean UI", "url": "https://img.shields.io/badge/UI-English%20%7C%20%ED%95%9C%EA%B5%AD%EC%96%B4-9ece6a", "source": "frontend/src/i18n/ko.ts"}
+  ]
+}

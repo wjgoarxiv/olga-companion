@@ -1,0 +1,16 @@
+# Keep the build machine's absolute paths out of the shipped binary.
+#
+# Third-party crates embed panic! location metadata from `file!()`, which
+# otherwise bakes `C:\Users\<name>\.cargo\registry\src\...` into
+# olga-companion.exe and ships it inside the installer. The only thing
+# disclosed is the build account name, but it disclosed it 238 times.
+#
+# `[profile.release] trim-paths` would be the direct fix; it is NOT stabilized
+# in Cargo 1.95.0 (it still requires nightly), so use the stable rustc flag.
+#
+# The prefix is the build host's CARGO_HOME. On a host where CARGO_HOME differs
+# this silently stops matching, so re-check Step 4 item 3 after moving hosts.
+[build]
+rustflags = [
+  "--remap-path-prefix=C:\\Users\\Woojin\\.cargo\\registry\\src=/cargo-registry",
+]
