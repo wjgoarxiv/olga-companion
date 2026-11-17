@@ -1,0 +1,27 @@
+#Multiflash version: 7.3.32  October 2022  #
+#Date: Wed 14 June 2023        Time:   17:17:40  #
+remove all;
+units temperature K pressure Pa enthalpy J/mol entropy J/mol/K volume m3/mol
+amounts mol viscosity Pas thcond W/m/K surten N/m diffusion m2/s;
+datum enthalpy compound entropy compound;
+set fractions; chardata INFOCHAR TBSOEREIDE;
+puredata Infodata;
+chardata Infochar TbSoereide;
+Components overwrite
+1 CO2
+2 N2 ;
+bipdata INFOBIPS OILANDGAS4;
+BipSet CPABIP1 1 constant eos none;
+BipSet CPABIP2 1 constant association J/mol;
+BipSet CPABIP3 1 constant association J/mol;
+model MCPA ASSOC PSAT CPABIP1 CPABIP2 CPABIP3;
+model VSuperTRAPP SPVISC LFIT;
+model TCSuperTRAPP SPTHCOND SPTHCOND;
+model STMCSA MCSA MCS2P MCPA;
+PD GAS gas MCPA MCPA MCPA VSuperTRAPP TCSuperTRAPP STMCSA;
+PD LIQUID1 liquid MCPA MCPA MCPA VSuperTRAPP TCSuperTRAPP STMCSA;
+keys LIQUID1 "*";
+amounts 99.7 0.3;
+tolamounts 0. 0.;
+Temperature 293.15;
+Pressure 101325;

@@ -1,0 +1,79 @@
+{
+  "version": "3",
+  "nodes": [
+    {
+      "label": "PLANT",
+      "kind": "source",
+      "pressure_pa": 800000.0,
+      "temperature_c": 75.0,
+      "gas_fraction": 0.2,
+      "total_water_fraction": 0.3
+    },
+    {
+      "label": "TERMINAL",
+      "kind": "sink",
+      "pressure_pa": 300000.0,
+      "temperature_c": 20.0,
+      "gas_fraction": 0.2,
+      "total_water_fraction": 0.3
+    }
+  ],
+  "flowpaths": [
+    {
+      "label": "EXPORT",
+      "from": "PLANT",
+      "to": "TERMINAL",
+      "pipes": [
+        {
+          "label": "BURIED",
+          "length_m": 3000.0,
+          "elevation_m": 0.0,
+          "diameter_m": 0.2,
+          "roughness_m": 5e-05,
+          "sections": 60
+        }
+      ]
+    }
+  ],
+  "pvt_reference": "air_water.tab",
+  "fluid_label": "AIR_WATER",
+  "thermal": {
+    "model": "ambient_h_given",
+    "ambient_temperature_c": 5.0,
+    "outer_heat_transfer_coefficient_w_m2k": 10.0,
+    "wall": {
+      "thickness_m": 0.0127,
+      "material": {
+        "conductivity_w_mk": 45.0,
+        "heat_capacity_j_kgk": 470.0,
+        "density_kg_m3": 7850.0
+      }
+    }
+  },
+  "integration": {
+    "end_time_s": 3600.0
+  },
+  "outputs": [
+    "PT",
+    "TM",
+    "HOL",
+    "GT",
+    "QLT"
+  ],
+  "massflow_sources": [
+    {
+      "label": "FEED",
+      "flowpath": "EXPORT",
+      "pipe": "BURIED",
+      "section": 1,
+      "time_s": 0.0,
+      "mass_flow_kg_s": 1.5,
+      "temperature_c": 75.0,
+      "gas_fraction": 0.25,
+      "total_water_fraction": 0.2
+    }
+  ],
+  "meta": {
+    "title": "Line cooling to the ground"
+  }
+}
