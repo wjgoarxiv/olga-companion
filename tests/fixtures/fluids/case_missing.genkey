@@ -1,0 +1,71 @@
+!**************************************************************************************
+! Simple horizontal pipeline example
+! Minimal valid OLGA .genkey file for testing and demonstration
+!**************************************************************************************
+
+!**************************************************************************************
+! Global keywords
+!**************************************************************************************
+OPTIONS STEADYSTATE=ON, COMPOSITIONAL=OFF, FLOWMODEL=OLGAHD
+CASE AUTHOR=TestUser, PROJECT=SimplePipeline, TITLE="Simple Horizontal Pipeline", \
+        INFO="Minimal three-pipe horizontal pipeline example"
+FILES PVTFILE="./missing_fluid.tab"
+INTEGRATION ENDTIME=24 h, MAXDT=60 s, MINDT=0.001 s, STARTTIME=0 s, DTSTART=1 s
+OUTPUT DTOUT=3600 s
+TREND DTPLOT=300 s
+PROFILE DTPLOT=3600 s
+
+!**************************************************************************************
+! Library keywords
+!**************************************************************************************
+MATERIAL LABEL="Steel", CAPACITY=0.11 Btu/lbm-F, CONDUCTIVITY=27.0 Btu/ft-h-R, \
+        DENSITY=489.0 lb/ft3, TYPE=SOLID
+
+WALL LABEL="Steel_Wall", THICKNESS=(0.01) m, MATERIAL=("Steel")
+
+!**************************************************************************************
+! Network Component - FLOWPATH
+!**************************************************************************************
+NETWORKCOMPONENT TYPE=FLOWPATH, TAG=FLOWPATH_1
+ PARAMETERS LABEL="Pipeline"
+ BRANCH FLUID=1
+ GEOMETRY LABEL="G-Pipeline", XSTART=0 m, YSTART=0 m, ZSTART=0 m
+ PIPE LABEL=Pipe_1, WALL="Steel_Wall", ROUGHNESS=2.5e-05 m, NSEGMENT=5, \
+        LSEGMENT=(20, 20, 20, 20, 20) m, XEND=100 m, YEND=0 m, ZEND=0 m, \
+        DIAMETER=0.3 m
+ PIPE LABEL=Pipe_2, WALL="Steel_Wall", ROUGHNESS=2.5e-05 m, NSEGMENT=5, \
+        LSEGMENT=(20, 20, 20, 20, 20) m, XEND=200 m, YEND=0 m, ZEND=0 m, \
+        DIAMETER=0.3 m
+ PIPE LABEL=Pipe_3, WALL="Steel_Wall", ROUGHNESS=2.5e-05 m, NSEGMENT=5, \
+        LSEGMENT=(20, 20, 20, 20, 20) m, XEND=300 m, YEND=0 m, ZEND=0 m, \
+        DIAMETER=0.3 m
+ POSITION LABEL="MidPoint_Obs", PIPE=Pipe_2, SECTION=3
+ OUTPUTDATA VARIABLE=(PT, TM, HOL, QT)
+ PROFILEDATA VARIABLE=(PT, TM, HOL, QT)
+ TRENDDATA POSITION="MidPoint_Obs", VARIABLE=PT
+ TRENDDATA POSITION="MidPoint_Obs", VARIABLE=HOL
+ENDNETWORKCOMPONENT
+
+!**************************************************************************************
+! Network Component - INLET NODE
+!**************************************************************************************
+NETWORKCOMPONENT TYPE=NODE, TAG=NODE_INLET
+ PARAMETERS LABEL="Inlet_Node", TYPE=PRESSURE, X=0 m, Y=0 m, Z=0 m, \
+        PRESSURE=50 bara, TEMPERATURE=20 C, TIME=0 h, GASFRACTION=0 -, FLUID=1
+ENDNETWORKCOMPONENT
+
+!**************************************************************************************
+! Network Component - OUTLET NODE
+!**************************************************************************************
+NETWORKCOMPONENT TYPE=NODE, TAG=NODE_OUTLET
+ PARAMETERS LABEL="Outlet_Node", TYPE=PRESSURE, X=300 m, Y=0 m, Z=0 m, \
+        PRESSURE=30 bara, TEMPERATURE=15 C, TIME=0 h, FLUID=1
+ENDNETWORKCOMPONENT
+
+!**************************************************************************************
+! Connections
+!**************************************************************************************
+CONNECTION TERMINALS = (NODE_INLET FLOWTERM_1, FLOWPATH_1 INLET)
+CONNECTION TERMINALS = (NODE_OUTLET FLOWTERM_1, FLOWPATH_1 OUTLET)
+
+ENDCASE

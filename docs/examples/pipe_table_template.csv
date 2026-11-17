@@ -1,0 +1,8 @@
+flowpath,pipe,from_node,to_node,length_m,elevation_m,inner_diameter_m,roughness_m,valve,valve_position,valve_diameter_m,valve_schedule,node,node_kind,pressure_bar,temperature_c,gas_fraction,water_fraction
+,,,,,,,,,,,,SRC,source,2.4,25.0,1.0,0.0
+,,,,,,,,,,,,OUT_A,sink,2.0,25.0,0.5,0.0
+,,,,,,,,,,,,OUT_B,sink,2.0,25.0,0.5,0.0
+FP_IN,FP_IN_P1,SRC,J_1,20.0,0.0,0.05,5e-05,,,,,,,,,,
+FP_IN,FP_IN_P2,SRC,J_1,5.0,2.0,0.05,5e-05,,,,,,,,,,
+FP_A,FP_A_P1,J_1,OUT_A,10.0,0.0,0.04,5e-05,V_FP_A,0.5,0.04,"0:1, 299:1, 300:0",,,,,,
+FP_B,FP_B_P1,J_1,OUT_B,8.0,-1.0,0.04,5e-05,,,,,,,,,,

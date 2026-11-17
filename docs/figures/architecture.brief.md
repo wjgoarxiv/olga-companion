@@ -1,0 +1,29 @@
+# Diagram brief · Where a case runs
+
+- Type: architecture
+- Audience: engineers reading the README
+- Purpose: The shell talks to a local sidecar. The AI provider, OLGA and the workspace sit outside that process.
+- Theme: dark and light, Tokyo Night
+- Canvas: 1080 by 640
+- Required facts:
+- Tauri shell participates in the labeled relationships below.
+- Python sidecar participates in the labeled relationships below.
+- Chat agent participates in the labeled relationships below.
+- Case pipeline participates in the labeled relationships below.
+- Run supervisor participates in the labeled relationships below.
+- Result reader participates in the labeled relationships below.
+- AI provider participates in the labeled relationships below.
+- OLGA participates in the labeled relationships below.
+- Workspace participates in the labeled relationships below.
+- Required relationships:
+- Tauri shell → Python sidecar (loopback)
+- Python sidecar → Chat agent (hosts)
+- Chat agent → AI provider (API)
+- Chat agent → Case pipeline (cases)
+- Chat agent → Run supervisor (runs)
+- Run supervisor → OLGA (opi.exe)
+- Run supervisor → Result reader (outputs)
+- Case pipeline → Workspace (save)
+- Trust boundary internal nodes: Tauri shell; Python sidecar; Chat agent; Case pipeline; Run supervisor; Result reader
+- Trust boundary external nodes: AI provider; OLGA; Workspace
+- Do not infer omitted systems or timing.

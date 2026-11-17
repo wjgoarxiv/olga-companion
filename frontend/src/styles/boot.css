@@ -1,0 +1,356 @@
+/* Boot, shutdown and toast overlays. Terminalcore: square, stepped, tokens only. */
+
+.boot-overlay,
+.shutdown-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--sp-4);
+}
+
+.boot-overlay {
+  z-index: 200;
+  background-color: var(--bg);
+  background-image: var(--plot-grid);
+  background-size: var(--plot-grid-size);
+  background-position: center;
+}
+
+.boot-overlay.is-leaving {
+  opacity: 0;
+  transform: translateY(calc(var(--rise) * -1));
+  transition: opacity 240ms steps(3, end), transform 240ms steps(3, end);
+  pointer-events: none;
+}
+
+.shutdown-overlay {
+  z-index: 300;
+  background: color-mix(in srgb, var(--bg) 70%, transparent);
+}
+
+/* Terminal window: inverse title bar naming the process, 2px frame. */
+
+.lc-window {
+  width: min(460px, 100%);
+  background: var(--panel);
+  border: 2px solid var(--ink);
+  animation: lc-enter var(--d-enter) var(--ease-enter) 1 backwards;
+}
+
+.lc-titlebar {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  height: calc(28px * var(--ui-scale));
+  padding: 0 var(--sp-3);
+  background: var(--ink);
+  color: var(--bg);
+  font-family: var(--font-mono);
+  font-size: var(--fs-s);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+}
+
+.lc-mark {
+  width: 14px;
+  height: 14px;
+  flex: none;
+}
+
+.lc-mark path:first-child {
+  fill: currentColor;
+}
+
+.lc-mark-prompt {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+}
+
+.lc-name {
+  font-weight: 700;
+}
+
+.lc-process {
+  margin-left: auto;
+  opacity: 0.75;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.lc-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+  padding: var(--sp-6);
+}
+
+/* Signature scene: liquid slugs stepping through a pipe between two nodes. */
+
+.lc-scene {
+  display: flex;
+  align-items: center;
+  height: 32px;
+}
+
+.lc-scene-node {
+  width: 12px;
+  height: 12px;
+  flex: none;
+  border: 2px solid var(--ink);
+  background: var(--panel);
+}
+
+.lc-scene-node.is-outlet {
+  border-color: var(--accent);
+}
+
+.lc-scene.is-ok .lc-scene-node.is-outlet {
+  background: var(--pass);
+  border-color: var(--pass);
+}
+
+.lc-scene.is-fail .lc-scene-node.is-outlet {
+  background: var(--fail);
+  border-color: var(--fail);
+}
+
+.lc-scene-pipe {
+  position: relative;
+  flex: 1;
+  height: 12px;
+  overflow: hidden;
+  border-top: 2px solid var(--ink);
+  border-bottom: 2px solid var(--ink);
+}
+
+.lc-scene-pipe::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 3px;
+  border-top: 2px dotted var(--hairline-soft);
+}
+
+.lc-scene-slugs {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  padding-left: 4px;
+  animation: lc-flow 1440ms steps(3, end) infinite;
+}
+
+.lc-scene-slugs i {
+  display: block;
+  width: 16px;
+  height: 8px;
+  background: var(--accent);
+}
+
+.lc-scene-slugs i:nth-child(2) {
+  width: 8px;
+}
+
+.lc-scene:not(.is-flowing) .lc-scene-slugs {
+  animation: none;
+  transform: translateX(30%);
+}
+
+/* steps(3, end) applies per segment: four segments make twelve stepped frames. */
+@keyframes lc-flow {
+  0% { transform: translateX(-96px); }
+  25% { transform: translateX(calc(25% - 72px)); }
+  50% { transform: translateX(calc(50% - 48px)); }
+  75% { transform: translateX(calc(75% - 24px)); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes lc-enter {
+  from { opacity: 0; transform: translateY(var(--rise)); }
+  to { opacity: 1; transform: none; }
+}
+
+/* Stage log: one line per stage, a fixed-width status tag in front. */
+
+.lc-log {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  font-family: var(--font-mono);
+  font-size: var(--fs-m);
+  color: var(--mute);
+}
+
+.lc-line {
+  display: flex;
+  gap: var(--sp-3);
+  align-items: baseline;
+}
+
+.lc-tag {
+  flex: none;
+  width: 6ch;
+  text-align: center;
+  font-weight: 700;
+}
+
+.lc-tag::before { content: "["; float: left; }
+.lc-tag::after { content: "]"; float: right; }
+
+.lc-line.is-done .lc-tag { color: var(--pass); }
+.lc-line.is-current { color: var(--ink); }
+.lc-line.is-current .lc-tag { color: var(--accent); }
+.lc-line.is-failed { color: var(--ink); }
+.lc-line.is-failed .lc-tag { color: var(--fail); }
+
+.lc-bar {
+  height: 6px;
+  background: var(--panel-2);
+  border: 1px solid var(--ink);
+}
+
+.lc-bar > span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--accent);
+  transform: scaleX(0.33);
+  transform-origin: left;
+  transition: transform var(--d-ui) var(--ease-ui);
+}
+
+.lc-actions {
+  display: flex;
+  gap: var(--sp-2);
+  justify-content: flex-end;
+}
+
+.boot-failed {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  padding-top: var(--sp-3);
+  border-top: 3px solid var(--fail);
+}
+
+.boot-failed-title,
+.shutdown-confirm-title {
+  font-family: var(--font-display);
+  font-size: var(--fs-xl);
+  font-weight: 800;
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.boot-failed-reason,
+.shutdown-confirm-body {
+  font-size: var(--fs-m);
+  color: var(--mute);
+}
+
+.boot-bundle-result {
+  font-size: var(--fs-s);
+  color: var(--mute);
+  word-break: break-all;
+}
+
+.shutdown-error {
+  font-size: var(--fs-m);
+  color: var(--fail);
+}
+
+/* Away-notification toasts: bottom-right stack, slide in once, auto-dismiss. */
+
+.toast-queue {
+  position: fixed;
+  right: var(--sp-4);
+  bottom: var(--sp-4);
+  z-index: 400;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  max-width: min(360px, 90vw);
+}
+
+.toast {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-2);
+  padding: var(--sp-3);
+  background: var(--panel);
+  border: 1px solid var(--hairline);
+  box-shadow: var(--elev-pop);
+  animation: toast-slide-in var(--d-enter) var(--ease-enter) 1 backwards;
+}
+
+.toast-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+
+.toast-title {
+  font-size: var(--fs-m);
+  font-weight: 650;
+  color: var(--ink);
+}
+
+.toast-text {
+  font-size: var(--fs-s);
+  color: var(--mute);
+}
+
+.toast-close {
+  padding: 0 var(--sp-1);
+  border: 0;
+  background: none;
+  color: var(--mute);
+  font-size: var(--fs-l);
+  line-height: 1;
+  cursor: pointer;
+}
+
+@keyframes toast-slide-in {
+  from { opacity: 0; transform: translateY(var(--rise)); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .boot-overlay.is-leaving {
+    transition: none;
+  }
+
+  .lc-window,
+  .lc-scene-slugs {
+    animation: none;
+  }
+
+  .lc-scene-slugs {
+    transform: translateX(30%);
+  }
+
+  .lc-bar > span {
+    transition: none;
+  }
+
+  .toast {
+    animation: none;
+  }
+}
