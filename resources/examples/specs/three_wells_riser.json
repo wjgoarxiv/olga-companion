@@ -1,0 +1,191 @@
+{
+  "version": "3",
+  "pvt_reference": "air_water.tab",
+  "fluid_label": "AIR_WATER",
+  "integration": {
+    "end_time_s": 3600.0
+  },
+  "outputs": [
+    "PT",
+    "TM",
+    "HOL",
+    "GT",
+    "QLT"
+  ],
+  "nodes": [
+    {
+      "label": "WELL_A",
+      "kind": "source",
+      "pressure_pa": 1300000.0,
+      "temperature_c": 50.0,
+      "gas_fraction": 0.2,
+      "total_water_fraction": 0.3
+    },
+    {
+      "label": "WELL_B",
+      "kind": "source",
+      "pressure_pa": 1250000.0,
+      "temperature_c": 48.0,
+      "gas_fraction": 0.2,
+      "total_water_fraction": 0.3
+    },
+    {
+      "label": "WELL_C",
+      "kind": "source",
+      "pressure_pa": 1200000.0,
+      "temperature_c": 45.0,
+      "gas_fraction": 0.2,
+      "total_water_fraction": 0.3
+    },
+    {
+      "label": "MANIFOLD_1",
+      "kind": "junction"
+    },
+    {
+      "label": "MANIFOLD_2",
+      "kind": "junction"
+    },
+    {
+      "label": "SEPARATOR",
+      "kind": "sink",
+      "pressure_pa": 400000.0,
+      "temperature_c": 30.0,
+      "gas_fraction": 0.2,
+      "total_water_fraction": 0.3
+    }
+  ],
+  "flowpaths": [
+    {
+      "label": "LINE_A",
+      "from": "WELL_A",
+      "to": "MANIFOLD_1",
+      "pipes": [
+        {
+          "label": "PIPE_A",
+          "length_m": 700.0,
+          "elevation_m": -8.0,
+          "diameter_m": 0.15,
+          "roughness_m": 5e-05,
+          "sections": 14
+        }
+      ]
+    },
+    {
+      "label": "LINE_B",
+      "from": "WELL_B",
+      "to": "MANIFOLD_1",
+      "pipes": [
+        {
+          "label": "PIPE_B",
+          "length_m": 600.0,
+          "elevation_m": -5.0,
+          "diameter_m": 0.15,
+          "roughness_m": 5e-05,
+          "sections": 12
+        }
+      ]
+    },
+    {
+      "label": "HEADER",
+      "from": "MANIFOLD_1",
+      "to": "MANIFOLD_2",
+      "pipes": [
+        {
+          "label": "PIPE_H",
+          "length_m": 900.0,
+          "elevation_m": 0.0,
+          "diameter_m": 0.2,
+          "roughness_m": 5e-05,
+          "sections": 18
+        }
+      ]
+    },
+    {
+      "label": "LINE_C",
+      "from": "WELL_C",
+      "to": "MANIFOLD_2",
+      "pipes": [
+        {
+          "label": "PIPE_C",
+          "length_m": 800.0,
+          "elevation_m": -6.0,
+          "diameter_m": 0.15,
+          "roughness_m": 5e-05,
+          "sections": 16
+        }
+      ]
+    },
+    {
+      "label": "EXPORT",
+      "from": "MANIFOLD_2",
+      "to": "SEPARATOR",
+      "pipes": [
+        {
+          "label": "SEABED",
+          "length_m": 1200.0,
+          "elevation_m": -10.0,
+          "diameter_m": 0.25,
+          "roughness_m": 5e-05,
+          "sections": 24
+        },
+        {
+          "label": "RISER",
+          "length_m": 100.0,
+          "elevation_m": 100.0,
+          "diameter_m": 0.25,
+          "roughness_m": 5e-05,
+          "sections": 10
+        },
+        {
+          "label": "TOPSIDE",
+          "length_m": 30.0,
+          "elevation_m": 0.0,
+          "diameter_m": 0.25,
+          "roughness_m": 5e-05,
+          "sections": 3
+        }
+      ]
+    }
+  ],
+  "thermal": {
+    "model": "adiabatic"
+  },
+  "massflow_sources": [
+    {
+      "label": "FEED_A",
+      "flowpath": "LINE_A",
+      "pipe": "PIPE_A",
+      "section": 1,
+      "time_s": 0.0,
+      "mass_flow_kg_s": 1.2,
+      "temperature_c": 50.0,
+      "gas_fraction": 0.25,
+      "total_water_fraction": 0.2
+    },
+    {
+      "label": "FEED_B",
+      "flowpath": "LINE_B",
+      "pipe": "PIPE_B",
+      "section": 1,
+      "time_s": 0.0,
+      "mass_flow_kg_s": 1.0,
+      "temperature_c": 48.0,
+      "gas_fraction": 0.25,
+      "total_water_fraction": 0.2
+    },
+    {
+      "label": "FEED_C",
+      "flowpath": "LINE_C",
+      "pipe": "PIPE_C",
+      "section": 1,
+      "time_s": 0.0,
+      "mass_flow_kg_s": 0.8,
+      "temperature_c": 45.0,
+      "gas_fraction": 0.25,
+      "total_water_fraction": 0.2
+    }
+  ],
+  "meta": {
+    "title": "Three wells, two manifolds and a riser"
+  }
+}

@@ -1,0 +1,136 @@
+{
+  "version": "3",
+  "pvt_reference": "air_water.tab",
+  "fluid_label": "AIR_WATER",
+  "integration": {
+    "end_time_s": 3600.0
+  },
+  "outputs": [
+    "PT",
+    "TM",
+    "HOL",
+    "GT",
+    "QLT"
+  ],
+  "nodes": [
+    {
+      "label": "INLET",
+      "kind": "source",
+      "pressure_pa": 1200000.0,
+      "temperature_c": 60.0,
+      "gas_fraction": 0.2,
+      "total_water_fraction": 0.3
+    },
+    {
+      "label": "OUTLET",
+      "kind": "sink",
+      "pressure_pa": 300000.0,
+      "temperature_c": 30.0,
+      "gas_fraction": 0.2,
+      "total_water_fraction": 0.3
+    }
+  ],
+  "flowpaths": [
+    {
+      "label": "MAIN",
+      "from": "INLET",
+      "to": "OUTLET",
+      "pipes": [
+        {
+          "label": "UPHILL",
+          "length_m": 600.0,
+          "elevation_m": 25.0,
+          "diameter_m": 0.2,
+          "roughness_m": 5e-05,
+          "sections": 12
+        },
+        {
+          "label": "DOWNHILL",
+          "length_m": 600.0,
+          "elevation_m": -40.0,
+          "diameter_m": 0.2,
+          "roughness_m": 5e-05,
+          "sections": 12
+        },
+        {
+          "label": "VALLEY",
+          "length_m": 500.0,
+          "elevation_m": 20.0,
+          "diameter_m": 0.2,
+          "roughness_m": 5e-05,
+          "sections": 10
+        },
+        {
+          "label": "FLAT",
+          "length_m": 400.0,
+          "elevation_m": 0.0,
+          "diameter_m": 0.2,
+          "roughness_m": 5e-05,
+          "sections": 8
+        }
+      ]
+    }
+  ],
+  "thermal": {
+    "model": "ambient_h_given",
+    "ambient_temperature_c": 8.0,
+    "outer_heat_transfer_coefficient_w_m2k": 8.0,
+    "wall": {
+      "thickness_m": 0.0127,
+      "material": {
+        "conductivity_w_mk": 45.0,
+        "heat_capacity_j_kgk": 470.0,
+        "density_kg_m3": 7850.0
+      }
+    }
+  },
+  "equipment": [
+    {
+      "kind": "valve",
+      "label": "CHOKE",
+      "flowpath": "MAIN",
+      "pipe": "UPHILL",
+      "position": 1.0,
+      "diameter_m": 0.2,
+      "opening": 1.0,
+      "schedule": [
+        {
+          "time_s": 0.0,
+          "opening": 1.0
+        },
+        {
+          "time_s": 1200.0,
+          "opening": 1.0
+        },
+        {
+          "time_s": 1260.0,
+          "opening": 0.4
+        },
+        {
+          "time_s": 2400.0,
+          "opening": 0.4
+        },
+        {
+          "time_s": 2460.0,
+          "opening": 0.8
+        }
+      ]
+    }
+  ],
+  "massflow_sources": [
+    {
+      "label": "FEED",
+      "flowpath": "MAIN",
+      "pipe": "UPHILL",
+      "section": 1,
+      "time_s": 0.0,
+      "mass_flow_kg_s": 1.5,
+      "temperature_c": 60.0,
+      "gas_fraction": 0.25,
+      "total_water_fraction": 0.2
+    }
+  ],
+  "meta": {
+    "title": "Hilly line with a choke schedule and heat loss"
+  }
+}

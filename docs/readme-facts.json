@@ -1,0 +1,66 @@
+{
+  "claims": [
+    {
+      "id": "purpose",
+      "text": "A local Windows desktop app. Chat builds, checks and runs OLGA cases. Writes, saves and runs wait for an approval card.",
+      "sources": ["README.md", "docs/ARCHITECTURE.md"]
+    },
+    {
+      "id": "release-015",
+      "text": "Product version 0.1.5. Installer name on the v0.1.5 release notes is OLGA-Companion_0.1.5_x64-setup.exe, plus an msi. Unsigned. Compare SHA-256 with SHA256SUMS.txt.",
+      "sources": ["package.json", "src-tauri/tauri.conf.json"]
+    },
+    {
+      "id": "platform",
+      "text": "Windows x64. Needs a licensed OLGA for real runs. OLGA is not bundled. Tested with OLGA 2022.1.",
+      "sources": ["README.md", "docs/PACKAGING.md"]
+    },
+    {
+      "id": "providers",
+      "text": "OpenAI (Codex), GitHub Copilot, Antigravity (Gemini), xAI (Grok), or an API key.",
+      "sources": ["src/olga_companion/config.py"]
+    },
+    {
+      "id": "approval-ttl",
+      "text": "Each approval works once and expires after ten minutes.",
+      "sources": ["tests/test_approval_expiry_notice.py"]
+    },
+    {
+      "id": "dev-ports",
+      "text": "npm run dev:app serves the frontend on port 5273 and the sidecar on port 8865.",
+      "sources": ["README.md"]
+    },
+    {
+      "id": "node-python",
+      "text": "Build from source needs Node.js 22.12+ and Python 3.11+.",
+      "sources": ["package.json", "pyproject.toml"]
+    },
+    {
+      "id": "license",
+      "text": "Apache-2.0. The pvt_engine folder is MIT.",
+      "sources": ["LICENSE", "src/olga_companion/pvt_engine/LICENSE"]
+    },
+    {
+      "id": "sample-case",
+      "text": "Public sample: water 4 kg/s, air 0.05 kg/s, 1.5 km, 120 mm ID, outlet 4 bar(a), 30 C. Proposed feed 4.05 kg/s, water fraction 0.987654, roughness 4.5e-5 m, 50 sections, 3600 s. Result 447916.6 Pa to 400423.8 Pa, drop 47492.8 Pa.",
+      "sources": ["README.md"]
+    },
+    {
+      "id": "air-water",
+      "text": "Bundled generic air-water table, label AIR_WATER, 0-80 C, 0.5-20 bar. The shipped table file names CPA.",
+      "sources": ["resources/tutorial/README.md", "resources/fluids/air_water_cpa.tab"]
+    }
+  ],
+  "badges": [
+    {
+      "label": "release",
+      "url": "https://github.com/wjgoarxiv/olga-companion/releases/latest",
+      "claim": "release-015"
+    },
+    {
+      "label": "license",
+      "url": "https://github.com/wjgoarxiv/olga-companion/blob/master/LICENSE",
+      "claim": "license"
+    }
+  ]
+}
