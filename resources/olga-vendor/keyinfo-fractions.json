@@ -1,0 +1,23 @@
+[
+  {
+    "term": "GASFRACTION",
+    "file": "OLGA 2022.1 NODEkeyinfo.txt",
+    "line": 13,
+    "meaning": "The mass fraction of gas within the gas and oil that enters here. Enter -1 and OLGA takes the equilibrium value from the PVT table.",
+    "unit": "- (dimensionless)"
+  },
+  {
+    "term": "TOTALWATERFRACTION",
+    "file": "OLGA 2022.1 NODEkeyinfo.txt",
+    "line": 15,
+    "meaning": "The mass fraction of total water in the whole fluid at the boundary. Enter -1 and OLGA takes it from the PVT table. WATERFRACTION is the alternative to this key.",
+    "unit": "- (dimensionless)"
+  },
+  {
+    "term": "WATERFRACTION",
+    "file": "OLGA 2022.1 NODEkeyinfo.txt",
+    "line": 14,
+    "meaning": "The mass fraction of free water in the whole fluid at the boundary. TOTALWATERFRACTION is the alternative to this key.",
+    "unit": "- (dimensionless)"
+  }
+]

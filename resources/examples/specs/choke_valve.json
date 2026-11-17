@@ -1,0 +1,88 @@
+{
+  "version": "3",
+  "nodes": [
+    {
+      "label": "INLET",
+      "kind": "source",
+      "pressure_pa": 900000.0,
+      "temperature_c": 40.0,
+      "gas_fraction": 0.2,
+      "total_water_fraction": 0.3
+    },
+    {
+      "label": "OUTLET",
+      "kind": "sink",
+      "pressure_pa": 200000.0,
+      "temperature_c": 30.0,
+      "gas_fraction": 0.2,
+      "total_water_fraction": 0.3
+    }
+  ],
+  "flowpaths": [
+    {
+      "label": "MAIN",
+      "from": "INLET",
+      "to": "OUTLET",
+      "pipes": [
+        {
+          "label": "UPSTREAM",
+          "length_m": 500.0,
+          "elevation_m": 0.0,
+          "diameter_m": 0.2,
+          "roughness_m": 5e-05,
+          "sections": 10
+        },
+        {
+          "label": "DOWNSTREAM",
+          "length_m": 500.0,
+          "elevation_m": 0.0,
+          "diameter_m": 0.2,
+          "roughness_m": 5e-05,
+          "sections": 10
+        }
+      ]
+    }
+  ],
+  "pvt_reference": "air_water.tab",
+  "fluid_label": "AIR_WATER",
+  "thermal": {
+    "model": "adiabatic"
+  },
+  "integration": {
+    "end_time_s": 3600.0
+  },
+  "outputs": [
+    "PT",
+    "TM",
+    "HOL",
+    "GT",
+    "QLT"
+  ],
+  "massflow_sources": [
+    {
+      "label": "FEED",
+      "flowpath": "MAIN",
+      "pipe": "UPSTREAM",
+      "section": 1,
+      "time_s": 0.0,
+      "mass_flow_kg_s": 1.5,
+      "temperature_c": 40.0,
+      "gas_fraction": 0.25,
+      "total_water_fraction": 0.2
+    }
+  ],
+  "equipment": [
+    {
+      "kind": "valve",
+      "label": "CHOKE",
+      "flowpath": "MAIN",
+      "pipe": "UPSTREAM",
+      "position": 1.0,
+      "diameter_m": 0.2,
+      "opening": 0.3
+    }
+  ],
+  "meta": {
+    "title": "Pipe with a choke valve"
+  }
+}

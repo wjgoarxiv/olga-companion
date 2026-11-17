@@ -1,0 +1,41 @@
+{
+  "name": "olga-toolkit-static-genkey-contract",
+  "version": "0.1.0",
+  "toolkit_dir_env": "OLGA_TOOLKIT_DIR",
+  "support_files": [
+    "genkey_parser.py"
+  ],
+  "scripts": [
+    "criterion_evaluator.py",
+    "data_exporter.py",
+    "fast_plotter.py",
+    "fast_ppl_plotter.py",
+    "figure_generator.py",
+    "genkey_builder.py",
+    "genkey_diff.py",
+    "genkey_summarizer.py",
+    "genkey_validator.py",
+    "genkey_writer.py",
+    "iteration_helper.py",
+    "mfl_parser.py",
+    "mfl_runner.py",
+    "mfl_writer.py",
+    "olga_runner.py",
+    "opc_controller.py",
+    "opi_parser.py",
+    "parametric_sweep.py",
+    "pipe_mapper.py",
+    "report_generator.py",
+    "result_comparator.py",
+    "result_parser.py",
+    "result_summarizer.py",
+    "run_monitor.py",
+    "slug_analyzer.py",
+    "solver_diagnostics.py",
+    "tab_parser.py",
+    "tab_summarizer.py",
+    "tab_validator.py",
+    "topology_visualizer.py",
+    "wax_hydrate_checker.py"
+  ]
+}
