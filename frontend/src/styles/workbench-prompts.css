@@ -1,0 +1,191 @@
+/* Shared orientation surface for Workspace, Run, and Results blank states. */
+.workbench-prompt {
+  width: min(980px, 100%);
+  display: grid;
+  gap: 16px;
+  color: var(--ink);
+  /* This blank state renders inside panes that carry their own inner rails
+     (Results inventory, Workspace file list), so its usable width is far
+     narrower than the viewport and a viewport media query cannot describe it.
+     Size the layout against the real container instead. */
+  container-type: inline-size;
+}
+
+.ws-canvas.empty > .workbench-prompt,
+.rv-main.empty > .workbench-prompt { margin: 0; }
+.ws-selection-state,
+.rv-selection-state { margin: auto; }
+.run-empty-state { margin-top: 4px; }
+
+.workbench-prompt-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(240px, 320px);
+  align-items: stretch;
+  gap: 18px;
+}
+
+/* Below this the fixed 240-320px aside track wins the row and starves the text
+   column (it collapsed to 26px, spilling the copy 57px past its edge), so the
+   hero and the step list stack — same treatment the narrow viewport gets. */
+@container (max-width: 580px) {
+  .workbench-prompt-hero,
+  .workbench-prompt-steps { grid-template-columns: 1fr; }
+}
+
+.workbench-prompt-intro {
+  display: grid;
+  align-content: center;
+  gap: 7px;
+  min-width: 0;
+  padding: 8px 0;
+}
+
+.workbench-prompt-kicker {
+  margin: 0;
+  color: var(--mute);
+  font-size: var(--fs-s);
+  font-weight: 820;
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+}
+
+.workbench-prompt h2 {
+  margin: 0;
+  color: var(--ink);
+  font-size: var(--fs-2xl);
+  font-weight: 780;
+  letter-spacing: -.035em;
+  line-height: 1.05;
+  text-wrap: balance;
+}
+
+.workbench-prompt-description {
+  max-width: 62ch;
+  margin: 0;
+  color: var(--ink);
+  font-size: var(--fs-s);
+  line-height: 1.55;
+  text-wrap: pretty;
+}
+
+.workbench-prompt-context {
+  display: grid;
+  align-content: center;
+  gap: 6px;
+  min-width: 0;
+  padding: 20px 22px;
+  overflow: hidden;
+  color: var(--ink);
+  background: var(--panel-2);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-s);
+}
+
+.workbench-prompt-context span {
+  color: var(--mute);
+  font-size: var(--fs-s);
+  font-weight: 820;
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+}
+
+.workbench-prompt-context strong,
+.workbench-prompt-context em {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.workbench-prompt-context strong {
+  font-size: var(--fs-m);
+  font-weight: 720;
+}
+
+.workbench-prompt-context em {
+  color: var(--mute);
+  font-size: var(--fs-xs);
+  font-style: normal;
+}
+
+.workbench-prompt-body { display: grid; gap: 12px; }
+.workbench-prompt-steps {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.workbench-prompt-steps li {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  align-items: center;
+  gap: 11px;
+  min-width: 0;
+  min-height: 76px;
+  padding: 13px 15px;
+  background: var(--panel);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-s);
+}
+
+.workbench-prompt-steps > li > span {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  color: var(--on-select);
+  background: var(--select);
+  border-radius: var(--r-s);
+  font-size: var(--fs-s);
+  font-weight: 820;
+}
+
+.workbench-prompt-steps div { display: grid; gap: 2px; min-width: 0; }
+.workbench-prompt-steps strong { color: var(--ink); font-size: var(--fs-xs); }
+.workbench-prompt-steps em { color: var(--mute); font-size: var(--fs-s); font-style: normal; line-height: 1.35; }
+
+.workbench-prompt-footer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-top: 4px;
+}
+
+.workbench-prompt-footer .ui-button { min-width: 132px; }
+.workbench-prompt-note { color: var(--mute); font-size: var(--fs-xs); }
+.run-loading-state { width: min(620px, 100%); padding: 16px; background: var(--panel-2); border: 1px solid var(--hairline); border-radius: var(--r-s); }
+
+.runtime-unavailable-view {
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  padding: 32px 36px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.runtime-unavailable-view > .workbench-prompt { margin: 0; }
+
+@media (max-height: 700px) {
+  /* Short screens (720x450, 1440x700): the 34px clamp and 104px card push
+     primary content out. Desktop-tall rendering is untouched. */
+  .workbench-prompt h2 { font-size: var(--fs-2xl); }
+  .workbench-prompt-context { min-height: 0; }
+  .workbench-prompt-steps li { min-height: 0; }
+  .runtime-unavailable-view { padding: 18px 20px; }
+}
+
+@media (max-width: 760px) {
+  .workbench-prompt { min-width: 0; gap: 12px; }
+  .workbench-prompt-hero,
+  .workbench-prompt-steps { grid-template-columns: 1fr; }
+  .ws-selection-state,
+  .rv-selection-state { margin: 0; }
+  .workbench-prompt-context { min-height: 104px; padding: 17px 18px; }
+  .workbench-prompt h2 { font-size: calc(22px * var(--ui-scale)); }
+  .workbench-prompt-footer { align-items: stretch; flex-direction: column; }
+  .workbench-prompt-footer .ui-button { width: 100%; min-height: 44px; }
+  .runtime-unavailable-view { padding: 18px 16px 84px; }
+}

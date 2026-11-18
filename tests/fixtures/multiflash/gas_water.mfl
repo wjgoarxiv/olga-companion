@@ -1,0 +1,15 @@
+# test fixture written for OLGA Companion #
+remove all;
+units temperature K pressure Pa enthalpy J/mol entropy J/mol/K volume m3/mol
+amounts mol viscosity Pas thcond W/m/K surten N/m diffusion m2/s;
+set fractions;
+table olga "C:\cases\gas_water.tab" info title "GASWATER" temperatures 260 300
+  340 ; pressures
+  50000 1000000 5000000 ; ;
+puredata INFODATA ;
+components overwrite 1 METHANE
+2 ETHANE
+3 WATER ;
+amounts .8 .1 .1;
+units temperature C pressure bar enthalpy J/mol entropy J/mol/K volume m3/mol
+amounts mole viscosity Pas thcond W/m/K surten N/m diffusion m2/s;

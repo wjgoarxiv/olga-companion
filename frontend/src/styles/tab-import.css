@@ -1,0 +1,26 @@
+/* Make a .tab from values the user already has: a collapsible block inside the fluid-table flow. */
+.tab-import {
+  margin-top: 12px; padding: 0 12px 12px;
+  border: 1px solid var(--hairline); background: var(--raised);
+}
+.tab-import > summary {
+  display: flex; align-items: center; min-height: var(--tgt); cursor: pointer;
+  font-size: var(--fs-m); font-weight: 650; color: var(--ink);
+}
+.tab-import[open] > summary { border-bottom: 1px solid var(--hairline); margin-bottom: 8px; }
+.tab-import-result { display: grid; gap: 4px; margin-top: 12px; }
+.tab-import-summary {
+  margin: 0; color: var(--ink); font-family: var(--font-mono); font-size: var(--fs-s);
+  font-variant-numeric: tabular-nums;
+}
+.tab-import-heading { margin: 8px 0 0; color: var(--mute); font-size: var(--fs-s); font-weight: 700; }
+.tab-import-issues { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.tab-import-issues li {
+  min-width: 0; padding: 8px 10px; border: 1px solid var(--fail); background: var(--raised);
+  color: var(--ink); font-size: var(--fs-s); line-height: 1.45; overflow-wrap: anywhere;
+}
+.tab-import-head {
+  max-height: 240px; overflow: auto; margin: 8px 0 0; padding: 12px;
+  border: 1px solid var(--hairline); background: var(--bg-deep);
+  font-size: var(--fs-xs); line-height: 1.6; white-space: pre;
+}
