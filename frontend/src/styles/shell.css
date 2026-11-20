@@ -1,0 +1,37 @@
+/* Workbench frame: bypass link, focus ownership, chat header actions. The
+   region grid lives in workbench.css; this file keeps the shell-level
+   contracts the accessibility and depth pins target. */
+.skip-link {
+  position: fixed;
+  z-index: 1000;
+  top: 8px;
+  left: 8px;
+  padding: 10px 14px;
+  border-radius: var(--r-input);
+  background: var(--ink);
+  color: var(--bg);
+  font-size: var(--fs-s);
+  font-weight: 750;
+  transform: translateY(calc(-100% - 12px));
+}
+.skip-link:focus-visible { transform: translateY(0); }
+.shell-main { grid-area: centre; display: flex; flex-direction: column; min-width: 0; min-height: 0; }
+.shell-main:focus-visible { outline-offset: -2px; }
+/* The view container keeps its ring for keyboard focus only: a mouse click
+   focuses the scrolled panel without matching :focus-visible, so mouse
+   focus must never paint an outline here. */
+.shell-main:focus:not(:focus-visible),
+.ui-tabpanel:focus:not(:focus-visible) { outline: none; }
+/* Selected activity reads as pressed depth, not a decorative colour rail. */
+.wb-activity .ui-iconbutton[aria-pressed="true"] {
+  background: var(--select);
+  color: var(--on-select);
+  border-color: var(--clear);
+  box-shadow: none;
+}
+.chat-head-actions { display: flex; flex: 0 0 auto; align-items: center; gap: 4px; padding: 2px; background: transparent; border: 0; border-radius: var(--r-surface); box-shadow: none; }
+
+/* Chat section stacks head / timeline / composer; the timeline is the scroll region. */
+.chat { display: flex; flex-direction: column; min-height: 0; }
+.chat > .timeline { flex: 1 1 auto; min-width: 0; min-height: 0; }
+.timeline > * { min-width: 0; max-width: 100%; }

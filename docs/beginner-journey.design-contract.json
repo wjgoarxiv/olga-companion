@@ -1,0 +1,690 @@
+{
+  "schema_id": "litfamily.design-contract/v1beta2",
+  "contract_id": "contract:beginner-journey",
+  "source_hash": "24315cb442e2e8de53c36c56e815f23b9ae24a5468fde1a39bf89256ba117483",
+  "lane": "brownfield",
+  "intent": {
+    "audiences": [
+      "Korean-speaking OLGA beginners"
+    ],
+    "tasks": [
+      "Define, create, modify, validate, approve, run, plot and analyze a case"
+    ],
+    "qualities": [
+      "Understandable next action",
+      "Evidence before engineering claims",
+      "Explicit human approval"
+    ],
+    "constraints": [
+      "Preserve existing worktree changes and local fonts",
+      "Reuse the light React workbench",
+      "No typed filesystem paths",
+      "Do not transmit a guide question without manual Send"
+    ],
+    "non_goals": [
+      "Release or signing",
+      "Fabricated simulation success",
+      "Replacement of the simulation engine",
+      "Global UI translation"
+    ]
+  },
+  "direction": {
+    "name": "Guided engineering workbench",
+    "principles": [
+      "One ordered task list, not five competing cards",
+      "Prepare editable questions before sending",
+      "Expose recovery actions for missing prerequisites",
+      "Show evidence checkpoints without inventing completion"
+    ],
+    "token_strategy": "reuse",
+    "voice": "Plain Korean verbs with existing English navigation names where necessary"
+  },
+  "inventory": {
+    "routes": [
+      {
+        "id": "route:chat",
+        "path": "/",
+        "primary": true,
+        "auth_required": false
+      },
+      {
+        "id": "route:workspace",
+        "path": "/#workspace",
+        "primary": false,
+        "auth_required": false
+      },
+      {
+        "id": "route:run",
+        "path": "/#run",
+        "primary": false,
+        "auth_required": false
+      },
+      {
+        "id": "route:results",
+        "path": "/#results",
+        "primary": false,
+        "auth_required": false
+      },
+      {
+        "id": "route:settings",
+        "path": "/#settings",
+        "primary": false,
+        "auth_required": false
+      }
+    ],
+    "regions": [
+      {
+        "id": "region:journey",
+        "route_id": "route:chat"
+      },
+      {
+        "id": "region:composer",
+        "route_id": "route:chat"
+      },
+      {
+        "id": "region:run-controls",
+        "route_id": "route:run"
+      },
+      {
+        "id": "region:run-evidence",
+        "route_id": "route:run"
+      },
+      {
+        "id": "region:result-inventory",
+        "route_id": "route:results"
+      },
+      {
+        "id": "region:result-chart",
+        "route_id": "route:results"
+      },
+      {
+        "id": "region:chat-history",
+        "route_id": "route:chat"
+      },
+      {
+        "id": "region:settings",
+        "route_id": "route:settings"
+      },
+      {
+        "id": "region:topology",
+        "route_id": "route:workspace"
+      }
+    ],
+    "components": [
+      {
+        "id": "component:guide",
+        "region_id": "region:journey"
+      },
+      {
+        "id": "component:question",
+        "region_id": "region:composer"
+      },
+      {
+        "id": "component:run-approve",
+        "region_id": "region:run-controls"
+      },
+      {
+        "id": "component:run-receipt",
+        "region_id": "region:run-evidence"
+      },
+      {
+        "id": "component:result-rail",
+        "region_id": "region:result-inventory"
+      },
+      {
+        "id": "component:trend-chart",
+        "region_id": "region:result-chart"
+      },
+      {
+        "id": "component:session-menu",
+        "region_id": "region:chat-history"
+      },
+      {
+        "id": "component:settings-card",
+        "region_id": "region:settings"
+      },
+      {
+        "id": "component:topology-map",
+        "region_id": "region:topology"
+      }
+    ],
+    "interactions": [
+      {
+        "id": "interaction:select-step",
+        "route_id": "route:chat",
+        "critical": false,
+        "input_modes": [
+          "keyboard",
+          "pointer",
+          "touch"
+        ]
+      },
+      {
+        "id": "interaction:prepare-question",
+        "route_id": "route:chat",
+        "critical": true,
+        "input_modes": [
+          "keyboard",
+          "pointer",
+          "touch"
+        ]
+      },
+      {
+        "id": "interaction:recover",
+        "route_id": "route:chat",
+        "critical": true,
+        "input_modes": [
+          "keyboard",
+          "pointer",
+          "touch"
+        ]
+      },
+      {
+        "id": "interaction:disclose",
+        "route_id": "route:chat",
+        "critical": false,
+        "input_modes": [
+          "keyboard",
+          "pointer",
+          "touch"
+        ]
+      },
+      {
+        "id": "interaction:clear-question",
+        "route_id": "route:chat",
+        "critical": true,
+        "input_modes": [
+          "keyboard",
+          "pointer",
+          "touch"
+        ]
+      },
+      {
+        "id": "interaction:send-question",
+        "route_id": "route:chat",
+        "critical": true,
+        "input_modes": [
+          "keyboard",
+          "pointer",
+          "touch"
+        ]
+      },
+      {
+        "id": "interaction:preview-run",
+        "route_id": "route:run",
+        "critical": true,
+        "input_modes": [
+          "keyboard",
+          "pointer",
+          "touch"
+        ]
+      },
+      {
+        "id": "interaction:approve-run",
+        "route_id": "route:run",
+        "critical": true,
+        "input_modes": [
+          "keyboard",
+          "pointer",
+          "touch"
+        ]
+      },
+      {
+        "id": "interaction:stop-run",
+        "route_id": "route:run",
+        "critical": true,
+        "input_modes": [
+          "keyboard",
+          "pointer",
+          "touch"
+        ]
+      },
+      {
+        "id": "interaction:open-result",
+        "route_id": "route:results",
+        "critical": false,
+        "input_modes": [
+          "keyboard",
+          "pointer",
+          "touch"
+        ]
+      },
+      {
+        "id": "interaction:plot-variable",
+        "route_id": "route:results",
+        "critical": true,
+        "input_modes": [
+          "keyboard",
+          "pointer",
+          "touch"
+        ]
+      },
+      {
+        "id": "interaction:export-result",
+        "route_id": "route:results",
+        "critical": true,
+        "input_modes": [
+          "keyboard",
+          "pointer",
+          "touch"
+        ]
+      },
+      {
+        "id": "interaction:switch-chat",
+        "route_id": "route:chat",
+        "critical": true,
+        "input_modes": [
+          "keyboard",
+          "pointer",
+          "touch"
+        ]
+      }
+    ],
+    "states": [
+      {
+        "id": "state:no-case",
+        "route_id": "route:chat",
+        "kind": "empty"
+      },
+      {
+        "id": "state:ready",
+        "route_id": "route:chat",
+        "kind": "ready"
+      },
+      {
+        "id": "state:busy",
+        "route_id": "route:chat",
+        "kind": "disabled"
+      },
+      {
+        "id": "state:offline",
+        "route_id": "route:chat",
+        "kind": "offline"
+      },
+      {
+        "id": "state:no-provider",
+        "route_id": "route:chat",
+        "kind": "permission"
+      },
+      {
+        "id": "state:question-prepared",
+        "route_id": "route:chat",
+        "kind": "success"
+      },
+      {
+        "id": "state:run-history-receipt",
+        "route_id": "route:run",
+        "kind": "ready"
+      },
+      {
+        "id": "state:run-live",
+        "route_id": "route:run",
+        "kind": "loading"
+      },
+      {
+        "id": "state:run-failed",
+        "route_id": "route:run",
+        "kind": "error"
+      },
+      {
+        "id": "state:approve-blocked",
+        "route_id": "route:run",
+        "kind": "disabled"
+      },
+      {
+        "id": "state:result-receipt-verified",
+        "route_id": "route:results",
+        "kind": "success"
+      },
+      {
+        "id": "state:result-receipt-changed",
+        "route_id": "route:results",
+        "kind": "error"
+      },
+      {
+        "id": "state:results-loading",
+        "route_id": "route:results",
+        "kind": "loading"
+      },
+      {
+        "id": "state:results-empty",
+        "route_id": "route:results",
+        "kind": "empty"
+      }
+    ],
+    "viewports": [
+      {
+        "id": "viewport:small",
+        "width": 320,
+        "height": 800,
+        "category": "compact"
+      },
+      {
+        "id": "viewport:phone",
+        "width": 390,
+        "height": 844,
+        "category": "compact"
+      },
+      {
+        "id": "viewport:tablet",
+        "width": 768,
+        "height": 1024,
+        "category": "medium"
+      },
+      {
+        "id": "viewport:desktop",
+        "width": 1440,
+        "height": 900,
+        "category": "expanded"
+      },
+      {
+        "id": "viewport:zoom",
+        "width": 720,
+        "height": 450,
+        "category": "medium"
+      }
+    ],
+    "references": [
+      {
+        "id": "reference:design",
+        "sha256": "6a9da683f490698987650f966bf63dbf0513731b5d917777c98cd8896d13b727",
+        "kind": "repo-local",
+        "label": "DESIGN.md: preserve the local workbench identity; do not copy its obsolete layout descriptions"
+      }
+    ],
+    "authenticated_surfaces": []
+  },
+  "accessibility": {
+    "target": "WCAG 2.2 AA",
+    "keyboard": true,
+    "screen_reader": true,
+    "reduced_motion": true,
+    "forced_colors": true,
+    "zoom_percent": 200
+  },
+  "localization": {
+    "locales": [
+      "ko-KR",
+      "en-US"
+    ],
+    "text_expansion_percent": 40,
+    "cjk_line_break_review": true,
+    "font_fallback_review": true,
+    "ime_review": true,
+    "rtl_review": false
+  },
+  "performance": {
+    "lcp_ms": 3000,
+    "cls": 0.1,
+    "inp_ms": 200,
+    "initial_js_kb": 550,
+    "initial_css_kb": 130
+  },
+  "evidence_policy": {
+    "independent_review_required": false,
+    "required_channels": [
+      "tests",
+      "browser",
+      "keyboard",
+      "localization"
+    ],
+    "cleanup_required": true
+  },
+  "omissions": [
+    {
+      "id": "omission:live-engine",
+      "reason": "Licensed Windows OLGA and a provider-backed real run need separate verification; no scientific lifecycle pass is inferred from UI evidence",
+      "owner": "project owner"
+    },
+    {
+      "id": "omission:speech",
+      "reason": "Screen-reader speech and physical touch are not observable in the local browser probe",
+      "owner": "project owner"
+    },
+    {
+      "id": "omission:rtl",
+      "reason": "The requested Korean and existing English UI do not require RTL mirroring",
+      "owner": "implementer"
+    }
+  ],
+  "accepted_exceptions": [],
+  "tokens": [
+    {
+      "id": "token:ink",
+      "category": "color",
+      "value": "var(--ink)",
+      "usage": "Selected labels, primary actions and visible focus"
+    },
+    {
+      "id": "token:body",
+      "category": "typography",
+      "value": "14px / 1.6 Pretendard Variable",
+      "usage": "Korean guide copy with keep-all and overflow-wrap anywhere"
+    },
+    {
+      "id": "token:rhythm",
+      "category": "spacing",
+      "value": "4px base, 8px step gaps, 24px region gaps",
+      "usage": "Reuse existing workbench spacing"
+    }
+  ],
+  "component_behaviors": [
+    {
+      "component_id": "component:guide",
+      "state_ids": [
+        "state:no-case",
+        "state:ready",
+        "state:busy",
+        "state:offline",
+        "state:no-provider"
+      ],
+      "interaction_ids": [
+        "interaction:select-step",
+        "interaction:prepare-question",
+        "interaction:recover",
+        "interaction:disclose"
+      ],
+      "keyboard_behavior": "Native summary uses Enter/Space; step buttons use Tab/Enter/Space with aria-pressed; recovery moves to existing views"
+    },
+    {
+      "component_id": "component:question",
+      "state_ids": [
+        "state:question-prepared",
+        "state:offline",
+        "state:busy"
+      ],
+      "interaction_ids": [
+        "interaction:prepare-question",
+        "interaction:clear-question",
+        "interaction:send-question"
+      ],
+      "keyboard_behavior": "Native multiline textarea: Enter inserts a newline; Ctrl/Command+Enter submits only online and idle with non-empty text, never during IME composition; Clear only empties the draft and restores focus"
+    },
+    {
+      "component_id": "component:run-approve",
+      "state_ids": [
+        "state:approve-blocked",
+        "state:run-live",
+        "state:run-failed"
+      ],
+      "interaction_ids": [
+        "interaction:preview-run",
+        "interaction:approve-run",
+        "interaction:stop-run"
+      ],
+      "keyboard_behavior": "Native buttons; Approve is disabled until a preview passes and names the blocker through aria-describedby; no automatic retry"
+    },
+    {
+      "component_id": "component:run-receipt",
+      "state_ids": [
+        "state:run-history-receipt",
+        "state:run-failed"
+      ],
+      "interaction_ids": [
+        "interaction:open-result"
+      ],
+      "keyboard_behavior": "A restored receipt is labelled as earlier history and shows no live progress; the raw log is a native disclosure"
+    },
+    {
+      "component_id": "component:result-rail",
+      "state_ids": [
+        "state:result-receipt-verified",
+        "state:result-receipt-changed",
+        "state:results-empty",
+        "state:results-loading"
+      ],
+      "interaction_ids": [
+        "interaction:open-result"
+      ],
+      "keyboard_behavior": "Buttons with full accessible names; a checkbox limits the list to the active case"
+    },
+    {
+      "component_id": "component:trend-chart",
+      "state_ids": [
+        "state:results-loading"
+      ],
+      "interaction_ids": [
+        "interaction:plot-variable",
+        "interaction:export-result"
+      ],
+      "keyboard_behavior": "Focusable SVG with arrow-key inspection; any selection change clears export receipts"
+    },
+    {
+      "component_id": "component:session-menu",
+      "state_ids": [
+        "state:ready"
+      ],
+      "interaction_ids": [
+        "interaction:switch-chat"
+      ],
+      "keyboard_behavior": "Native dialog-like rail; Escape closes and returns focus; the newest user intent wins over late responses"
+    }
+  ],
+  "responsive_transformations": [
+    {
+      "route_id": "route:chat",
+      "viewport_id": "viewport:small",
+      "behavior": "Labeled native step picker above detail; no duplicate context card; multiline composer with bounded height, 44px actions and internal overflow"
+    },
+    {
+      "route_id": "route:chat",
+      "viewport_id": "viewport:phone",
+      "behavior": "Same reflow in light, dark preference and reduced-motion preference; the app intentionally stays light"
+    },
+    {
+      "route_id": "route:chat",
+      "viewport_id": "viewport:tablet",
+      "behavior": "Let content fit the workbench without horizontal document overflow"
+    },
+    {
+      "route_id": "route:chat",
+      "viewport_id": "viewport:desktop",
+      "behavior": "Two columns: ordered steps and selected task detail; advanced shortcuts folded"
+    },
+    {
+      "route_id": "route:chat",
+      "viewport_id": "viewport:zoom",
+      "behavior": "Use the scrolling timeline in the viewport-halved zoom approximation; keep the composer reachable"
+    }
+  ],
+  "motion": {
+    "policy": "none",
+    "reduced_motion_behavior": "No new animation; keep native disclosure and existing global reduced-motion policy",
+    "transitions": []
+  },
+  "acceptance_criteria": [
+    {
+      "id": "criterion:five-stages",
+      "observable": "All five stages expose task descriptions and evidence checkpoints without claiming completion",
+      "verification": "tests",
+      "required": true,
+      "inventory_ids": [
+        "component:guide"
+      ]
+    },
+    {
+      "id": "criterion:manual-send",
+      "observable": "Preparing a question changes only the multiline composer value and focus; no chat or approval request is sent; existing drafts are preserved",
+      "verification": "browser",
+      "required": true,
+      "inventory_ids": [
+        "interaction:prepare-question",
+        "component:question"
+      ]
+    },
+    {
+      "id": "criterion:edit-question",
+      "observable": "Long Korean drafts wrap; Enter adds a line; Clear empties only the draft; IME and whitespace cannot trigger submission; Ctrl/Command+Enter submits once",
+      "verification": "browser",
+      "required": true,
+      "inventory_ids": [
+        "interaction:clear-question",
+        "interaction:send-question",
+        "component:question"
+      ]
+    },
+    {
+      "id": "criterion:recovery",
+      "observable": "Missing case, missing provider and offline state explain the next action",
+      "verification": "browser",
+      "required": true,
+      "inventory_ids": [
+        "interaction:recover",
+        "state:no-case",
+        "state:no-provider",
+        "state:offline"
+      ]
+    },
+    {
+      "id": "criterion:keyboard",
+      "observable": "Disclosure, step selection and preparation work with keyboard and show focus",
+      "verification": "keyboard",
+      "required": true,
+      "inventory_ids": [
+        "component:guide",
+        "component:question"
+      ]
+    },
+    {
+      "id": "criterion:rs-matrix",
+      "observable": "Attempt the full installed probe matrix; no remaining measured or derived HIGH findings; exit 2 remains blocked",
+      "verification": "browser",
+      "required": true,
+      "inventory_ids": [
+        "route:chat"
+      ]
+    },
+    {
+      "id": "criterion:run-truth",
+      "observable": "A receipt from an earlier session is labelled as history with no live progress; Approve names what blocks it; a failed run shows fault lines and a next step without automatic retry",
+      "verification": "browser",
+      "required": true,
+      "inventory_ids": [
+        "state:run-history-receipt",
+        "state:approve-blocked",
+        "component:run-approve"
+      ]
+    },
+    {
+      "id": "criterion:result-truth",
+      "observable": "Each result is labelled receipt-verified, changed after the run, or receipt-less; chart text is at least 12px; selection changes clear export receipts",
+      "verification": "browser",
+      "required": true,
+      "inventory_ids": [
+        "state:result-receipt-verified",
+        "state:result-receipt-changed",
+        "component:trend-chart"
+      ]
+    },
+    {
+      "id": "criterion:stale-chat",
+      "observable": "A slow earlier chat load, create or delete never replaces the conversation the user is looking at",
+      "verification": "tests",
+      "required": true,
+      "inventory_ids": [
+        "interaction:switch-chat",
+        "component:session-menu"
+      ]
+    }
+  ]
+}
