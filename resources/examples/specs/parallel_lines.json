@@ -1,0 +1,130 @@
+{
+  "version": "3",
+  "pvt_reference": "air_water.tab",
+  "fluid_label": "AIR_WATER",
+  "integration": {
+    "end_time_s": 3600.0
+  },
+  "outputs": [
+    "PT",
+    "TM",
+    "HOL",
+    "GT",
+    "QLT"
+  ],
+  "nodes": [
+    {
+      "label": "INLET",
+      "kind": "source",
+      "pressure_pa": 1000000.0,
+      "temperature_c": 40.0,
+      "gas_fraction": 0.2,
+      "total_water_fraction": 0.3
+    },
+    {
+      "label": "SPLIT",
+      "kind": "junction"
+    },
+    {
+      "label": "MERGE",
+      "kind": "junction"
+    },
+    {
+      "label": "OUTLET",
+      "kind": "sink",
+      "pressure_pa": 300000.0,
+      "temperature_c": 30.0,
+      "gas_fraction": 0.2,
+      "total_water_fraction": 0.3
+    }
+  ],
+  "flowpaths": [
+    {
+      "label": "FEEDER",
+      "from": "INLET",
+      "to": "SPLIT",
+      "pipes": [
+        {
+          "label": "PIPE_F",
+          "length_m": 400.0,
+          "elevation_m": 0.0,
+          "diameter_m": 0.25,
+          "roughness_m": 5e-05,
+          "sections": 8
+        }
+      ]
+    },
+    {
+      "label": "LINE_NORTH",
+      "from": "SPLIT",
+      "to": "MERGE",
+      "pipes": [
+        {
+          "label": "NORTH_UP",
+          "length_m": 750.0,
+          "elevation_m": 15.0,
+          "diameter_m": 0.15,
+          "roughness_m": 5e-05,
+          "sections": 15
+        },
+        {
+          "label": "NORTH_DOWN",
+          "length_m": 750.0,
+          "elevation_m": -15.0,
+          "diameter_m": 0.15,
+          "roughness_m": 5e-05,
+          "sections": 15
+        }
+      ]
+    },
+    {
+      "label": "LINE_SOUTH",
+      "from": "SPLIT",
+      "to": "MERGE",
+      "pipes": [
+        {
+          "label": "SOUTH",
+          "length_m": 1500.0,
+          "elevation_m": 0.0,
+          "diameter_m": 0.2,
+          "roughness_m": 5e-05,
+          "sections": 30
+        }
+      ]
+    },
+    {
+      "label": "OUTFLOW",
+      "from": "MERGE",
+      "to": "OUTLET",
+      "pipes": [
+        {
+          "label": "PIPE_O",
+          "length_m": 500.0,
+          "elevation_m": 0.0,
+          "diameter_m": 0.25,
+          "roughness_m": 5e-05,
+          "sections": 10
+        }
+      ]
+    }
+  ],
+  "thermal": {
+    "model": "adiabatic"
+  },
+  "massflow_sources": [
+    {
+      "label": "FEED",
+      "flowpath": "FEEDER",
+      "pipe": "PIPE_F",
+      "section": 1,
+      "time_s": 0.0,
+      "mass_flow_kg_s": 2.0,
+      "temperature_c": 40.0,
+      "gas_fraction": 0.25,
+      "total_water_fraction": 0.2
+    }
+  ],
+  "meta": {
+    "title": "One line split into two parallel lines"
+  }
+}

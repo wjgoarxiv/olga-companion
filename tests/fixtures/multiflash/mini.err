@@ -1,0 +1,16 @@
+Test record one title.
+Module: Test module
+Subprogram: TESTA
+Error: 201
+Test record one detail.
+Test record two title.
+Module: Test module
+Subprogram: TESTB
+Error: 20575
+Test record two detail line one.
+Test record two detail line two.
+Test record three title.
+Module: Test module
+Subprogram: TESTB
+Error: 20576
+Test record three detail.

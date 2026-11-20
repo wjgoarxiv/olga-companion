@@ -1,0 +1,386 @@
+{
+  "ANIMATE": {
+    "en": "Controls frequency of animation data output.",
+    "ko": "애니메이션 데이터를 쓰는 간격을 정해요."
+  },
+  "AUTHOR": {
+    "en": "Case author name",
+    "ko": "사례 작성자 이름"
+  },
+  "BOTTOMPOSITION": {
+    "en": "Label of the POSITION marking the bottom of the reservoir interval",
+    "ko": "저류층 구간의 아래 끝을 표시하는 POSITION의 이름"
+  },
+  "BRANCH": {
+    "en": "Assigns a fluid system to this flowpath.",
+    "ko": "이 유로(flowpath)에 쓸 유체 계통을 지정해요."
+  },
+  "CAPACITY": {
+    "en": "Specific heat capacity",
+    "ko": "비열"
+  },
+  "CASE": {
+    "en": "Case metadata.",
+    "ko": "사례 정보"
+  },
+  "COMPOPTIONS": {
+    "en": "Compositional tracking options.",
+    "ko": "조성 추적 옵션"
+  },
+  "COMPOSITIONAL": {
+    "en": "Enable compositional (multi-component) fluid tracking",
+    "ko": "조성(여러 성분) 유체 추적을 켜요"
+  },
+  "CONDUCTIVITY": {
+    "en": "Thermal conductivity",
+    "ko": "열전도도"
+  },
+  "CONNECTION": {
+    "en": "Wires a node terminal to a flowpath end, establishing the network topology.",
+    "ko": "노드 단자를 유로 끝에 이어 배관망 연결을 정해요."
+  },
+  "DENSITY": {
+    "en": "Material density",
+    "ko": "재료 밀도"
+  },
+  "DIAMETER": {
+    "en": "Inner diameter",
+    "ko": "안지름"
+  },
+  "DRILLING": {
+    "en": "Enable drilling fluid model",
+    "ko": "시추 유체 모델을 켜요"
+  },
+  "DTOUT": {
+    "en": "Time interval between output file writes",
+    "ko": "출력 파일을 쓰는 시간 간격"
+  },
+  "DTPLOT": {
+    "en": "Time interval between trend data points",
+    "ko": "추세(trend) 데이터를 기록하는 시간 간격"
+  },
+  "DTSTART": {
+    "en": "Initial timestep size",
+    "ko": "첫 시간 간격 크기"
+  },
+  "ENDTIME": {
+    "en": "Simulation end time",
+    "ko": "시뮬레이션 끝 시각"
+  },
+  "EQUILIBRIUMMODEL": {
+    "en": "Flash model for the valve: FROZEN (no flash) or EQUILIBRIUM",
+    "ko": "밸브의 플래시 모델: FROZEN(플래시 없음) 또는 EQUILIBRIUM"
+  },
+  "EXPANSION": {
+    "en": "Thermal expansion coefficient. Used when RADIATION=YES.",
+    "ko": "열팽창 계수. RADIATION=YES일 때 써요."
+  },
+  "FILES": {
+    "en": "References to external data files required by the simulation.",
+    "ko": "시뮬레이션에 필요한 외부 데이터 파일 참조"
+  },
+  "FLOWMODEL": {
+    "en": "Select the multiphase flow model",
+    "ko": "다상 유동 모델 선택"
+  },
+  "FLOWPATH": {
+    "en": "A flow path: one or more pipes in series between two nodes.",
+    "ko": "유로: 두 노드 사이에 이어진 하나 이상의 배관"
+  },
+  "FLUID": {
+    "en": "Fluid system index (references a fluid defined in the PVT file; 1 for the first/only fluid)",
+    "ko": "유체 계통 번호(PVT 파일에 정의된 유체를 가리켜요. 하나뿐이면 1)"
+  },
+  "FORCHHEIMER": {
+    "en": "Defines a non-Darcy (Forchheimer) inflow performance relationship (IPR) model for a reservoir contact.",
+    "ko": "저류층 접촉부의 비다시(Forchheimer) 유입 성능(IPR) 모델을 정해요."
+  },
+  "GASFRACTION": {
+    "en": "Gas mass fraction of the inflow gas+oil mixture. Specify -1 for OLGA to use the equilibrium values from the PVT table.",
+    "ko": "유입되는 가스+오일 혼합물의 가스 질량 분율. -1이면 PVT 표의 평형값을 써요."
+  },
+  "GASINJ": {
+    "en": "Gas injection productivity index at each time point",
+    "ko": "각 시각의 가스 주입 생산성 지수"
+  },
+  "GEOMETRY": {
+    "en": "Sets the spatial start coordinates for the flowpath (i.e., the inlet end location).",
+    "ko": "유로의 시작 좌표(입구 끝 위치)를 정해요."
+  },
+  "GT": {
+    "en": "Total mass flow rate",
+    "ko": "총 질량 유량"
+  },
+  "HAMBIENT": {
+    "en": "Ambient (outer) heat transfer coefficient",
+    "ko": "외부(주변) 열전달 계수"
+  },
+  "HEATTRANSFER": {
+    "en": "Defines the heat transfer model applied across a set of pipes within the flowpath.",
+    "ko": "유로 안 여러 배관에 적용할 열전달 모델을 정해요."
+  },
+  "HMININNERWALL": {
+    "en": "Minimum inner wall heat transfer coefficient",
+    "ko": "내벽 열전달 계수의 최소값"
+  },
+  "HOL": {
+    "en": "Liquid holdup (liquid volume fraction)",
+    "ko": "액체 홀드업(액체 부피 분율)"
+  },
+  "HOUTEROPTION": {
+    "en": "Outer boundary option: HGIVEN (heat transfer coefficient given), UVALUE, etc.",
+    "ko": "바깥 경계 옵션: HGIVEN(열전달 계수 지정), UVALUE 등"
+  },
+  "INLET": {
+    "en": "The inlet terminal of a flow path.",
+    "ko": "유로의 입구 단자"
+  },
+  "INNEREMISSIVITY": {
+    "en": "Emissivity of inner surface (0–1). Used when RADIATION=YES.",
+    "ko": "안쪽 면의 방사율(0–1). RADIATION=YES일 때 써요."
+  },
+  "INTEGRATION": {
+    "en": "Time integration control parameters.",
+    "ko": "시간 적분 설정"
+  },
+  "INTERPOLATION": {
+    "en": "Interpolation method: SECTIONWISE or OFF",
+    "ko": "보간 방법: SECTIONWISE 또는 OFF"
+  },
+  "ISOTHERMAL": {
+    "en": "YES / NO — whether reservoir fluid enters at constant temperature",
+    "ko": "YES / NO — 저류층 유체가 일정한 온도로 들어오는지"
+  },
+  "LABEL": {
+    "en": "Unique name of this item",
+    "ko": "이 항목의 고유 이름"
+  },
+  "LINEAR": {
+    "en": "Defines a linear (Darcy-only) IPR model for injection.",
+    "ko": "주입용 선형(다시 법칙만 쓰는) IPR 모델을 정해요."
+  },
+  "LSEGMENT": {
+    "en": "Length of each segment; tuple must have NSEGMENT elements",
+    "ko": "각 구간의 길이. 값의 개수는 NSEGMENT와 같아야 해요"
+  },
+  "MATERIAL": {
+    "en": "Defines the thermal properties of a wall layer material (solid or fluid annulus).",
+    "ko": "벽 층 재료(고체 또는 유체 환형부)의 열 물성을 정해요."
+  },
+  "MAXDT": {
+    "en": "Maximum allowable timestep",
+    "ko": "허용하는 최대 시간 간격"
+  },
+  "MINDT": {
+    "en": "Minimum allowable timestep",
+    "ko": "허용하는 최소 시간 간격"
+  },
+  "MODELOPTION": {
+    "en": "Flow rate basis: VOLUME (volumetric) or MASS",
+    "ko": "유량 기준: VOLUME(부피) 또는 MASS(질량)"
+  },
+  "NETWORKCOMPONENT": {
+    "en": "A part of the network: a flow path or a node.",
+    "ko": "배관망의 구성 요소: 유로 또는 노드"
+  },
+  "NODE": {
+    "en": "A network node: a boundary, a junction or a closed end.",
+    "ko": "배관망 노드: 경계, 분기점 또는 막힌 끝"
+  },
+  "NSEGMENT": {
+    "en": "Number of computational segments in this pipe",
+    "ko": "이 배관의 계산 구간 수"
+  },
+  "OILINJ": {
+    "en": "Oil injection productivity index at each time point",
+    "ko": "각 시각의 오일 주입 생산성 지수"
+  },
+  "OPENING": {
+    "en": "Valve opening fraction (0 = fully closed, 1 = fully open)",
+    "ko": "밸브 열림 비율(0 = 완전히 닫힘, 1 = 완전히 열림)"
+  },
+  "OPTIONS": {
+    "en": "Simulation mode flags.",
+    "ko": "시뮬레이션 모드 설정"
+  },
+  "OUTEREMISSIVITY": {
+    "en": "Emissivity of outer surface (0–1). Used when RADIATION=YES.",
+    "ko": "바깥 면의 방사율(0–1). RADIATION=YES일 때 써요."
+  },
+  "OUTLET": {
+    "en": "The outlet terminal of a flow path.",
+    "ko": "유로의 출구 단자"
+  },
+  "OUTPUT": {
+    "en": "Controls frequency of the main output file (.res / .genkey_out).",
+    "ko": "주 출력 파일(.res / .genkey_out)을 쓰는 간격을 정해요."
+  },
+  "OUTPUTDATA": {
+    "en": "Specifies which OLGA output variables to write for all positions in this flowpath.",
+    "ko": "이 유로의 모든 위치에 대해 쓸 OLGA 출력 변수를 정해요."
+  },
+  "PIPE": {
+    "en": "A pipe in a flow path, with its length, diameter, roughness and segments.",
+    "ko": "유로 안의 배관(길이, 지름, 거칠기, 구간 수)"
+  },
+  "POSITION": {
+    "en": "Defines a named observation point at a specific section boundary within a pipe.",
+    "ko": "배관 안 특정 구간 경계에 둔 이름 붙은 관측 지점"
+  },
+  "PRESSURE": {
+    "en": "Pressure",
+    "ko": "압력"
+  },
+  "PRODIPR": {
+    "en": "Label of the FORCHHEIMER or LINEAR model used for production IPR",
+    "ko": "생산 IPR에 쓰는 FORCHHEIMER 또는 LINEAR 모델의 이름"
+  },
+  "PROFILE": {
+    "en": "Controls frequency of profile plot data (spatial snapshots along flowpaths).",
+    "ko": "프로파일(유로를 따라 찍은 공간 분포) 데이터를 쓰는 간격을 정해요."
+  },
+  "PROFILEDATA": {
+    "en": "Specifies which OLGA variables to include in spatial profile output for this flowpath.",
+    "ko": "이 유로의 공간 프로파일 출력에 넣을 OLGA 변수를 정해요."
+  },
+  "PROJECT": {
+    "en": "Project identifier",
+    "ko": "프로젝트 이름"
+  },
+  "PT": {
+    "en": "Pressure",
+    "ko": "압력"
+  },
+  "PVTFILE": {
+    "en": "Path to the PVT fluid properties table (.tab file). Path is relative to the .genkey file location.",
+    "ko": "PVT 유체 물성 표(.tab) 경로. .genkey 파일 위치 기준이에요."
+  },
+  "QLT": {
+    "en": "Total liquid volume flow rate",
+    "ko": "총 액체 체적 유량"
+  },
+  "QT": {
+    "en": "Total volume flow rate",
+    "ko": "총 체적 유량"
+  },
+  "RADIATION": {
+    "en": "Enable radiative heat transfer (YES/NO). Applicable to FLUID type only.",
+    "ko": "복사 열전달을 켜요(YES/NO). FLUID 형식에만 써요."
+  },
+  "RESERVOIRCONTACT": {
+    "en": "Defines a reservoir inflow/outflow boundary within the flowpath, using a named IPR model to compute fluid exchange between the reservoir and the wellbore.",
+    "ko": "유로 안의 저류층 유입·유출 경계를 정하고, 이름 붙은 IPR 모델로 저류층과 유정 사이의 유체 교환을 계산해요."
+  },
+  "ROUGHNESS": {
+    "en": "Inner wall absolute roughness",
+    "ko": "내벽 절대 거칠기"
+  },
+  "SECTION": {
+    "en": "Section boundary index within the pipe (1 = inlet end of first segment)",
+    "ko": "배관 안의 구간 경계 번호(1 = 첫 구간의 입구 끝)"
+  },
+  "SECTIONBOUNDARY": {
+    "en": "Section boundary index within the pipe where the valve is located",
+    "ko": "밸브가 있는 배관 안의 구간 경계 번호"
+  },
+  "STARTTIME": {
+    "en": "Simulation start time (usually 0)",
+    "ko": "시뮬레이션 시작 시각(보통 0)"
+  },
+  "STEADYSTATE": {
+    "en": "Run a steady-state initialisation before transient simulation",
+    "ko": "과도 계산 전에 정상 상태 초기화를 해요"
+  },
+  "TAMBIENT": {
+    "en": "Ambient temperature at each pipe segment",
+    "ko": "각 배관 구간의 주변 온도"
+  },
+  "TEMPERATURE": {
+    "en": "Temperature",
+    "ko": "온도"
+  },
+  "TERMINALS": {
+    "en": "The two ends a CONNECTION joins: a node terminal and a flow path end.",
+    "ko": "CONNECTION이 잇는 두 끝: 노드 단자와 유로 끝"
+  },
+  "THICKNESS": {
+    "en": "Radial thickness of each layer, ordered from innermost to outermost",
+    "ko": "각 층의 반지름 방향 두께(안쪽부터 바깥쪽 순서)"
+  },
+  "TIME": {
+    "en": "Time points at which the following coefficients apply",
+    "ko": "다음 계수가 적용되는 시각들"
+  },
+  "TITLE": {
+    "en": "Human-readable case title",
+    "ko": "사람이 읽는 사례 제목"
+  },
+  "TM": {
+    "en": "Fluid temperature",
+    "ko": "유체 온도"
+  },
+  "TOPPOSITION": {
+    "en": "Label of the POSITION marking the top of the reservoir interval",
+    "ko": "저류층 구간의 위 끝을 표시하는 POSITION의 이름"
+  },
+  "TOTALWATERFRACTION": {
+    "en": "Mass fraction of total water in the total boundary fluid mixture. Use -1 for the total water fraction to be taken from the PVT table. Either this key or WATERFRACTION can be specified.",
+    "ko": "경계 유체 전체에서 전체 물의 질량 분율. -1이면 PVT 표의 값을 써요. 이 값과 WATERFRACTION 중 하나만 정해요."
+  },
+  "TREND": {
+    "en": "Controls frequency of trend plot data (time-series at specific positions).",
+    "ko": "추세(특정 위치의 시계열) 데이터를 쓰는 간격을 정해요."
+  },
+  "VALVE": {
+    "en": "Places a choke or valve element at a section boundary within a pipe of the flowpath.",
+    "ko": "유로의 배관 안 구간 경계에 초크나 밸브를 둬요."
+  },
+  "VARIABLE": {
+    "en": "OLGA output variable name (e.g., LIQC, PT, HOL)",
+    "ko": "OLGA 출력 변수 이름(예: LIQC, PT, HOL)"
+  },
+  "VISCOSITY": {
+    "en": "Dynamic viscosity. Applicable to FLUID type only.",
+    "ko": "동적 점도. FLUID 형식에만 써요."
+  },
+  "WALL": {
+    "en": "Defines a layered pipe wall configuration by referencing a sequence of MATERIAL labels and their corresponding layer thicknesses.",
+    "ko": "MATERIAL 이름과 층 두께를 차례로 적어 여러 층의 배관 벽을 정해요."
+  },
+  "WATERFRACTION": {
+    "en": "Mass fraction of free water in the total boundary fluid mixture. Either this key or TOTALWATERFRACTION can be specified.",
+    "ko": "경계 유체 전체에서 자유수의 질량 분율. 이 값과 TOTALWATERFRACTION 중 하나만 정해요."
+  },
+  "WATINJ": {
+    "en": "Water injection productivity index at each time point",
+    "ko": "각 시각의 물 주입 생산성 지수"
+  },
+  "WGR": {
+    "en": "Water-gas ratio at each time point",
+    "ko": "각 시각의 물-가스 비"
+  },
+  "XEND": {
+    "en": "X coordinate of the pipe outlet end",
+    "ko": "배관 출구 끝의 X 좌표"
+  },
+  "XSTART": {
+    "en": "X coordinate of the flowpath inlet",
+    "ko": "유로 입구의 X 좌표"
+  },
+  "YEND": {
+    "en": "Y coordinate of the pipe outlet end",
+    "ko": "배관 출구 끝의 Y 좌표"
+  },
+  "YSTART": {
+    "en": "Y coordinate (negative = below surface/mudline)",
+    "ko": "Y 좌표(음수 = 지표/해저면 아래)"
+  },
+  "ZEND": {
+    "en": "Z coordinate of the pipe outlet end",
+    "ko": "배관 출구 끝의 Z 좌표"
+  },
+  "ZSTART": {
+    "en": "Z coordinate (azimuth offset; often 0)",
+    "ko": "Z 좌표(방위 오프셋, 보통 0)"
+  }
+}
