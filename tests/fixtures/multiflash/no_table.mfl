@@ -1,0 +1,6 @@
+remove all;
+units temperature C pressure bar;
+puredata INFODATA ;
+components overwrite 1 METHANE
+2 WATER ;
+amounts 0.9 0.1;

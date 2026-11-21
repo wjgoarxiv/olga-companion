@@ -1,0 +1,36 @@
+[
+  {
+    "term": "AMPLIFICATION",
+    "file": "OLGA 2022.1 PIDCONTROLLERkeyinfo.txt",
+    "line": 12,
+    "meaning": "Gain of the PID controller: how strongly its output reacts to the gap between setpoint and measured value. With the non-linear option it is a list matched to the ERROR list.",
+    "unit": "- (dimensionless)"
+  },
+  {
+    "term": "DERIVATIVECONST",
+    "file": "OLGA 2022.1 PIDCONTROLLERkeyinfo.txt",
+    "line": 14,
+    "meaning": "Derivative time of the PID controller: the coefficient in front of its derivative term. With the non-linear option it is a list matched to the ERROR list.",
+    "unit": "s"
+  },
+  {
+    "term": "INTEGRALCONST",
+    "file": "OLGA 2022.1 PIDCONTROLLERkeyinfo.txt",
+    "line": 16,
+    "meaning": "Integral time of the PID controller, a characteristic time. It is the inverse of the integral coefficient in the output formula, so a larger time means a weaker integral action.",
+    "unit": "s"
+  },
+  {
+    "term": "MASSFLOW",
+    "file": "OLGA 2022.1 FLOWPATHkeyinfo.txt",
+    "line": 52,
+    "meaning": "On a SOURCE: its total mass flow rate, given as a time series.",
+    "unit": "kg/s"
+  },
+  {
+    "term": "SETPOINT",
+    "file": "OLGA 2022.1 PIDCONTROLLERkeyinfo.txt",
+    "line": 19,
+    "meaning": "The target the controller steers its measured value toward, in the unit of that measured value. A list when it changes over time (paired with TIME)."
+  }
+]

@@ -1,0 +1,204 @@
+
+
+
+     **************************************************************
+     *                                                            *
+     *                                                            *
+     *    XXXXXXX     XXX               XXXXXXX        XXXXXXX    *
+     *   XX     XX    XXX              XX     XX      XX     XX   *
+     * XXX       XXX  XXX            XXX       XXX  XXX       XXX *
+     * XXX       XXX  XXX            XXX            XXX       XXX *
+     * XXX       XXX  XXX            XXX   XXXXXXX  XXXXXXXXXXXXX *
+     * XXX       XXX  XXX            XXX       XXX  XXX       XXX *
+     * XXX       XXX  XXX            XXX       XXX  XXX       XXX *
+     *   XX     XX    XXX              XX     XX    XXX       XXX *
+     *    XXXXXXX     XXXXXXXXXXXXX     XXXXXXX     XXX       XXX *
+     *                                                            *
+     *                                                            *
+     **************************************************************
+
+
+
+     A  T R A N S I E N T,  O N E  D I M E N S I O N A L  M O D E L
+
+     F O R  T H R E E - P H A S E  F L O W  I N  P I P E L I N E S
+
+
+
+     DELIVERED BY    :   Schlumberger
+
+     VERSION         :   OLGA 2022.1.0.35696
+
+     SUPPORT         :   customercarecenter@slb.com
+
+     DATE            :   26-11-17
+
+     PROJECT         :   CASESPEC
+     TITLE           :   Valve shut-in and restart
+     AUTHOR          :   OLGACOMPANION
+     CASE NAME       :   C:\run\case
+     INPUT FILE      :   case.genkey
+     PVT FILE        :   air_water.tab
+
+     FLOWMODEL       :   OLGA HD
+
+     CPU CORES USED  :   6
+     CORES AVAILABLE :   12
+     PHYSICAL CPUs   :   6
+
+     ARGUMENTS       :  ''
+
+
+WARNING The steady state preprocessor did not converge. 
+
+*****************************************************
+      Results at Simulation Time: 0s
+*****************************************************
+
+
+
+Time step information:
+
+--*++*-- Time: 0.000e+00s. Step no: 0/3600. Current step-size: 1.000e+00s --*++*--
+
+
+---------------------------
+Variables for FlowPath: MAIN
+---------------------------
+
+
+
+
+Variables in control volumes:
+
+
+  Nr      Z               HOL             PT              TM
+ (-)      (m)             (-)             (PA)            (C)
+   1      2.500000e+01  7.898548e-01  8.851732e+05  3.992913e+01
+   2      7.500000e+01  7.898182e-01  8.685396e+05  3.990089e+01
+   3      1.250000e+02  7.897843e-01  8.532261e+05  3.987466e+01
+   4      1.750000e+02  7.897497e-01  8.377050e+05  3.984783e+01
+   5      2.250000e+02  7.897143e-01  8.219537e+05  3.982031e+01
+   6      2.750000e+02  7.896780e-01  8.059606e+05  3.979207e+01
+   7      3.250000e+02  7.896296e-01  7.897130e+05  3.975060e+01
+   8      3.750000e+02  7.895737e-01  7.731973e+05  3.970079e+01
+   9      4.250000e+02  7.895164e-01  7.563986e+05  3.964978e+01
+  10      4.750000e+02  7.894577e-01  7.392999e+05  3.959746e+01
+  11      5.250000e+02  7.893975e-01  7.218823e+05  3.954371e+01
+  12      5.750000e+02  7.893357e-01  7.041250e+05  3.948836e+01
+  13      6.250000e+02  7.892721e-01  6.860047e+05  3.943125e+01
+  14      6.750000e+02  7.892065e-01  6.674952e+05  3.937217e+01
+  15      7.250000e+02  7.891387e-01  6.485667e+05  3.931085e+01
+  16      7.750000e+02  7.890675e-01  6.289024e+05  3.924607e+01
+  17      8.250000e+02  7.889945e-01  6.090181e+05  3.917927e+01
+  18      8.750000e+02  7.889185e-01  5.886004e+05  3.910913e+01
+  19      9.250000e+02  7.888391e-01  5.675931e+05  3.903505e+01
+  20      9.750000e+02  7.887556e-01  5.459346e+05  3.895631e+01
+  21      1.025000e+03  7.886677e-01  5.235511e+05  3.887195e+01
+  22      1.075000e+03  7.885743e-01  5.003539e+05  3.878070e+01
+  23      1.125000e+03  7.884082e-01  4.762342e+05  3.860406e+01
+  24      1.175000e+03  7.882321e-01  4.510613e+05  3.841340e+01
+  25      1.225000e+03  7.880452e-01  4.246621e+05  3.820616e+01
+  26      1.275000e+03  7.878449e-01  3.968121e+05  3.797708e+01
+  27      1.325000e+03  7.876271e-01  3.671424e+05  3.771757e+01
+  28      1.375000e+03  7.873853e-01  3.350397e+05  3.741023e+01
+  29      1.425000e+03  7.871094e-01  2.997742e+05  3.702389e+01
+  30      1.475000e+03  7.865703e-01  2.601902e+05  3.623321e+01
+  31      1.525000e+03  7.861152e-01  2.142635e+05  3.455978e+01
+  32      1.575000e+03  7.852433e-01  1.311830e+05  2.924922e+01
+
+Variables at control volume boundaries:
+
+
+  Nr      Z               QLT
+ (-)      (m)             (M3/S)
+   1      0.000000e+00  5.472173e-01
+   2      5.000000e+01  6.478308e-01
+   3      1.000000e+02  6.601195e-01
+   4      1.500000e+02  6.718561e-01
+   5      2.000000e+02  6.841897e-01
+   6      2.500000e+02  6.971819e-01
+   7      3.000000e+02  7.108929e-01
+   8      3.500000e+02  7.253575e-01
+   9      4.000000e+02  7.406634e-01
+  10      4.500000e+02  7.569168e-01
+  11      5.000000e+02  7.742184e-01
+  12      5.500000e+02  7.926846e-01
+  13      6.000000e+02  8.124504e-01
+  14      6.500000e+02  8.336740e-01
+  15      7.000000e+02  8.565418e-01
+  16      7.500000e+02  8.812753e-01
+  17      8.000000e+02  9.085446e-01
+  18      8.500000e+02  9.379068e-01
+  19      9.000000e+02  9.701172e-01
+  20      9.500000e+02  1.005672e+00
+  21      1.000000e+03  1.045187e+00
+  22      1.050000e+03  1.089452e+00
+  23      1.100000e+03  1.139493e+00
+  24      1.150000e+03  1.196354e+00
+  25      1.200000e+03  1.262160e+00
+  26      1.250000e+03  1.339524e+00
+  27      1.300000e+03  1.432255e+00
+  28      1.350000e+03  1.546453e+00
+  29      1.400000e+03  1.692664e+00
+  30      1.450000e+03  1.889098e+00
+  31      1.500000e+03  2.170433e+00
+  32      1.550000e+03  2.620753e+00
+  33      1.600000e+03  4.205853e+00
+
+
+Wall information from each control volume:
+
+
+Mass error information:
+
+
+
+
+
+     MASS SOURCE INFORMATION:
+     ************************
+     SOURCE    BRANCH    PIPE      SECT  GAS       OIL       WATER     ENTHALPY  TEMP
+     LABEL     LABEL     LABEL     NO    SOURCE    SOURCE    SOURCE    SOURCE    SOURCE
+                                         (KG/S)    (KG/S)    (KG/S)    (W)       (C)
+     --------- --------- --------- ----- --------- --------- --------- --------- ---------
+     FEED      MAIN      UPSTREAM  1     0.30      0.90      0.30      -6.901e+05 40.00     
+
+
+     CHOKE INFORMATION:
+     ******************
+
+
+     VALVE: ESD, BRANCH: MAIN, PIPE: UPSTREAM, SECTION: 16
+     ===================================================================
+
+     CRITICAL FLOWMODEL: FROZEN       
+
+     CHOKE AREA FROM TIME TABLE
+
+     CHOKE AREA    = 3.142e-02    (M2)
+     CHOKE OPENING = 1.00         
+
+     FLOW CONDITION: SUBCRITICAL
+
+     PRESSURE DROP     = 5.658e+02    (PA)
+     CHOKE MASS FLOW   = 11.24        (KG/S)
+     CHOKE PRESSURE    = 6.268e+05    (PA)
+     CHOKE TEMPERATURE = 36.23        (C)
+     CHOKE VELOCITY    = 42.42        (M/S)
+
+
+     **************************************************************
+     *                                                            *
+     *                       OLGA  STOP                           *
+     *                                                            *
+     **************************************************************
+
+     THE OLGA SIMULATION ABORTED AT TIME 985.61161540 SECONDS.
+
+    PRESSURE BELOW TABLE VALUES (P = 0.48789 bara, T = 24.734 C)
+
+     REPORTED IN FLOWPATH=MAIN, PIPE=DOWNSTREAM, SECTION=9.
+
+
+
