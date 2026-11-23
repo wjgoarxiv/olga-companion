@@ -1,0 +1,23 @@
+
+     READING FLUID PROP. FILE    :   air_water.tab
+
+
+WARNING 59 table value exceptions have been reg. for fluid: AIR_WATER. For more info, use DEBUG = ON in OPTIONS and rerun
+
+
+     **************************************************************
+     *                                                            *
+     *                       OLGA  STOP                           *
+     *                                                            *
+     **************************************************************
+
+     THE OLGA SIMULATION ABORTED AT TIME 0.00000000 SECONDS.
+
+    PRESSURE ABOVE TABLE VALUES (P = 900 bara, T = 40 C)
+
+     INPUT PROCESSING NEEDS LARGER RANGE FOR PVT TABLE
+     REPORTED IN NODE INLET
+
+
+
+**** OLGA stopped with exit message 'pressure above' (66) ****

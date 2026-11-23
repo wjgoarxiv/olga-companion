@@ -1,0 +1,4 @@
+# Build-machine paths are kept out of the shipped binary by `scripts/tauri-build.mjs`
+# (`npm run tauri:build`), which sets RUSTFLAGS with --remap-path-prefix for this
+# machine's CARGO_HOME at build time. A fixed prefix here would name the build account
+# in the public repository, and `[profile.release] trim-paths` still needs nightly.

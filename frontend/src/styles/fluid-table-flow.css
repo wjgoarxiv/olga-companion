@@ -1,0 +1,99 @@
+/* ── W3-L3: M4 '.tab 없음' banner + T5 fluid-table flow ── */
+
+/* Banner: one full-width row under the step bar, never inside a narrow pane. */
+.fluid-banner {
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  padding: 10px 16px;
+  background: var(--raised); border-bottom: 1px solid var(--hairline);
+}
+.fluid-banner-copy { flex: 1 1 320px; min-width: 0; }
+.fluid-banner-copy h2 { margin: 0 0 2px; font-size: var(--fs-m); font-weight: 650; }
+.fluid-banner-copy p { margin: 0; color: var(--mute); font-size: var(--fs-s); line-height: 1.5; word-break: keep-all; overflow-wrap: anywhere; }
+.fluid-banner-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.fluid-banner-actions .ui-button { min-height: 44px; }
+
+/* T5 flow: an overlay dialog, never an inline pusher — the workbench keeps
+   its size while the flow is open (Review-2 overlay direction). Sizes to
+   content up to the caps with internal scroll; no Esc/click-outside so a
+   half-filled composition cannot be lost by accident. */
+.fluid-flow {
+  position: fixed; z-index: 80; left: 50%; top: 48%; transform: translate(-50%, -50%);
+  width: min(680px, calc(100vw - 48px)); max-height: calc(100dvh - 96px); overflow-y: auto;
+  padding: 20px;
+  background: var(--raised); border: 1px solid var(--hairline); border-radius: var(--r-s);
+  box-shadow: var(--elev-pop);
+}
+@media (max-width: 640px) {
+  .fluid-flow-grid { grid-template-columns: minmax(0, 1fr); }
+  .fluid-row { grid-template-columns: minmax(0, 1fr); }
+}
+.fluid-flow-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.fluid-flow-head h2 { margin: 0 0 4px; font-size: var(--fs-l); }
+.fluid-flow-head p { margin: 0; color: var(--mute); font-size: var(--fs-s); }
+.fluid-flow-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-top: 12px; }
+.fluid-field { display: grid; gap: 4px; font-size: var(--fs-s); }
+.fluid-field > span, .fluid-field > legend { font-weight: 600; }
+.fluid-field input, .fluid-field select {
+  min-height: 44px; padding: 8px 10px; border: 1px solid var(--hairline); border-radius: var(--r-s);
+  color: var(--ink); background: var(--raised); font: inherit;
+}
+.fluid-field em { color: var(--mute); font-size: var(--fs-xs); font-style: normal; }
+.fluid-field fieldset, fieldset.fluid-field { border: 0; padding: 0; margin: 0; }
+.fluid-models { display: flex; gap: 8px; flex-wrap: wrap; }
+.fluid-model { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 4px 10px; border: 1px solid var(--hairline); border-radius: var(--r-s); cursor: pointer; }
+.fluid-model input { min-height: 0; width: 16px; height: 16px; accent-color: var(--select); }
+.fluid-components { margin-top: 12px; }
+.fluid-components h3, .fluid-preview h3 { margin: 0 0 8px; font-size: var(--fs-m); }
+.fluid-components ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.fluid-row { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) auto; gap: 8px; align-items: end; }
+.fluid-row label { display: grid; gap: 4px; font-size: var(--fs-s); }
+.fluid-row label > span { font-weight: 600; }
+.fluid-row input { min-height: 44px; padding: 8px 10px; border: 1px solid var(--hairline); border-radius: var(--r-s); color: var(--ink); background: var(--raised); font: inherit; min-width: 0; }
+.fluid-row .ui-button { min-height: 44px; }
+.fluid-row-foot { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 8px; }
+.fluid-row-foot p { margin: 0; font-size: var(--fs-s); font-variant-numeric: tabular-nums; }
+.fluid-empty { color: var(--mute); font-size: var(--fs-s); }
+.fluid-error { color: var(--fail); font-size: var(--fs-s); }
+.fluid-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+.fluid-actions .ui-button { min-height: 44px; }
+.fluid-note { margin: 8px 0 0; color: var(--mute); font-size: var(--fs-s); line-height: 1.5; }
+.fluid-preview pre {
+  max-height: 240px; overflow: auto; padding: 12px;
+  border: 1px solid var(--hairline); border-radius: var(--r-s);
+  background: var(--bg-deep); font-size: var(--fs-xs); line-height: 1.6; white-space: pre-wrap;
+}
+.fluid-status { margin-top: 8px; }
+.fluid-loading { margin-top: 8px; }
+.fluid-open, .fluid-pickup { margin-top: 12px; }
+
+/* Pipe-table wizard: same dialog shell; a four-step strip says where the user is. */
+.pipe-wizard-steps {
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px;
+  margin: 16px 0 0; padding: 0; list-style: none;
+}
+.pipe-wizard-steps li {
+  display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 10px; min-width: 0;
+  color: var(--mute); font-size: var(--fs-s); font-weight: 600;
+  border: 1px solid var(--hairline); background: var(--raised); overflow-wrap: anywhere;
+}
+.pipe-wizard-steps li > span {
+  display: inline-grid; place-items: center; flex: 0 0 auto; width: 22px; height: 22px;
+  font-family: var(--font-mono); font-size: var(--fs-xs); border: 1px solid currentColor;
+}
+.pipe-wizard-steps li.is-current { color: var(--on-select); background: var(--select); box-shadow: var(--select-edge); }
+.pipe-wizard-steps li.is-done { color: var(--ink); }
+.pipe-wizard-steps li.is-done > span { color: var(--pass); }
+.pipe-wizard-block { margin-top: 16px; }
+.pipe-wizard-summary { margin: 0; color: var(--ink); font-family: var(--font-mono); font-size: var(--fs-s); font-variant-numeric: tabular-nums; }
+.pipe-wizard-given { margin: 4px 0 0; color: var(--mute); font-size: var(--fs-s); }
+.pipe-wizard-ends { display: grid; gap: 12px; margin: 8px 0 0; padding: 0; list-style: none; }
+.pipe-wizard-ends fieldset {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px;
+  margin: 0; padding: 12px; border: 1px solid var(--hairline); min-inline-size: 0;
+}
+.pipe-wizard-ends .fluid-field { min-width: 0; align-content: start; }
+.pipe-wizard-ends .fluid-field input, .pipe-wizard-ends .fluid-field select { width: 100%; min-width: 0; box-sizing: border-box; }
+.pipe-wizard-ends legend { padding: 0 4px; font-weight: 700; font-size: var(--fs-s); color: var(--ink); }
+@media (max-width: 640px) {
+  .pipe-wizard-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
