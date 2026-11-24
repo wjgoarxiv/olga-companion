@@ -1,0 +1,5 @@
+include setup.py
+graft resources/olga-toolkit
+graft resources/fluids
+graft resources/examples
+global-exclude __pycache__ *.pyc

@@ -1,7 +1,7 @@
 """The generic air-water PVT table that ships with the app.
 
 It is a plain bundled file: this module only says where it is and what it is. The table was
-computed once in Multiflash (CPA) from ``air_water_cpa.mfl``; nothing here computes a property.
+computed once in Multiflash (CPA); nothing here computes a property.
 """
 
 from __future__ import annotations

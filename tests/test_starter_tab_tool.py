@@ -264,4 +264,5 @@ def test_the_real_bundled_table_is_a_valid_three_phase_cpa_air_water_table() -> 
     gas_density, water_density = values[2], values[4]
     assert 990 < water_density < 1005
     assert 1.0 < gas_density < 1.3
-    assert (REPO / "resources" / "fluids" / "air_water_cpa.mfl").is_file()
+    # The Multiflash input is derived from a vendor template, so only the table ships.
+    assert [p.name for p in (REPO / "resources" / "fluids").iterdir()] == ["air_water_cpa.tab"]

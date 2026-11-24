@@ -250,6 +250,25 @@ Problems a chat turn or Check can report:
 | `tools_unavailable` | The app's own tools could not start, so the turn was stopped. Restart the app; if it repeats, check whether security software blocks it. |
 | `unknown` | Claude Code reported some other error. |
 
+## Use without the app (Claude Code plugin)
+
+If you would rather stay in Claude Code, install OLGA Companion as a plugin. It runs the same engine as the app, at the same version, without the desktop window: Claude Code gets the app's tools and a short skill on how to use them.
+
+You need Claude Code and [uv](https://docs.astral.sh/uv/). The plugin uses `uvx` to fetch this release the first time it starts.
+
+```
+claude plugin marketplace add wjgoarxiv/olga-companion
+claude plugin install olga-companion@olga-companion
+```
+
+Inside a Claude Code session the same commands are `/plugin marketplace add wjgoarxiv/olga-companion` and `/plugin install olga-companion@olga-companion`. To try it for one session without installing, run `claude --plugin-dir ./plugin` from a clone of this repository.
+
+- **Files live where you work.** The tools read and write in the folder Claude Code started in.
+- **Claude Code's permission prompt is the approval.** Every tool that writes, runs or stops something asks your permission on each call, even in modes that skip other prompts. A non-interactive `claude -p` run cannot approve them, so they are refused there.
+- **A write always makes a new file.** An existing case, table or result is never overwritten; a run works on a copy in its own new folder.
+- **What works where.** Reading, checking and drafting cases and tables work on Windows, macOS and Linux. Running OLGA or opening Multiflash needs Windows with those programs installed.
+- **Same engine as the app.** The plugin's version always matches the app release it comes from, so a case made in one opens the same way in the other.
+
 ## How to tell a genuine download
 
 OLGA Companion is open source, so anyone may copy and rebuild it. Only the copies published here are checked by the author.
@@ -390,7 +409,7 @@ Issues and pull requests are welcome. Branch from `master`, keep changes small, 
 
 ## License
 
-[Apache License 2.0](./LICENSE) (see [NOTICE](./NOTICE)). The engine folder [`src/olga_companion/pvt_engine/`](src/olga_companion/pvt_engine/LICENSE) is MIT-licensed. The tutorial page bundles Pretendard (SIL OFL 1.1) and Meslo LGS NF (Apache 2.0); their licence texts are in [`docs/tutorial/assets/fonts/`](docs/tutorial/assets/fonts/).
+The source code is under the [Apache License 2.0](./LICENSE). The Windows installer also contains [pyfas](https://github.com/gpagliuca/pyfas) (GPL-3.0) and easydict (LGPL-3.0), so the installer as a whole is distributed under [GPL-3.0](./licenses/GPL-3.0.txt). See [NOTICE](./NOTICE) and [THIRD-PARTY-LICENSES.txt](./THIRD-PARTY-LICENSES.txt). The engine folder [`src/olga_companion/pvt_engine/`](src/olga_companion/pvt_engine/LICENSE) is MIT-licensed. The tutorial page bundles Pretendard (SIL OFL 1.1) and Meslo LGS NF (Apache 2.0); their licence texts are in [`docs/tutorial/assets/fonts/`](docs/tutorial/assets/fonts/).
 
 OLGA is a product of SLB. This is an independent companion application, not affiliated with, endorsed by or sponsored by SLB.
 

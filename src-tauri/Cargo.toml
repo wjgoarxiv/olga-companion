@@ -1,6 +1,6 @@
 [package]
 name = "olga-companion"
-version = "0.1.28"
+version = "0.1.29"
 description = "Native Windows shell for OLGA Companion"
 authors = ["Woojin Go"]
 edition = "2024"

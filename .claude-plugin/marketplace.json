@@ -1,0 +1,16 @@
+{
+  "name": "olga-companion",
+  "description": "OLGA Companion as a Claude Code plugin.",
+  "owner": {
+    "name": "wjgoarxiv",
+    "url": "https://github.com/wjgoarxiv"
+  },
+  "plugins": [
+    {
+      "name": "olga-companion",
+      "source": "./plugin",
+      "version": "0.1.29",
+      "description": "OLGA multiphase flow tools without the desktop app. Writes always go to new files, and Claude Code asks before each one."
+    }
+  ]
+}

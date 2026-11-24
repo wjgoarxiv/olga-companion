@@ -15,6 +15,7 @@ SIDECAR_PORT = 8865
 # from a frozen binary. Resolved from this file rather than project_root() because
 # project_root() is redirected to app-local data when OLGA_APP_DATA_DIR is set.
 DEFAULT_TOOLKIT_DIR = Path(__file__).resolve().parents[2] / "resources" / "olga-toolkit"
+PACKAGED_TOOLKIT_DIR = Path(__file__).resolve().parent / "resources" / "bundled" / "olga-toolkit"
 # litellm "provider/model" convention; consumed by the Antigravity preview client.
 DEFAULT_LLM_MODEL = os.getenv("OLGA_LLM_MODEL", "gemini/gemini-2.0-flash")
 
@@ -51,7 +52,13 @@ def private_state_root() -> Path:
 
 
 def toolkit_dir() -> Path:
-    return Path(os.environ.get("OLGA_TOOLKIT_DIR", str(DEFAULT_TOOLKIT_DIR))).expanduser()
+    env = os.environ.get("OLGA_TOOLKIT_DIR")
+    if env:
+        return Path(env).expanduser()
+    # An installed wheel has no repo checkout; setup.py copied the folders inside the package.
+    if not DEFAULT_TOOLKIT_DIR.is_dir() and PACKAGED_TOOLKIT_DIR.is_dir():
+        return PACKAGED_TOOLKIT_DIR
+    return DEFAULT_TOOLKIT_DIR
 
 
 def native_tab_enabled() -> bool:

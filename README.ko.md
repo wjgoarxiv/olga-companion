@@ -259,6 +259,25 @@ OLGA Companion은 시뮬레이션 파일과 모델 출력을 믿을 수 없는 �
 | `tools_unavailable` | 이 앱의 도구를 시작하지 못해 대화를 멈췄습니다. 앱을 다시 시작하고, 계속되면 보안 프로그램이 앱을 막고 있는지 확인하세요. |
 | `unknown` | Claude Code에서 그 밖의 오류가 났습니다. |
 
+## 앱 없이 쓰기 (Claude Code 플러그인)
+
+앱을 띄우지 않고 Claude Code 안에서만 작업하고 싶다면 OLGA Companion을 플러그인으로 설치하세요. 앱과 같은 엔진, 같은 버전이 데스크톱 창 없이 돌아갑니다. Claude Code는 앱의 도구와 그 사용법을 담은 짧은 스킬을 받습니다.
+
+Claude Code와 [uv](https://docs.astral.sh/uv/)가 필요합니다. 플러그인은 처음 시작할 때 `uvx`로 이 릴리스를 받아 옵니다.
+
+```
+claude plugin marketplace add wjgoarxiv/olga-companion
+claude plugin install olga-companion@olga-companion
+```
+
+Claude Code 세션 안에서는 `/plugin marketplace add wjgoarxiv/olga-companion`, `/plugin install olga-companion@olga-companion`으로 같은 일을 합니다. 설치하지 않고 한 세션만 써 보려면 이 저장소를 받은 폴더에서 `claude --plugin-dir ./plugin`을 실행하세요.
+
+- **파일은 작업하는 폴더에 생깁니다.** 도구는 Claude Code를 시작한 폴더에서 읽고 씁니다.
+- **Claude Code의 권한 확인이 곧 승인입니다.** 쓰기, 실행, 중지를 하는 도구는 부를 때마다 권한을 묻습니다. 다른 확인을 건너뛰는 모드에서도 마찬가지입니다. 대화 없이 도는 `claude -p`에서는 승인할 방법이 없으므로 이 도구들이 거절됩니다.
+- **쓰기는 언제나 새 파일입니다.** 기존 사례, 표, 결과는 덮어쓰지 않습니다. 실행은 사본을 새 폴더에서 돌립니다.
+- **운영체제별로 되는 일.** 사례와 표를 읽고, 검사하고, 초안을 만드는 일은 Windows, macOS, Linux에서 됩니다. OLGA 실행과 Multiflash 열기는 두 프로그램이 설치된 Windows에서만 됩니다.
+- **앱과 같은 엔진입니다.** 플러그인 버전은 항상 같은 앱 릴리스와 맞춰 나가므로, 한쪽에서 만든 사례가 다른 쪽에서도 똑같이 열립니다.
+
 <a id="genuine-download"></a>
 
 ## 진짜 설치 파일인지 확인하기
@@ -410,7 +429,7 @@ npm run dev:app        # 프론트엔드 :5273, 사이드카 :8865
 
 ## 라이선스
 
-[Apache License 2.0](./LICENSE)([NOTICE](./NOTICE) 참고). 엔진 폴더 [`src/olga_companion/pvt_engine/`](src/olga_companion/pvt_engine/LICENSE)는 MIT 라이선스입니다. 튜토리얼 페이지에는 Pretendard(SIL OFL 1.1)와 Meslo LGS NF(Apache 2.0)가 들어 있으며, 라이선스 전문은 [`docs/tutorial/assets/fonts/`](docs/tutorial/assets/fonts/)에 있습니다.
+소스 코드는 [Apache License 2.0](./LICENSE)입니다. Windows 설치 파일에는 [pyfas](https://github.com/gpagliuca/pyfas)(GPL-3.0)와 easydict(LGPL-3.0)도 들어 있어, 설치 파일 전체는 [GPL-3.0](./licenses/GPL-3.0.txt) 조건으로 배포합니다. [NOTICE](./NOTICE)와 [THIRD-PARTY-LICENSES.txt](./THIRD-PARTY-LICENSES.txt)를 참고하세요. 엔진 폴더 [`src/olga_companion/pvt_engine/`](src/olga_companion/pvt_engine/LICENSE)는 MIT 라이선스입니다. 튜토리얼 페이지에는 Pretendard(SIL OFL 1.1)와 Meslo LGS NF(Apache 2.0)가 들어 있으며, 라이선스 전문은 [`docs/tutorial/assets/fonts/`](docs/tutorial/assets/fonts/)에 있습니다.
 
 OLGA는 SLB의 제품입니다. 이 앱은 독립적으로 만든 보조 앱이며 SLB와 제휴하거나 SLB의 보증·후원을 받지 않았습니다.
 

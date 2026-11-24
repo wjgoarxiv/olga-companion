@@ -493,7 +493,7 @@ _AMOUNTS_PATTERN = re.compile(r"(?m)^amounts\s+[0-9.][^;]*;")
 _TABLE_PATTERN = re.compile(r"table\s+olga\s+.*?\s*;\s*;[ \t]*\n?", re.IGNORECASE | re.DOTALL)
 _MOLE_UNITS_PATTERN = re.compile(r"(?m)^(units temperature )K( pressure )bar( enthalpy.*)$")
 # The hydrate and ice phase set of the vendor CPA file, removed as one set
-# (models and the phase descriptors that use them), as in air_water_cpa.mfl.
+# (models and the phase descriptors that use them).
 _HYDRATE_ICE_PATTERN = re.compile(
     r"(?im)^(?:model\s+MHYD2MASSOC\b|model\s+MICEMASSOC\b|pd\s+HYDRATE2\b|pd\s+ICE\b)[^\n]*;[ \t]*\n"
 )
@@ -568,7 +568,7 @@ def build_mfl_text(
     # The vendor file is a recorded session with its table command first; run
     # as a script that is an empty system under K/Pa. Lift it out and emit it
     # last, after the model, components and the user's units (as the
-    # Multiflash GUI-made air_water_cpa.mfl does).
+    # Multiflash GUI-made air-water file does).
     draft, count = _TABLE_PATTERN.subn("", draft, count=1)
     if count != 1:
         raise FluidTableError("The CPA template has no replaceable table command.")

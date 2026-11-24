@@ -6,3 +6,18 @@ This product includes software developed by Woojin Go.
 OLGA is a product of SLB (Schlumberger). This project is an independent
 companion application. It is not affiliated with, endorsed by, or sponsored
 by SLB, and it does not distribute any OLGA binary, licence, or model data.
+
+Third-party components in the Windows installer
+
+The source code of OLGA Companion is licensed under Apache-2.0. The Windows
+installer also contains the components below, so the installer as a whole is
+distributed under the terms of GPL-3.0 (licenses/GPL-3.0.txt).
+
+- pyfas 0.5.0, GPL-3.0, by Giuseppe Pagliuca and contributors.
+  Source: https://github.com/gpagliuca/pyfas at commit
+  d7432ec89cbeea1afc88dc7cf617c6df00b11b5e. Unmodified.
+- easydict 1.13, LGPL-3.0 (licenses/LGPL-3.0.txt).
+  Source: https://pypi.org/project/easydict/1.13/. Unmodified.
+
+Other open-source components and their licences: THIRD-PARTY-LICENSES.txt.
+Source code of this version: https://github.com/wjgoarxiv/olga-companion

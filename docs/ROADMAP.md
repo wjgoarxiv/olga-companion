@@ -6,7 +6,7 @@ M0–M8 built and verified the safety substrate that v2 keeps as its tool belt: 
 
 ## Released (0.1.x desktop app)
 
-The chat-first app below shipped as the Windows desktop app, published on the GitHub releases page from 0.1.1 on (0.1.28 at the time of writing). It includes the signed updater, the step bar, the edit table, sweeps, the controller wizard, the tutorial and the AI tools bridge. The release notes on each GitHub release list what changed.
+The chat-first app below shipped as the Windows desktop app, published on the GitHub releases page from 0.1.1 on (0.1.29 at the time of writing). It includes the signed updater, the step bar, the edit table, sweeps, the controller wizard, the tutorial and the AI tools bridge. The release notes on each GitHub release list what changed.
 
 ## v2 — Chat-first re-architecture (shipped)
 

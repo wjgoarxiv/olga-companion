@@ -309,7 +309,7 @@ def _air_water_cpa_draft() -> str:
 
 def test_cpa_draft_carries_no_hydrate_or_ice_phase() -> None:
     """Owner decision: CPA drafts drop the hydrate and ice set, as the
-    GUI-made air_water_cpa.mfl does."""
+    GUI-made air-water file does."""
     _require_templates()
     draft = _air_water_cpa_draft()
     for word in ("HYDRATE", "MHYD2MASSOC", "MICEMASSOC", "FREEZEOUT", "pd ICE", "hydratefile", ".hyd"):
@@ -327,21 +327,44 @@ def _statement_heads(text: str) -> list[str]:
 
 
 def test_air_water_cpa_draft_follows_the_owner_made_file_order() -> None:
-    """Command order matches resources/fluids/air_water_cpa.mfl, except the
+    """Command order matches the owner's Multiflash-made air-water file, except the
     vendor-only LIQUID2 phase and pseudo-component property line kept by design."""
     _require_templates()
-    owner = (Path(__file__).resolve().parents[1] / "resources" / "fluids" / "air_water_cpa.mfl").read_text(
-        encoding="utf-8"
-    )
     allow = {"properties pfc6plusmw", "pd liquid2", "key liquid2"}
     draft_heads = [head for head in _statement_heads(_air_water_cpa_draft()) if head not in allow]
-    owner_heads = _statement_heads(owner)
+    owner_heads = [
+        "remove all",
+        "units temperature",
+        "datum enthalpy",
+        "set fractions",
+        "puredata infodata",
+        "components overwrite",
+        "chardata infochar",
+        "bipset assocbip",
+        "bipset assocbip-2",
+        "bipdata erase",
+        "model massoc",
+        "model mpdvisc",
+        "model mstrapp",
+        "model mmcsmassoc",
+        "bipdata oilandgas4",
+        "pd gas",
+        "pd liquid1",
+        "key liquid1",
+        "pd water",
+        "key water",
+        "amounts 0.5",
+        "units temperature",
+        "set physprops",
+        "table olga",
+        "pressures 0.5",
+    ]
     assert draft_heads == owner_heads
 
 
 def test_cpa_draft_runs_table_after_model_components_and_user_units() -> None:
     """Multiflash executes top to bottom: the table command needs the system
-    defined and the user's degC/bar units active (air_water_cpa.mfl order)."""
+    defined and the user's degC/bar units active (the GUI-made file order)."""
     _require_templates()
     draft = fluid_table.build_mfl_text(
         fluid_label="SYN-CPA",
