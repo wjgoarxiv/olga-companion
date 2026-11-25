@@ -27,7 +27,8 @@ import {
  * Outside the Tauri shell (plain `npm run dev` in a browser) the plugin APIs do
  * not exist. The panel says so instead of throwing.
  *
- * Deliberately free of useEffect: nothing here may start on mount.
+ * Deliberately free of useEffect: nothing here may start on mount. The only mount-time act is
+ * scrolling the card into view, so a short window shows its buttons.
  */
 
 type Phase =
@@ -81,6 +82,9 @@ export default function UpdatePanel({ currentVersion }: { currentVersion: string
   // handed back explicitly or a keyboard user lands on the page body.
   const installButton = useRef<HTMLButtonElement | null>(null);
   const checkButton = useRef<HTMLButtonElement | null>(null);
+  const showCard = useCallback((node: HTMLElement | null) => {
+    node?.scrollIntoView({ block: 'start' });
+  }, []);
 
   const keepHandle = keepsUpdateHandle(phase);
 
@@ -206,7 +210,7 @@ export default function UpdatePanel({ currentVersion }: { currentVersion: string
     : '';
 
   return (
-    <article className="settings-card update-card">
+    <article ref={showCard} className="settings-card update-card">
       <h3 className="settings-h">{t('update.title')}</h3>
       <p className="settings-note">{t('update.note')}</p>
 

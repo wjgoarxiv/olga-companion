@@ -492,3 +492,19 @@ def test_the_runbook_records_why_the_exclusion_works_with_the_broad_collect() ->
     runbook = " ".join(_runbook().split())
     assert "excluding a package excludes its submodules" in runbook
     assert "6.21" in runbook, "the PyInstaller version the behaviour was checked against"
+
+
+def test_an_update_clears_the_bundled_resource_folders_before_copying_the_new_ones() -> None:
+    """Real install 2026-11-26: the 0.1.31 update left air_water_cpa.tab/.mfl from older versions."""
+    nsis = _conf()["bundle"]["windows"]["nsis"]
+    hooks = (TAURI_DIR / nsis["installerHooks"]).read_text(encoding="utf-8")
+    body = hooks.split("!macro NSIS_HOOK_PREINSTALL", 1)[1].split("!macroend", 1)[0]
+    targets = [t for t in _conf()["bundle"]["resources"].values() if t.startswith("resources/")]
+    bundled = {target.strip("/").split("/")[1] for target in targets}
+    assert bundled == {"olga-toolkit", "fluids", "tutorial", "examples"}
+    for folder in bundled:
+        assert f'RMDir /r "$INSTDIR\\resources\\{folder}"' in body
+    # The app must be closed first: an installer cancelled at that prompt must not leave a half-emptied app.
+    assert body.index('!insertmacro CheckIfAppIsRunning "${MAINBINARYNAME}.exe" "${PRODUCTNAME}"') < body.index("RMDir")
+    # Nothing outside the app's own resource folders is removed.
+    assert body.count("RMDir") == 4 and "Delete" not in body and '"$INSTDIR"' not in body

@@ -26,7 +26,7 @@
 <p>
   <a href="#quick-start">빠른 시작</a> ·
   <a href="#try-the-tutorial">튜토리얼</a> ·
-  <a href="./docs/intro.html">소개 슬라이드</a> ·
+  <a href="https://wjgoarxiv.github.io/olga-companion/intro.html">소개 슬라이드</a> ·
   <a href="#five-steps">다섯 단계</a> ·
   <a href="#features">기능</a> ·
   <a href="#safety-model">안전 장치</a> ·

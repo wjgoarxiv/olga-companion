@@ -200,3 +200,10 @@ test('every new string exists in both languages', () => {
     assert.match(ko, new RegExp(`'${key.replace('.', '\\.')}':`), `ko ${key}`);
   }
 });
+
+test('opening Updates brings the update card into view in a short window', () => {
+  // Real install 2026-11-26: at 1280x820 the card sat below the fold and the download button was hidden.
+  const panel = readFileSync(new URL('../src/UpdatePanel.tsx', import.meta.url), 'utf8');
+  assert.match(panel, /const showCard = useCallback\(\(node: HTMLElement \| null\) => \{\s*node\?\.scrollIntoView\(\{ block: 'start' \}\);\s*\}, \[\]\);/);
+  assert.match(panel, /<article ref=\{showCard\} className="settings-card update-card">/);
+});

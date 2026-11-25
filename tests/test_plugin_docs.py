@@ -41,3 +41,11 @@ def test_the_plugin_section_follows_the_local_cli_section(name: str, heading: st
         assert command in section, command
     for phrase in phrases:
         assert phrase in section, phrase
+
+
+def test_the_intro_slides_link_opens_the_rendered_page() -> None:
+    """A link into docs/ shows HTML source on GitHub; the slides are served by GitHub Pages."""
+    for name in ("README.md", "README.ko.md"):
+        text = (Path(__file__).resolve().parents[1] / name).read_text(encoding="utf-8")
+        assert "./docs/intro.html" not in text
+        assert 'href="https://wjgoarxiv.github.io/olga-companion/intro.html"' in text

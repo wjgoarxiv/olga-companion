@@ -26,7 +26,7 @@
 <p>
   <a href="#quick-start">Quick start</a> ·
   <a href="#try-the-tutorial">Tutorial</a> ·
-  <a href="./docs/intro.html">Intro slides</a> ·
+  <a href="https://wjgoarxiv.github.io/olga-companion/intro.html">Intro slides</a> ·
   <a href="#your-first-simulation-in-five-steps">Five steps</a> ·
   <a href="#features">Features</a> ·
   <a href="#safety-model">Safety model</a> ·
