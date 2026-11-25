@@ -266,6 +266,33 @@ def _starter_tab_display(args: dict[str, Any], paths: PathBindings, locale: str 
     }
 
 
+def _make_tab_display(args: dict[str, Any], paths: PathBindings, locale: str = "ko") -> dict[str, Any]:
+    target = tool_side_effects.approval_payload("fluids_make_tab", args, paths)
+    text = _labels(locale)
+    kind = text(
+        "Multiflash가 .mfl의 표 명령대로 계산한 표", "Computed by Multiflash from the .mfl's own table command"
+    ) if target["grid_source"] == "mfl" else text(
+        "Multiflash가 기본 범위로 계산한 표 (.mfl에 표 명령이 없음)",
+        "Computed by Multiflash over the default range (the .mfl has no table command)",
+    )
+    temperatures = [round(value - 273.15, 2) for value in target["temperatures_k"]]
+    pressures = [round(value / 1e5, 4) for value in target["pressures_pa"]]
+    water = [_field("water_option", "HAWATER")] if target["hawater"] else []
+    return {
+        "fields": [
+            _field("file", target["tab_rel"]),
+            _field("mfl_file", target["source_rel"]),
+            _field("label", target["fluid_label"]),
+            *water,
+            _field("pressure_points", len(pressures)),
+            _field("temperature_points", len(temperatures)),
+            _field("pressure_range", _range(pressures), "bar"),
+            _field("temperature_range", _range(temperatures), "degC"),
+            _field("table_kind", kind),
+        ]
+    }
+
+
 def _import_tab_display(args: dict[str, Any], paths: PathBindings, locale: str = "ko") -> dict[str, Any]:
     target = tool_side_effects.approval_payload("fluids_import_tab", args, paths)
     from .. import tab_import
@@ -430,6 +457,8 @@ def build(
         return _generate_tab_display(args, paths, locale)
     if action_kind == "fluids_starter_tab":
         return _starter_tab_display(args, paths, locale)
+    if action_kind == "fluids_make_tab":
+        return _make_tab_display(args, paths, locale)
     if action_kind == "fluids_import_tab":
         return _import_tab_display(args, paths, locale)
     field_builder = _FIELD_BUILDERS.get(action_kind)

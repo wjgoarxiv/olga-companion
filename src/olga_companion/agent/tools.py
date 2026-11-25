@@ -225,6 +225,10 @@ def _t_fluids_starter_tab(args: dict[str, Any]) -> dict[str, Any]:
     return _side_effects.fluids_starter_tab(args, approval_payload)
 
 
+def _t_fluids_make_tab(args: dict[str, Any]) -> dict[str, Any]:
+    return _side_effects.fluids_make_tab(args, approval_payload)
+
+
 def _t_fluids_import_tab(args: dict[str, Any]) -> dict[str, Any]:
     return _side_effects.fluids_import_tab(args, approval_payload)
 
@@ -353,6 +357,7 @@ _HANDLERS = {
         _t_fluids_draft_mfl,
         _t_fluids_generate_tab,
         _t_fluids_starter_tab,
+        _t_fluids_make_tab,
         _t_fluids_import_tab,
         _t_fluids_pickup_tab,
         _t_fluids_compare_tab,

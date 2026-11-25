@@ -100,6 +100,8 @@ def plot_export(
     options = _view_options(args)
     if args.get("timestep") is not None and Path(source).suffix.casefold() == ".ppl":
         options["timestep"] = float(args["timestep"])
+    if args.get("format") == "pdf" and Path(source).suffix.casefold() == ".ppl":
+        options["profile_pdf"] = True
     output = results.plot_result(
         source,
         args.get("variables"),

@@ -21,7 +21,7 @@ FIX = Path(__file__).parent / "fixtures" / "multiflash"
 
 
 def _engine(request: dict[str, Any]) -> dict[str, Any]:
-    table = (FIX / "generated_cpa_3x3.tab").read_text(encoding="utf-8")
+    table = (FIX / "handwritten_3x3.tab").read_text(encoding="utf-8")
     Path(request["tab_path"]).write_text(table.replace("LABEL = probe", f"LABEL = {request['title']}", 1), encoding="utf-8")
     return {"ok": True, "errors": []}
 
@@ -61,7 +61,7 @@ def test_editing_the_mfl_makes_the_table_stale(tmp_path: Path) -> None:
 
 def test_a_table_without_a_record_is_unknown(tmp_path: Path) -> None:
     tab = tmp_path / "other.tab"
-    shutil.copy(FIX / "generated_cpa_3x3.tab", tab)
+    shutil.copy(FIX / "handwritten_3x3.tab", tab)
     assert fp.fluid_freshness(tab) == {"state": "unknown", "reason": "no_record", "mfl": None}
 
 

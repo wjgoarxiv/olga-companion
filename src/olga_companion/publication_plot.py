@@ -91,7 +91,54 @@ def _time_axis_label(time_unit: str | None) -> str:
     return f"Time ({time_unit})" if time_unit else "Time"
 
 
+def _file_stem(text: str) -> str:
+    return "_".join(part for part in text.replace("/", "_").split() if part)
+
+
+def _with_unit(label: str, unit: str | None) -> str:
+    return f"{label} ({unit})" if unit else label
+
+
 def render_publication_series(series: dict[str, Any], out_dir: Path) -> dict[str, Any]:
+    return _render_line(
+        series["time"],
+        series["values"],
+        x_label=_time_axis_label(series.get("time_unit")),
+        y_label=_with_unit(series["variable"], series.get("unit")),
+        legend_text=series.get("position"),
+        stem=_file_stem(f"{series['variable']}_{series.get('position') or 'series'}"),
+        out_dir=out_dir,
+    )
+
+
+def render_publication_profile(profile: dict[str, Any], out_dir: Path) -> dict[str, Any]:
+    """One variable along one branch at one time; the legend names the branch and the time."""
+    time = profile.get("timestep")
+    when = "" if time is None else f", t = {float(time):.1f} {profile.get('timestep_unit') or 's'}"
+    stem = f"{profile['branch']}_{profile['variable']}" + ("" if time is None else f"_t{float(time):08.1f}")
+    return _render_line(
+        profile["positions"],
+        profile["values"],
+        x_label="Position (m)",
+        y_label=_with_unit(profile["variable"], profile.get("unit")),
+        legend_text=f"{profile['branch']}{when}",
+        keep_gaps=True,
+        stem=_file_stem(stem),
+        out_dir=out_dir,
+    )
+
+
+def _render_line(
+    x_values: list[float],
+    y_values: list[float],
+    *,
+    x_label: str,
+    y_label: str,
+    legend_text: str | None,
+    stem: str,
+    out_dir: Path,
+    keep_gaps: bool = False,
+) -> dict[str, Any]:
     try:
         import matplotlib
         import numpy as np
@@ -119,17 +166,18 @@ def render_publication_series(series: dict[str, Any], out_dir: Path) -> dict[str
         font_path = font_manager.findfont(properties, fallback_to_default=True)
         font_family = font_manager.FontProperties(fname=font_path).get_name()
 
-    time = np.asarray(series["time"], dtype=float)
-    values = np.asarray(series["values"], dtype=float)
+    time = np.asarray(x_values, dtype=float)
+    values = np.asarray(y_values, dtype=float)
     finite = np.isfinite(time) & np.isfinite(values)
+    line_x, line_y = time, np.where(finite, values, np.nan)
     time = time[finite]
     values = values[finite]
     if time.size == 0:
         raise EmptyPublicationSeriesError
+    if not keep_gaps:
+        line_x, line_y = time, values
 
     out_dir.mkdir(parents=True, exist_ok=True)
-    stem = f"{series['variable']}_{series.get('position') or 'series'}"
-    stem = "_".join(part for part in stem.replace("/", "_").split() if part)
     png = out_dir / f"{stem}.png"
     pdf = out_dir / f"{stem}.pdf"
 
@@ -149,11 +197,12 @@ def render_publication_series(series: dict[str, Any], out_dir: Path) -> dict[str
     with matplotlib.rc_context(style):
         fig, ax = plt.subplots(figsize=(7.2, 4.4), constrained_layout=True)
         try:
-            ax.plot(time, values, color="#0072B2", linewidth=1.6, label=series.get("position") or None)
-            ax.set_xlabel(_time_axis_label(series.get("time_unit")))
-            y_label = series["variable"]
-            if series.get("unit"):
-                y_label += f" ({series['unit']})"
+            # A point alone between two gaps has no line to show it, so a broken line also gets markers.
+            marker = "o" if keep_gaps and not finite.all() else None
+            ax.plot(
+                line_x, line_y, color="#0072B2", linewidth=1.6, marker=marker, markersize=3, label=legend_text or None
+            )
+            ax.set_xlabel(x_label)
             ax.set_ylabel(y_label)
             ax.grid(False)
 
@@ -166,9 +215,10 @@ def render_publication_series(series: dict[str, Any], out_dir: Path) -> dict[str
             ax.set_ylim(ymin - pad, ymax + pad)
             ax.set_xticks(np.linspace(xmin, xmax, 6))
             ax.set_yticks(np.linspace(ymin - pad, ymax + pad, 6))
+            ax.ticklabel_format(useOffset=False)
             ax.minorticks_on()
             ax.tick_params(which="both", direction="in", top=True, right=True)
-            if series.get("position"):
+            if legend_text:
                 legend = ax.legend(loc="best", frameon=True, edgecolor="black", framealpha=1)
                 legend.get_frame().set_linewidth(0.8)
 

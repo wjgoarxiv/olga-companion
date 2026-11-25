@@ -20,18 +20,194 @@ import re
 import sys
 from typing import Optional
 
-try:
-    from pyfas import Tpl, Ppl
-    PYFAS_AVAILABLE = True
-except ImportError:
-    PYFAS_AVAILABLE = False
+# pyfas pulls in pandas, which costs seconds to import. It is loaded only when a .tpl
+# is read, or when a .ppl needs something the single-pass reader below does not do.
+Tpl = Ppl = None
 
 
 def _check_pyfas():
-    if not PYFAS_AVAILABLE:
-        raise ImportError(
-            "pyfas not installed. Run: pip install pyfas easydict"
-        )
+    global Tpl, Ppl
+    if Tpl is None or Ppl is None:
+        try:
+            from pyfas import Tpl as _Tpl, Ppl as _Ppl
+        except ImportError as exc:
+            raise ImportError(
+                "pyfas not installed. Run: pip install pyfas easydict"
+            ) from exc
+        Tpl, Ppl = _Tpl, _Ppl
+
+
+def _float_tokens(line: str) -> list:
+    """The numbers on one line, split on single spaces; anything else is skipped (as pyfas does)."""
+    points = []
+    for point in line.split(" "):
+        try:
+            points.append(float(point))
+        except ValueError:
+            pass
+    return points
+
+
+def _safe_key(key) -> str:
+    """The key pyfas's ``data_in_df`` gives a branch or variable name."""
+    key = str(key)
+    if re.match(r"^\d", key):
+        key = f"BRANCH_{key}"
+    key = re.sub(r"[^a-zA-Z0-9_]", "_", key)
+    return key or "EMPTY_KEY"
+
+
+class _PplUnsupported(Exception):
+    """The single-pass reader cannot answer this the way pyfas would; use pyfas."""
+
+
+class _SinglePassPpl:
+    """Reads a .ppl once and extracts a variable only when asked.
+
+    ``pyfas.Ppl`` re-reads the whole file for every catalog line and every branch while it
+    initialises (and builds a DataFrame for every variable), so a 1 MB file with a few
+    thousand variables took 35-70 s before anything was asked. The catalog, the time
+    vector, and the geometries are the same few lines here; a variable's profile is parsed
+    from the in-memory lines on demand. It follows pyfas's parsing rules line for line so
+    the numbers are identical, except that a branch is matched by its whole name. Anything it does not cover is answered by pyfas, loaded on
+    first use.
+    """
+
+    def __init__(self, fname: str):
+        if not fname.endswith(".ppl"):
+            raise ValueError("not a ppl file")
+        self.abspath = fname
+        with open(fname) as fobj:
+            lines = fobj.readlines()
+        self._lines = lines
+        catalog = nvar_idx = data_idx = None
+        self.profiles = {}
+        branch_idx = []
+        for idx, line in enumerate(lines):
+            if "CATALOG" in line:
+                catalog = idx
+                nvar_idx = idx + 1
+            if "TIME SERIES" in line:
+                data_idx = idx
+                break
+            if catalog is not None:
+                adj_idx = idx - catalog - 1
+                if adj_idx > 0:
+                    self.profiles[adj_idx] = line
+            if "BRANCH\n" in line:
+                branch_idx.append(idx + 1)
+        if catalog is None or data_idx is None:
+            raise _PplUnsupported("no catalog or time series section")
+        self._catalog_idx = catalog
+        self._data_idx = data_idx
+        self._nvar = int(lines[nvar_idx])
+        self.time = [float(line) for line in lines[1 + data_idx::self._nvar + 1]]
+        self.geometries = {}
+        for begin in branch_idx:
+            self._extract_geometry(lines[begin].replace("'", "").replace("\n", ""), begin + 2)
+        self._all_branches = list(set(self._branch_of(line) for line in self.profiles.values()))
+        self._legacy = None
+
+    # -- what pyfas.Ppl offers, answered from the lines already in memory --------------
+
+    @staticmethod
+    def _branch_of(line: str):
+        parts = line.split("'BRANCH:'")
+        if len(parts) > 1:
+            branch_part = parts[1].strip()
+            return branch_part.split("'")[1] if "'" in branch_part else None
+        return None
+
+    def _extract_geometry(self, branch: str, begin: int) -> None:
+        raw = []
+        lines = self._lines
+        for pos in range(begin, len(lines)):
+            raw.extend(_float_tokens(lines[pos]))
+            if re.search(r"[A-DF-Z]", lines[pos]) is not None:
+                break
+        self.geometries[branch] = (raw[:int(len(raw) / 2)], raw[int(len(raw) / 2):])
+
+    def filter_data(self, pattern: str = "") -> dict:
+        found = {}
+        for idx in range(self._catalog_idx + 2, self._data_idx):
+            line = self._lines[idx]
+            if pattern in line:
+                found[idx - self._catalog_idx - 1] = line
+        return found
+
+    @property
+    def branches(self):
+        return self._all_branches
+
+    @property
+    def timesteps(self):
+        return self.time
+
+    def extract(self, variable_idx: int):
+        """``(x, [one list of values per timestep])`` for one catalog line."""
+        branch = re.findall(r"'(.+?)'", self.profiles[variable_idx])[2]
+        per_step = [_float_tokens(line)
+                    for line in self._lines[variable_idx + 1 + self._data_idx::self._nvar + 1]]
+        x_st = self.geometries[branch][0]
+        if len(per_step[0]) == len(x_st):
+            return list(x_st), per_step
+        return [(x0 + x1) / 2 for x0, x1 in zip(x_st[:-1], x_st[1:])], per_step
+
+    def profile_columns(self, variable: str, branch: str):
+        """One variable on exactly one branch: ``(x, [values per timestep], catalog line)``.
+
+        A branch is asked for by its own name or by the key ``data_in_df`` gives it (see
+        ``_safe_key``). Its variables are the catalog lines of that branch only; pyfas takes
+        every line that contains the name, so LINE_3 answers with LINE_3-10's values.
+        """
+        owner = self.branch_name(branch)
+        props = {}
+        for idx, line in self.profiles.items():
+            if self._branch_of(line) == owner:
+                props[line.split(" ")[0].strip()] = idx  # the last catalog line of a name wins
+        variables = {}
+        for raw_name in props:
+            variables[_safe_key(raw_name)] = props[raw_name]
+        if variable not in variables:
+            raise ValueError(
+                f"Variable '{variable}' not found in branch '{branch}'. Available: {list(variables)}"
+            )
+        x, per_step = self.extract(variables[variable])
+        if (
+            len(set(self.time)) != len(self.time)
+            or len(per_step) != len(self.time)
+            or len({len(step) for step in per_step}) != 1
+            or len(per_step[0]) != len(x)
+        ):
+            raise _PplUnsupported("ragged profile")
+        return x, per_step, self.profiles[variables[variable]]
+
+    def branch_name(self, branch: str) -> str:
+        """The catalog's own name for the branch asked for."""
+        if branch in self._all_branches:
+            return branch
+        keyed = {}
+        for raw_branch in self._all_branches:
+            keyed.setdefault(_safe_key(raw_branch), []).append(raw_branch)
+        if branch not in keyed:
+            raise ValueError(f"Branch '{branch}' not found. Available: {list(keyed)}")
+        if len(keyed[branch]) > 1:
+            raise ValueError(f"Branch '{branch}' fits more than one branch: {sorted(keyed[branch])}. Ask for one of them.")
+        return keyed[branch][0]
+
+    # -- everything else is pyfas's -----------------------------------------------------
+
+    @property
+    def legacy(self):
+        if self._legacy is None:
+            _check_pyfas()
+            self._legacy = Ppl(self.abspath)
+        return self._legacy
+
+    def __getattr__(self, name: str):
+        if name.startswith("_"):
+            raise AttributeError(name)
+        return getattr(self.legacy, name)
 
 
 def _to_list(arr) -> list:
@@ -39,12 +215,13 @@ def _to_list(arr) -> list:
     NaN and Inf values are converted to None (JSON null)."""
     if arr is None:
         return []
-    try:
-        import numpy as np
-        if isinstance(arr, np.ndarray):
-            arr = arr.tolist()
-    except ImportError:
-        pass
+    if not isinstance(arr, (list, tuple)):  # a list needs no numpy (and its import time)
+        try:
+            import numpy as np
+            if isinstance(arr, np.ndarray):
+                arr = arr.tolist()
+        except ImportError:
+            pass
     if isinstance(arr, (list, tuple)):
         return [None if isinstance(v, float) and (math.isnan(v) or math.isinf(v)) else v
                 for v in arr]
@@ -72,6 +249,8 @@ def _parse_catalog_line(raw_line: str) -> dict:
     for token in quoted:
         if token.startswith("(") and token.endswith(")"):
             unit = token[1:-1]  # strip parens
+        elif token == "BRANCH:" and not position:
+            kind = ""  # "'BOUNDARY:' 'BRANCH:' 'LINE'" in a .ppl: the label is the branch itself
         elif token in ("POSITION:", "SECTION:", "BRANCH:"):
             continue
         elif not position and not kind and token.endswith(":"):
@@ -124,16 +303,21 @@ class ResultParser:
     """
 
     def __init__(self, filepath: str):
-        _check_pyfas()
         self.filepath = os.path.abspath(filepath)
 
         ext = os.path.splitext(filepath)[1].lower()
         if ext == ".tpl":
+            _check_pyfas()
             self.file_type = "tpl"
             self._reader = Tpl(self.filepath)
         elif ext == ".ppl":
             self.file_type = "ppl"
-            self._reader = Ppl(self.filepath)
+            try:
+                self._reader = _SinglePassPpl(self.filepath)
+            except Exception:
+                # Anything the single-pass reader cannot take is pyfas's to read, or to reject.
+                _check_pyfas()
+                self._reader = Ppl(self.filepath)
         else:
             raise ValueError(
                 f"Unsupported file extension '{ext}'. Expected .tpl or .ppl."
@@ -389,7 +573,17 @@ class ResultParser:
         if self.file_type != "ppl":
             raise ValueError("get_profile() is only available for .ppl files.")
 
-        data_in_df = self._reader.data_in_df
+        reader = self._reader
+        if isinstance(reader, _SinglePassPpl):
+            try:
+                return self._get_profile_single_pass(reader, variable, branch, timestep)
+            except _PplUnsupported:
+                owner = reader.branch_name(branch)
+                if any(other and other != owner and (owner in other or _safe_key(other) == _safe_key(owner))
+                       for other in reader.branches):
+                    raise ValueError(f"The profile of '{variable}' on branch '{owner}' is incomplete in this file.")
+                reader, branch = reader.legacy, _safe_key(owner)
+        data_in_df = reader.data_in_df
         if branch not in data_in_df:
             available = list(data_in_df.keys())
             raise ValueError(
@@ -405,7 +599,7 @@ class ResultParser:
             )
 
         df = branch_data[variable]
-        timesteps = list(self._reader.timesteps)
+        timesteps = list(reader.timesteps)
 
         if timestep is None:
             selected_t = timesteps[-1] if timesteps else df.columns[-1]
@@ -427,13 +621,7 @@ class ResultParser:
         profile_series = df[col]
 
         # Resolve unit from catalog
-        unit = ""
-        raw_entries = self._reader.filter_data(variable)
-        for _, raw_line in raw_entries.items():
-            if branch.lower() in raw_line.lower():
-                parsed = _parse_catalog_line(raw_line)
-                unit = parsed["unit"]
-                break
+        unit = self._catalog_unit(reader, variable, branch)
 
         return {
             "variable": variable,
@@ -443,6 +631,32 @@ class ResultParser:
             "positions": _to_list(list(profile_series.index)),
             "values": _to_list(list(profile_series.values)),
             "unit": unit,
+        }
+
+    @staticmethod
+    def _catalog_unit(reader, variable: str, branch: str) -> str:
+        """The unit the catalog gives the first line of ``variable`` that names ``branch``."""
+        for _, raw_line in reader.filter_data(variable).items():
+            if branch.lower() in raw_line.lower():
+                return _parse_catalog_line(raw_line)["unit"]
+        return ""
+
+    def _get_profile_single_pass(self, reader, variable: str, branch: str, timestep: Optional[float]) -> dict:
+        """``get_profile`` for a .ppl read by ``_SinglePassPpl``: parses only this variable."""
+        x, per_step, catalog_line = reader.profile_columns(variable, branch)
+        timesteps = list(reader.timesteps)
+        if timestep is None:
+            index = len(timesteps) - 1
+        else:
+            index = min(range(len(timesteps)), key=lambda i: abs(timesteps[i] - timestep))
+        return {
+            "variable": variable,
+            "branch": branch,
+            "timestep": float(timesteps[index]),
+            "timestep_unit": "s",
+            "positions": _to_list(x),
+            "values": _to_list(per_step[index]),
+            "unit": _parse_catalog_line(catalog_line)["unit"],
         }
 
     def get_geometry(self, branch: str) -> dict:
@@ -592,6 +806,11 @@ def _cli():
         help="List all timesteps (.ppl only)",
     )
     parser.add_argument(
+        "--index",
+        action="store_true",
+        help="All of a file's lists in one JSON answer (variables, and branches/timesteps or the time range)",
+    )
+    parser.add_argument(
         "--geometry",
         metavar="BRANCH",
         help="Print geometry for a branch (.ppl only)",
@@ -621,6 +840,22 @@ def _cli():
     # --all
     if args.all:
         print(rp.to_json())
+        return
+
+    # --index: one start of this script answers everything a load asks
+    if args.index:
+        index = {"variables": rp.list_variables()}
+        if rp.file_type == "ppl":
+            index["branches"] = rp.list_branches()
+            index["timesteps"] = rp.list_timesteps()
+        elif index["variables"]:
+            try:
+                time = rp.get_time_series(index["variables"][0]["variable"])["time"]
+            except Exception:  # the variables are still worth listing
+                time = []
+            if time:
+                index["time_range"] = {"start_s": time[0], "end_s": time[-1], "samples": len(time)}
+        print(json.dumps(index))
         return
 
     # --list-vars

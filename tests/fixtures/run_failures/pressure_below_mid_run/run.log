@@ -1,42 +1,5 @@
-
-     READING FLUID PROP. FILE    :   air_water.tab
-
-
-WARNING 59 table value exceptions have been reg. for fluid: AIR_WATER. For more info, use DEBUG = ON in OPTIONS and rerun
-WARNING The steady state preprocessor did not converge. 
-
-     INPUT AND OUTPUT FILENAMES:
-     ***************************
-
-
-
-     INPUT FILE                  :   C:\run\case.genkey
-
-
-     FLUID PROP. FILE            :   air_water.tab
-
-
-
-Elapsed simulation-time is now:       0.00 S    (   0.0% of simulation completed )
-
-Elapsed simulation-time is now:       6.00 MIN  (  10.0% of simulation completed )
-
-Elapsed simulation-time is now:      12.00 MIN  (  20.0% of simulation completed )
-
-
-
-     **************************************************************
-     *                                                            *
-     *                       OLGA  STOP                           *
-     *                                                            *
-     **************************************************************
-
-     THE OLGA SIMULATION ABORTED AT TIME 985.61161540 SECONDS.
-
-    PRESSURE BELOW TABLE VALUES (P = 0.48789 bara, T = 24.734 C)
-
-     REPORTED IN FLOWPATH=MAIN, PIPE=DOWNSTREAM, SECTION=9.
-
-
-
+OLGA STOP
+THE OLGA SIMULATION ABORTED AT TIME 985.61161540 SECONDS.
+PRESSURE BELOW TABLE VALUES (P = 0.48789 bara, T = 24.734 C)
+REPORTED IN FLOWPATH=MAIN, PIPE=DOWNSTREAM, SECTION=9.
 **** OLGA stopped with exit message 'pressure below' (65) ****

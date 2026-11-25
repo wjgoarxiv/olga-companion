@@ -1135,7 +1135,8 @@ def test_the_tool_description_states_the_node_cap(native_on: None) -> None:
 # The LIQC/HOL output-placement sentence (hyper-real round 8) moved them again (strength unchanged).
 # Rehashed for the product-name change only (earlier working name -> OLGA Companion); no other byte differs.
 # 0.1.20 row 2: one sentence names the <<<OLGA OUTPUT block as data (prompt-injection guard).
-RELEASE_PROMPT_TEMPLATE_SHA256 = "1ebeda623087f28b5f607ca1f4057fe2bb73967b8f576b0e492d887d64973470"
+# M3: one sentence names fluids_make_tab, the chat form of the Make button.
+RELEASE_PROMPT_TEMPLATE_SHA256 = "e00bb7557347ea55210786cf38f4dcebe0a8980ffd41fa4efcb5f200596a92a6"
 
 
 def test_the_release_prompt_is_byte_identical_to_the_text_before_the_generator() -> None:

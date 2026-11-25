@@ -36,8 +36,8 @@ def build_entries() -> list[dict]:
     _docstring_terms(entries, validator, "genkey_validator.py")
     _catalog_variables(entries, parser)
     _korean_variables(entries, variables)
-    _vendor_definitions(entries, REPO / "resources/olga-vendor/keyinfo-fractions.json")
-    _vendor_definitions(entries, REPO / "resources/olga-vendor/keyinfo-controller.json")
+    _vendor_definitions(entries, REPO / "resources/olga-key-notes/fractions.json")
+    _vendor_definitions(entries, REPO / "resources/olga-key-notes/controller.json")
     _meanings(entries, Path(__file__).with_name("olga_glossary_meanings.json"))
     return [entries[term] for term in sorted(entries)]
 
@@ -194,7 +194,7 @@ def _korean_variables(entries: dict[str, dict], lines: list[str]) -> None:
 
 
 def _vendor_definitions(entries: dict[str, dict], path: Path) -> None:
-    """The OLGA install's own key definitions win over the owner notes they replace."""
+    """Notes in our own words on OLGA keys; each cites the key file line it describes, and wins over the owner notes."""
     for row in json.loads(path.read_text(encoding="utf-8")):
         entry = {
             "kind": "parameter",

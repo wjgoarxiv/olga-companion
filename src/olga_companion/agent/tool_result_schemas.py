@@ -24,6 +24,10 @@ def _object(
 
 _STRING: Final = {"type": "string", "minLength": 1}
 _PATH: Final = {"type": "string", "minLength": 1, "maxLength": 4096}
+_RESULT_REF: Final = {
+    **_PATH,
+    "description": "The result_id from results_inventory (for example workspace:run/case.ppl), not a file path.",
+}
 _TOKEN: Final = {"type": "string", "minLength": 1, "maxLength": 128}
 _STRING_LIST: Final = {
     "type": "array",
@@ -109,7 +113,7 @@ RESULT_PARAMETER_SCHEMAS: Final = {
     ),
     "results_series": _object(
         {
-            "result_id": {"type": "string", "minLength": 1, "maxLength": 4096},
+            "result_id": _RESULT_REF,
             "variable": _TOKEN,
             "position": {"type": "string", "minLength": 1, "maxLength": 512},
             "value_unit": {"type": "string", "minLength": 1, "maxLength": 64},
@@ -124,17 +128,17 @@ RESULT_PARAMETER_SCHEMAS: Final = {
     ),
     "results_profile": _object(
         {
-            "result_id": {"type": "string", "minLength": 1, "maxLength": 4096},
+            "result_id": _RESULT_REF,
             "variable": _TOKEN,
             "branch": _TOKEN,
             "timestep": {"type": "number", "minimum": 0},
         },
         ["result_id", "variable", "branch"],
     ),
-    "results_load": _object({"path": _PATH}, ["path"]),
+    "results_load": _object({"path": _RESULT_REF}, ["path"]),
     "results_csv": _object(
         {
-            "path": _PATH,
+            "path": _RESULT_REF,
             "variables": _VARIABLE_LIST,
             "branch": _TOKEN,
             **_VIEW_SELECTION,
@@ -144,7 +148,7 @@ RESULT_PARAMETER_SCHEMAS: Final = {
     ),
     "results_plot": _object(
         {
-            "path": _PATH,
+            "path": _RESULT_REF,
             "variables": _VARIABLE_LIST,
             "branch": _TOKEN,
             **_VIEW_SELECTION,
@@ -208,7 +212,7 @@ RESULT_PARAMETER_SCHEMAS: Final = {
     "report_figure": _object(
         {
             "kind": {"type": "string", "enum": ["hol-profile", "liqc-timeseries"]},
-            "file": _PATH,
+            "file": _RESULT_REF,
             "branch": _TOKEN,
             "criterion": {"type": "number", "minimum": 0},
             "timestep": {"type": "number", "minimum": 0},

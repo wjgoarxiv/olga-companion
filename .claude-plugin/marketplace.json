@@ -9,7 +9,7 @@
     {
       "name": "olga-companion",
       "source": "./plugin",
-      "version": "0.1.29",
+      "version": "0.1.30",
       "description": "OLGA multiphase flow tools without the desktop app. Writes always go to new files, and Claude Code asks before each one."
     }
   ]

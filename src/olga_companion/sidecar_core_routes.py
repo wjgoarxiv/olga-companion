@@ -519,6 +519,7 @@ def api_fluids_make_tab(
         "fluid_label": result["fluid_label"],
         "grid_source": result["grid_source"],
         "points": result["points"],
+        "engine_warnings": result["engine_warnings"],
         "errors": [item.get("message", "") for item in result.get("errors", [])],
         "warnings": len(result.get("warnings", [])),
     }

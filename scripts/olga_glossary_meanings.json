@@ -1,19 +1,19 @@
 {
   "AMPLIFICATION": {
-    "en": "Gain of the PID controller: how strongly its output reacts to the gap between setpoint and measured value. With the non-linear option it is a list matched to the ERROR list.",
-    "ko": "PID 제어기의 이득. 설정값과 측정값의 차이에 출력이 얼마나 크게 반응하는지 정해요. 비선형 옵션을 쓰면 ERROR 목록에 맞춘 값 목록이에요."
+    "en": "Gain of the PID controller: how strongly its output reacts to the gap between setpoint and measured value. A non-linear controller takes one value per ERROR entry.",
+    "ko": "PID 제어기의 이득. 설정값과 측정값의 차이에 출력이 얼마나 크게 반응하는지 정해요. 비선형 제어기에서는 ERROR 값마다 하나씩 줘요."
   },
   "DERIVATIVECONST": {
-    "en": "Derivative time of the PID controller: the coefficient in front of its derivative term. With the non-linear option it is a list matched to the ERROR list.",
-    "ko": "PID 제어기의 미분 시간. 미분 항 앞에 붙는 계수예요. 비선형 옵션을 쓰면 ERROR 목록에 맞춘 값 목록이에요."
+    "en": "Derivative time of the PID controller: how strongly it reacts to how fast the measured value changes. A non-linear controller takes one value per ERROR entry.",
+    "ko": "PID 제어기의 미분 시간. 측정값이 변하는 빠르기에 얼마나 크게 반응하는지 정해요. 비선형 제어기에서는 ERROR 값마다 하나씩 줘요."
   },
   "INTEGRALCONST": {
-    "en": "Integral time of the PID controller, a characteristic time. It is the inverse of the integral coefficient in the output formula, so a larger time means a weaker integral action.",
-    "ko": "PID 제어기의 적분 시간(특성 시간). 출력 식의 적분 계수의 역수라서, 클수록 적분 작용이 약해져요."
+    "en": "Integral time of the PID controller. The longer the time, the more slowly the controller corrects a lasting gap.",
+    "ko": "PID 제어기의 적분 시간. 길수록 남아 있는 차이를 더 천천히 고쳐요."
   },
   "MASSFLOW": {
-    "en": "On a SOURCE: its total mass flow rate, given as a time series.",
-    "ko": "SOURCE에서: 소스의 전체 질량 유량. 시간에 따른 값 목록으로 줘요."
+    "en": "On a SOURCE: how much mass enters per second, all phases together. Give a list to change it over time.",
+    "ko": "SOURCE에서 1초에 들어오는 전체 질량(모든 상 합계). 시간에 따라 바꾸려면 값 목록으로 줘요."
   },
   "SETPOINT": {
     "en": "The target the controller steers its measured value toward, in the unit of that measured value. A list when it changes over time (paired with TIME).",
@@ -116,8 +116,8 @@
     "ko": "저류층 접촉부의 비다시(Forchheimer) 유입 성능(IPR) 모델을 정해요."
   },
   "GASFRACTION": {
-    "en": "Gas mass fraction of the inflow gas+oil mixture. Specify -1 for OLGA to use the equilibrium values from the PVT table.",
-    "ko": "유입되는 가스+오일 혼합물의 가스 질량 분율. -1이면 PVT 표의 평형값을 써요."
+    "en": "Share of the inflowing gas and oil, by mass, that is gas (a mass fraction). Enter -1 to take the equilibrium share from the PVT table.",
+    "ko": "들어오는 가스와 오일 가운데 가스의 질량 분율. -1을 넣으면 PVT 표의 평형값을 써요."
   },
   "GASINJ": {
     "en": "Gas injection productivity index at each time point",
@@ -344,8 +344,8 @@
     "ko": "저류층 구간의 위 끝을 표시하는 POSITION의 이름"
   },
   "TOTALWATERFRACTION": {
-    "en": "Mass fraction of total water in the total boundary fluid mixture. Use -1 for the total water fraction to be taken from the PVT table. Either this key or WATERFRACTION can be specified.",
-    "ko": "경계 유체 전체에서 전체 물의 질량 분율. -1이면 PVT 표의 값을 써요. 이 값과 WATERFRACTION 중 하나만 정해요."
+    "en": "Mass fraction of all water, free water plus water vapour, in the fluid at the boundary. Enter -1 to take it from the PVT table. Give this or WATERFRACTION, never both.",
+    "ko": "경계 유체에서 자유수와 수증기를 합친 전체 물의 질량 분율. -1을 넣으면 PVT 표의 값을 써요. WATERFRACTION과 함께 쓰지 않고 하나만 정해요."
   },
   "TREND": {
     "en": "Controls frequency of trend plot data (time-series at specific positions).",
@@ -368,8 +368,8 @@
     "ko": "MATERIAL 이름과 층 두께를 차례로 적어 여러 층의 배관 벽을 정해요."
   },
   "WATERFRACTION": {
-    "en": "Mass fraction of free water in the total boundary fluid mixture. Either this key or TOTALWATERFRACTION can be specified.",
-    "ko": "경계 유체 전체에서 자유수의 질량 분율. 이 값과 TOTALWATERFRACTION 중 하나만 정해요."
+    "en": "Mass fraction of the free water alone in the fluid at the boundary. Give this or TOTALWATERFRACTION, never both.",
+    "ko": "경계 유체에서 자유수만의 질량 분율. TOTALWATERFRACTION과 함께 쓰지 않고 하나만 정해요."
   },
   "WATINJ": {
     "en": "Water injection productivity index at each time point",

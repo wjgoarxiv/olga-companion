@@ -111,6 +111,15 @@ def _approved(name: str, arguments: dict[str, Any]) -> dict[str, Any]:
     return tools.dispatch(name, {**arguments, "approval_token": token, "idempotency_key": secrets.token_urlsafe(24)})
 
 
+def _with_saved_path(payload: Any) -> Any:
+    """Add where an exported figure or CSV was saved. The app keeps this private; here the user owns the folder."""
+    if not isinstance(payload, dict) or not payload.get("artifact_id"):
+        return payload
+    from . import result_artifacts
+
+    return {**payload, "saved_path": str(result_artifacts.resolve(str(payload["artifact_id"])))}
+
+
 def call(name: str, arguments: dict[str, Any]) -> dict[str, Any]:
     from . import genkey_static, workspace
     from .agent import tools
@@ -131,7 +140,7 @@ def call(name: str, arguments: dict[str, Any]) -> dict[str, Any]:
                     {"error": f"{existing} already exists, so nothing was written. Choose a new file name."}, error=True
                 )
             return _answer(_approved(name, arguments))
-        return _answer(tools.dispatch(name, arguments))
+        return _answer(_with_saved_path(tools.dispatch(name, arguments)))
     except (tools.ToolError, workspace.WorkspaceError, genkey_static.OlgaInputError, ValueError) as exc:
         return _answer({"error": str(exc)}, error=True)
     except Exception as exc:  # noqa: BLE001 - one failing tool must not end the server

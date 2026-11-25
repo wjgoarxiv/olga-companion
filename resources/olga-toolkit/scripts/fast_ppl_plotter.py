@@ -41,11 +41,12 @@ _SCRIPTS_DIR = os.path.dirname(os.path.abspath(__file__))
 if _SCRIPTS_DIR not in sys.path:
     sys.path.insert(0, _SCRIPTS_DIR)
 
+# The single-pass reader lives in result_parser; pyfas stays the fallback and loads only
+# when that reader cannot take a file (importing it costs seconds).
 try:
-    from pyfas import Ppl
-    PYFAS_AVAILABLE = True
+    from result_parser import _SinglePassPpl
 except ImportError:
-    PYFAS_AVAILABLE = False
+    _SinglePassPpl = None
 
 
 class FastPPLPlotter:
@@ -62,15 +63,25 @@ class FastPPLPlotter:
     """
 
     def __init__(self, ppl_path, wanted_branches=None, wanted_vars=None):
-        if not PYFAS_AVAILABLE:
-            raise ImportError('pyfas is required but not installed')
-
         self.ppl_path = ppl_path
         self._wanted_branches = set(wanted_branches) if wanted_branches else None
         self._wanted_vars = set(wanted_vars) if wanted_vars else None
 
         print('Loading PPL: %s' % os.path.basename(ppl_path))
-        self._ppl = Ppl(ppl_path)
+        self._ppl = None
+        if _SinglePassPpl is not None:
+            try:
+                self._ppl = _SinglePassPpl(ppl_path)
+            except Exception:
+                self._ppl = None
+        if self._ppl is None:
+            try:
+                from pyfas import Ppl
+            except ImportError:
+                raise ImportError('pyfas is required but not installed')
+            self._ppl = Ppl(ppl_path)
+        self._single_pass = _SinglePassPpl is not None and isinstance(self._ppl, _SinglePassPpl)
+        self._raw_cache = {}
 
         # Cache branch list and timesteps (actual pyfas API)
         self._all_branches = sorted(self._ppl.geometries.keys())
@@ -81,6 +92,8 @@ class FastPPLPlotter:
         _br_re = _re.compile(r"'BRANCH:'\s+'([^']+)'")
         self._vars_by_branch = {}
         self._catalog_index = {}  # (var_upper, branch) -> idx
+        self._units = {}  # (var_upper, branch) -> unit
+        _unit_re = _re.compile(r"'\(([^()']*)\)'")
         all_catalog = self._ppl.filter_data('')
         for idx, raw_line in all_catalog.items():
             parts = raw_line.split()
@@ -94,14 +107,9 @@ class FastPPLPlotter:
             key = (var_name.upper(), branch)
             if key not in self._catalog_index:
                 self._catalog_index[key] = idx
-
-        # Pre-extract all needed indices
-        needed = set()
-        for (var_u, br), idx in self._catalog_index.items():
-            if self._branch_ok(br) and self._var_ok(var_u):
-                needed.add(idx)
-        for idx in needed:
-            self._ppl.extract(idx)
+                unit_match = _unit_re.search(raw_line)
+                if unit_match:
+                    self._units[key] = unit_match.group(1).strip()
 
         # Count how many (branch, var) pairs pass filter
         total = sum(len(v) for v in self._vars_by_branch.values())
@@ -120,6 +128,16 @@ class FastPPLPlotter:
             print('  Time range: %.1f - %.1f s' % (
                 float(self._all_timesteps[0]),
                 float(self._all_timesteps[-1])))
+
+    def _raw(self, idx):
+        """``(positions, [values per timestep])`` for one catalog index, parsed on first use."""
+        if idx not in self._raw_cache:
+            if self._single_pass:
+                self._raw_cache[idx] = self._ppl.extract(idx)
+            else:
+                self._ppl.extract(idx)
+                self._raw_cache[idx] = self._ppl.data[idx]
+        return self._raw_cache[idx]
 
     def _branch_ok(self, branch):
         """Check if branch passes the wanted filter."""
@@ -171,7 +189,7 @@ class FastPPLPlotter:
         if idx is None:
             return None, None
 
-        raw = self._ppl.data[idx]
+        raw = self._raw(idx)
         positions = np.array(raw[0], dtype=float)
         values_per_ts = raw[1]
 
@@ -183,6 +201,10 @@ class FastPPLPlotter:
 
         values = np.array(values_per_ts[ts_idx], dtype=float)
         return positions, values
+
+    def get_unit(self, variable, branch):
+        """Unit text the file gives for a variable, or None."""
+        return self._units.get((variable.upper(), branch)) or None
 
     def get_all_profiles(self, variable, branch):
         """Get all timestep profiles for a variable on a branch.
@@ -205,7 +227,7 @@ class FastPPLPlotter:
         if idx is None:
             return {}
 
-        raw = self._ppl.data[idx]
+        raw = self._raw(idx)
         values_per_ts = raw[1]
         result = {}
         for i, ts in enumerate(self._all_timesteps):
@@ -273,7 +295,7 @@ class FastPPLPlotter:
 # ---------------------------------------------------------------------------
 
 def _plot_profile(positions, values, variable, branch, timestep,
-                  out_path):
+                  out_path, unit=None):
     """Save a single profile plot as PNG."""
     import matplotlib
     matplotlib.use('Agg')
@@ -294,7 +316,7 @@ def _plot_profile(positions, values, variable, branch, timestep,
     ax.plot(positions, values, linewidth=1.6, color=_color)
     ax.set_title('%s on %s at t=%.1f s' % (variable, branch, timestep))
     ax.set_xlabel('Position (m)')
-    ax.set_ylabel(variable)
+    ax.set_ylabel('%s (%s)' % (variable, unit) if unit else variable)
     save_figure(fig, out_path, dpi=600, transparent=False)
     plt.close(fig)
 
@@ -410,7 +432,8 @@ def main():
             vals = profiles[ts]
             fname = '%s_%s_t%08.1f.png' % (args.branch, args.var, ts)
             out_path = os.path.join(out_dir, fname)
-            _plot_profile(pos, vals, args.var, args.branch, ts, out_path)
+            _plot_profile(pos, vals, args.var, args.branch, ts, out_path,
+                          unit=plotter.get_unit(args.var, args.branch))
             if (i + 1) % 50 == 0 or (i + 1) == len(sorted_ts):
                 print('  %d / %d done' % (i + 1, len(sorted_ts)))
 
@@ -431,7 +454,8 @@ def main():
         os.makedirs(out_dir, exist_ok=True)
         fname = '%s_%s_t%08.1f.png' % (args.branch, args.var, actual_t)
         out_path = os.path.join(out_dir, fname)
-        _plot_profile(pos, vals, args.var, args.branch, actual_t, out_path)
+        _plot_profile(pos, vals, args.var, args.branch, actual_t, out_path,
+                      unit=plotter.get_unit(args.var, args.branch))
         print('Saved %s' % out_path)
         sys.exit(0)
 

@@ -46,6 +46,16 @@ SIDE_EFFECT_TOOL_METADATA: Final = {
         {},
         [],
     ),
+    "fluids_make_tab": (
+        "Make a PVT table (.tab) from a Multiflash .mfl in the workspace with the Multiflash engine "
+        "installed with OLGA, after explicit human approval. The new .tab goes in the same folder as the "
+        ".mfl; a table, or its .made-from.json record, that already exists is never overwritten. The grid "
+        "is the .mfl's own `table olga` command, or -20 to 150 C and 0.5 to 300 bar when it has none; the high-accuracy "
+        "water model is used only when that command says HAWATER. "
+        "Needs Windows with Multiflash.",
+        {},
+        [],
+    ),
     "fluids_import_tab": (
         "Write a PVT table (.tab) from the user's own property values (a CSV or XLSX from HYSYS, PVTsim "
         "or a lab) after explicit human approval. The values are written as given, only the pressure and "
@@ -137,6 +147,8 @@ def approval_payload(
         return _generate_tab_payload(args)
     if action_kind == "fluids_starter_tab":
         return _starter_tab_payload(args)
+    if action_kind == "fluids_make_tab":
+        return _make_tab_payload(args)
     if action_kind == "fluids_import_tab":
         return _import_tab_payload(args)
     if action_kind == "multiflash_open":
@@ -350,6 +362,57 @@ def _starter_tab_payload(args: dict[str, Any]) -> dict[str, Any]:
     if not starter_fluids.bundled_table().is_file():
         raise ToolError("The generic air-water table is not included in this build.")
     return {"tab_rel": str(target.relative_to(root)), "fluid_label": starter_fluids.LABEL}
+
+
+def _make_tab_payload(args: dict[str, Any]) -> dict[str, Any]:
+    """Canonicalize a make-table request; every refusal here happens before any card exists.
+
+    The payload carries the .mfl hash, so an .mfl edited after the card no longer matches.
+    """
+    import hashlib
+
+    from .. import fluid_provenance, fluid_table, multiflash_direct
+
+    source_rel, tab_rel = str(args.get("source_rel") or ""), str(args.get("tab_rel") or "")
+    if not source_rel:
+        raise ToolError("source_rel is required: the workspace-relative Multiflash .mfl.")
+    if not tab_rel:
+        raise ToolError("tab_rel is required: a new workspace-relative .tab destination.")
+    try:
+        root, _ = workspace.context_identity()
+        source = workspace.contained(source_rel)
+        target = workspace.contained(tab_rel)
+    except workspace.WorkspaceError as exc:
+        raise ToolError(str(exc)) from exc
+    if source.suffix.casefold() != ".mfl" or not source.is_file():
+        raise ToolError(f"{source.name} must be an existing .mfl file in the workspace.")
+    if target.suffix.casefold() != ".tab":
+        raise ToolError("Table destination must end in .tab.")
+    if not multiflash_direct._TAB_NAME.fullmatch(target.name):
+        raise ToolError("The table name must be a plain file name ending in .tab: English letters, digits, _ . - or spaces.")
+    if target.parent != source.parent:
+        raise ToolError("The table is made in the same folder as its .mfl; name a .tab in the same folder.")
+    for existing in (target, fluid_provenance.record_path(target)):
+        if os.path.lexists(existing):
+            raise ToolError(f"{existing.name} already exists; choose a new table name. Nothing is ever overwritten.")
+    try:
+        mfl_bytes = source.read_bytes()
+        plan = multiflash_direct.read_table_request(mfl_bytes.decode("utf-8", errors="replace"))
+    except (fluid_table.FluidTableError, OSError) as exc:
+        raise ToolError(str(exc)) from exc
+    unavailable = multiflash_direct.engine_available()
+    if unavailable:
+        raise ToolError(unavailable)
+    return {
+        "source_rel": str(source.relative_to(root)),
+        "tab_rel": str(target.relative_to(root)),
+        "mfl_sha256": hashlib.sha256(mfl_bytes).hexdigest(),
+        "fluid_label": multiflash_direct._label_for(plan, source),
+        "grid_source": plan["grid_source"],
+        "hawater": plan["ha_water"],
+        "temperatures_k": plan["temperatures_k"],
+        "pressures_pa": plan["pressures_pa"],
+    }
 
 
 def _import_tab_payload(args: dict[str, Any]) -> dict[str, Any]:
@@ -715,6 +778,39 @@ def fluids_starter_tab(args: dict[str, Any], payload_builder: ApprovalPayloadBui
             "Link the table through case_edit_plan and case_publish with this fluid label; the "
             "table's own composition is fixed and is used as it is."
         ),
+    }
+
+
+def fluids_make_tab(args: dict[str, Any], payload_builder: ApprovalPayloadBuilder) -> dict[str, Any]:
+    """Make the approved table once with the Multiflash engine, never overwriting."""
+    from .. import fluid_table, multiflash_direct
+
+    try:
+        _consume("fluids_make_tab", args, payload_builder)
+        request = payload_builder("fluids_make_tab", args)
+        source = workspace.contained(request["source_rel"])
+    except (ToolError, workspace.WorkspaceError) as exc:
+        # Every check up to here comes before the engine starts, so nothing was written.
+        raise ToolRefusedError(str(exc)) from exc
+    try:
+        made = multiflash_direct.make_tab(
+            str(source), Path(request["tab_rel"]).name, expected_sha256=request["mfl_sha256"]
+        )
+    except fluid_table.FluidTableError as exc:
+        # make_tab moves a table into place only after it passed; a failure leaves nothing behind.
+        raise ToolRefusedError(str(exc)) from exc
+    return {
+        "ok": True,
+        "tab_rel": request["tab_rel"],
+        "source_rel": request["source_rel"],
+        "fluid_label": made["fluid_label"],
+        "grid_source": made["grid_source"],
+        "hawater": made["hawater"],
+        "points": made["points"],
+        "record": made["provenance"],
+        "engine_warnings": made["engine_warnings"],
+        "validator": _validator_summary(made),
+        "next_step": "Link the table through case_edit_plan and case_publish with this fluid label.",
     }
 
 

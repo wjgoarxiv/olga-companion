@@ -145,7 +145,8 @@ __NATIVE_TAB_FLOW__- When a case's PVTFILE is missing and an .mfl is in the case
   from <name>.mfl" beside the missing file and approve. The Multiflash engine
   installed with OLGA computes the .tab from that .mfl (its own table range, or
   -20 to 150 C and 0.5 to 300 bar when the .mfl has none) and saves it next to
-  the case under the referenced name; nothing is overwritten. Do not tell them
+  the case under the referenced name; nothing is overwritten. fluids_make_tab
+  (approval-gated) does the same from chat for a named .mfl. Do not tell them
   to build it in the Multiflash program unless that button reports an error.
 - For a fluid table (.tab) with no .mfl yet, work the guided Stage 1 flow instead of saying
   one cannot be made: preview a Multiflash .mfl draft from the user's own

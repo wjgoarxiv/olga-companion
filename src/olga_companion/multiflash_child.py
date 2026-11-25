@@ -37,8 +37,8 @@ def run(request: dict[str, Any]) -> dict[str, Any]:
     dll.MFIN_MF(ctypes.c_char_p(text), ctypes.c_size_t(len(text)), ctypes.byref(nerr), ctypes.byref(mxerr), ierr)
     load_errors = [int(code) for code in ierr[: min(nerr.value, _MAX_ERRORS)]]
 
-    # The Multiflash program writes OLGA tables with the high-accuracy water model on by default.
-    dll.MF_PVT_TABLE_ENABLE_HA_WATERPHASE(ctypes.byref(ctypes.c_int(1 if request.get("ha_water", True) else 0)))
+    # On only when the .mfl table command says HAWATER.
+    dll.MF_PVT_TABLE_ENABLE_HA_WATERPHASE(ctypes.byref(ctypes.c_int(1 if request.get("ha_water", False) else 0)))
 
     moles = [float(value) for value in request["moles"]]
     pressures = [float(value) for value in request["pressures_pa"]]

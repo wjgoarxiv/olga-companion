@@ -18,7 +18,7 @@ def test_r4_a_load_error_refuses_the_table(tmp_path: Path) -> None:
     mfl = _workspace(tmp_path)
 
     def engine(request: dict[str, Any]) -> dict[str, Any]:
-        table = (FIX / "generated_cpa_3x3.tab").read_text(encoding="utf-8")
+        table = (FIX / "handwritten_3x3.tab").read_text(encoding="utf-8")
         Path(request["tab_path"]).write_text(table.replace("LABEL = probe", f"LABEL = {request['title']}", 1), encoding="utf-8")
         return {"ok": True, "errors": [], "load_errors": [20575]}
 

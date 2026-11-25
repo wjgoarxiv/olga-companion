@@ -35,8 +35,9 @@ They read and write files in the folder this session started in.
 
 1. Look before you change anything: `genkey_review`, `genkey_topology`, `fluids_inspect_tab`
    and the other read tools answer at once and change nothing.
-2. Fluid: draft a Multiflash file (`fluids_draft_mfl`), import measured properties
-   (`fluids_import_tab`), or start from the generic air-water table (`fluids_starter_tab`).
+2. Fluid: draft a Multiflash file (`fluids_draft_mfl`) and make its table from it
+   (`fluids_make_tab`), import measured properties (`fluids_import_tab`), or start from the
+   generic air-water table (`fluids_starter_tab`).
 3. Case: plan an edit (`case_edit_plan`), review the draft, then publish it as a new case
    (`case_publish`). A new case from a template is `genkey_save`.
 4. Run: `run_preview` checks the case and returns a selection; `run_execute` starts that exact
@@ -44,7 +45,11 @@ They read and write files in the folder this session started in.
    `timeout_s` out of both): the selection covers them, and a different value is refused.
    A sweep is `parametric_sweep` then `sweep_execute`.
 5. Results: `results_inventory` lists a run's `.tpl`/`.ppl` files; `results_series`,
-   `results_profile`, `results_plot` and `results_csv` read them.
+   `results_profile`, `results_plot` and `results_csv` read them. Every one of these takes the
+   `result_id` from the inventory, not a file path. For a `.ppl` profile, `results_plot` takes
+   `branch`, one variable, `timestep` and `value_unit` (for example `bar`).
+6. A figure or CSV is saved in the plugin's own folder, not next to the case. The answer's
+   `saved_path` says where; offer to copy it to the folder the user wants.
 
 ## Safety
 

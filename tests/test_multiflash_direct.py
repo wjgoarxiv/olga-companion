@@ -77,7 +77,7 @@ def test_make_tab_writes_a_new_valid_table_next_to_the_mfl(tmp_path: Path) -> No
 
     def engine(request: dict[str, Any]) -> dict[str, Any]:
         seen.update(request)
-        table = (FIX / "generated_cpa_3x3.tab").read_text(encoding="utf-8")
+        table = (FIX / "handwritten_3x3.tab").read_text(encoding="utf-8")
         Path(request["tab_path"]).write_text(table.replace("LABEL = probe", f"LABEL = {request['title']}", 1), encoding="utf-8")
         return {"ok": True, "errors": []}
 
@@ -116,3 +116,97 @@ def test_the_target_name_must_be_a_plain_tab_file_name(tmp_path: Path) -> None:
     for bad in ("../x.tab", "sub/x.tab", "x.txt", ""):
         with pytest.raises(FluidTableError):
             md.make_tab(str(mfl), bad, engine=lambda request: {"ok": True, "errors": []})
+
+
+def test_an_engine_warning_is_reported_and_the_table_is_kept(tmp_path: Path) -> None:
+    """Multiflash numbers its warnings below zero; a real two-phase fluid ends with -20573."""
+    mfl = _workspace(tmp_path)
+
+    def engine(request: dict[str, Any]) -> dict[str, Any]:
+        table = (FIX / "handwritten_3x3.tab").read_text(encoding="utf-8")
+        Path(request["tab_path"]).write_text(table.replace("LABEL = probe", f"LABEL = {request['title']}", 1), encoding="utf-8")
+        return {"ok": False, "errors": [-20573], "load_errors": [-20573]}
+
+    result = md.make_tab(str(mfl), "case.tab", engine=engine, error_file=FIX / "mini.err")
+    assert (mfl.parent / "case.tab").is_file()
+    assert result["engine_warnings"] == ["Test record four title. Test record four detail."]
+
+
+def test_an_error_next_to_a_warning_still_fails(tmp_path: Path) -> None:
+    mfl = _workspace(tmp_path)
+    with pytest.raises(FluidTableError, match="error 20575.*Test record two"):
+        md.make_tab(str(mfl), None, engine=lambda request: {"ok": False, "errors": [-20573, 20575]}, error_file=FIX / "mini.err")
+    assert sorted(p.name for p in mfl.parent.iterdir()) == ["gas_water.mfl"]
+
+
+def test_a_failure_without_any_code_still_fails(tmp_path: Path) -> None:
+    mfl = _workspace(tmp_path)
+    with pytest.raises(FluidTableError, match="could not make"):
+        md.make_tab(str(mfl), None, engine=lambda request: {"ok": False, "errors": []})
+
+
+@pytest.mark.parametrize(
+    ("text", "expected"),
+    [
+        ("{base}", False),
+        ("{hawater}", True),
+        ("{lower}", True),
+        ("{title}", False),
+        ("{comment}", False),
+    ],
+)
+def test_the_high_accuracy_water_model_is_on_only_when_the_table_command_says_so(
+    tmp_path: Path, text: str, expected: bool
+) -> None:
+    base = _text("gas_water.mfl")
+    import re
+
+    command = re.search(r'table\s+olga\s+"[^"]*"', base, re.IGNORECASE)
+    assert command is not None
+    head = command.group(0)
+    variants = {
+        "base": base,
+        "hawater": base.replace(head, f"{head} info HAWATER"),
+        "lower": base.replace(head, f"{head} hawater"),
+        "title": base.replace(head, head.replace('"', '"hawater_', 1)),
+        "comment": f"# HAWATER #\n{base}",
+    }
+    mfl = tmp_path / "f.mfl"
+    mfl.write_text(variants[text.strip("{}")], encoding="utf-8")
+    seen: dict[str, Any] = {}
+
+    def engine(request: dict[str, Any]) -> dict[str, Any]:
+        seen.update(request)
+        return {"ok": False, "errors": [20575]}
+
+    with pytest.raises(FluidTableError):
+        md.make_tab(str(mfl), None, engine=engine)
+    assert seen["ha_water"] is expected
+
+
+def test_an_mfl_without_a_table_command_keeps_the_water_model_off() -> None:
+    assert md.read_table_request(_text("no_table.mfl"))["ha_water"] is False
+
+
+def test_the_engine_child_keeps_the_water_model_off_by_default() -> None:
+    from olga_companion import multiflash_child
+
+    source = Path(multiflash_child.__file__).read_text(encoding="utf-8")
+    assert 'request.get("ha_water", False)' in source
+
+
+@pytest.mark.parametrize(
+    "command",
+    [
+        'table olga "a.tab" HAWATER title "X" temperatures C 10 20; pressures bar 1 2;\nset physprops 2VCS;\n',
+        "table olga a.tab title X temperatures 280 300 ; pressures 100000 200000 ; ;\n",
+    ],
+)
+def test_a_table_command_the_app_cannot_read_is_refused_not_replaced_by_the_default_grid(command: str) -> None:
+    with pytest.raises(FluidTableError, match="table olga"):
+        md.read_table_request(_text("no_table.mfl") + command)
+
+
+def test_an_unknown_warning_code_is_called_a_warning(tmp_path: Path) -> None:
+    assert md.explain_error(-99999, FIX / "mini.err") == "Multiflash warning -99999."
+    assert md.explain_error(-99999, tmp_path / "absent.err") == "Multiflash warning -99999."

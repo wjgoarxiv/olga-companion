@@ -77,13 +77,17 @@ def _parse_json_stdout(stdout: str) -> dict[str, Any] | None:
     return parsed if isinstance(parsed, dict) else None
 
 
+# A 62 x 50 three-phase table makes about 12 MiB of warnings; the default cap would call it unchecked.
+VALIDATOR_OUTPUT_BYTES = 64 * 1024 * 1024
+
+
 def _validate_tab(path: Path, genkey: Path | None = None) -> dict[str, Any]:
     # Neither an exit code alone nor an incomplete report proves that the table was checked.
     args = [str(path)]
     if genkey is not None:
         args.extend(["--genkey", str(genkey)])
     args.append("--json")
-    command = run_tool("tab_validator", args, names=FLUID_SCRIPTS)
+    command = run_tool("tab_validator", args, names=FLUID_SCRIPTS, max_output_bytes=VALIDATOR_OUTPUT_BYTES)
     report = _parse_json_stdout(command.stdout)
     structured = (
         report is not None

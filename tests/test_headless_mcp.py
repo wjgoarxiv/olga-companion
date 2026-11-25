@@ -160,3 +160,16 @@ def _child_env(tmp_path: Path) -> dict[str, str]:
 def test_the_console_script_is_declared():
     text = (ROOT / "pyproject.toml").read_text(encoding="utf-8")
     assert 'olga-companion-mcp = "olga_companion.headless_mcp:main"' in text
+
+
+def test_an_exported_figure_says_where_it_was_saved(monkeypatch: pytest.MonkeyPatch, tmp_path: Path):
+    figure = tmp_path / "appdata" / "fig.png"
+    monkeypatch.setattr(tools, "dispatch", lambda *_a: {"artifact_id": "artifact_" + "0" * 32, "kind": "png"})
+    monkeypatch.setattr("olga_companion.result_artifacts.resolve", lambda _id: figure)
+    result = _call("results_plot", {"path": "workspace:case.ppl", "variables": ["PT"], "branch": "LINE"})
+    body = json.loads(result["content"][0]["text"].split("\n", 1)[1].rsplit("\n", 1)[0])
+    assert body["saved_path"] == str(figure)
+
+
+def test_only_exports_carry_a_saved_path():
+    assert "saved_path" not in _call("olga_glossary", {"term": "PIPE"})["content"][0]["text"]

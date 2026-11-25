@@ -46,6 +46,9 @@ class _FakePlotter:
         index = -1 if timestep is None else self._all_timesteps.index(self._resolve_timestep(timestep))
         return np.array([0.0, 1.0]), np.array([index, index + 1.0])
 
+    def get_unit(self, _var, _branch):
+        return None
+
     def get_all_profiles(self, _var, _branch):
         return {t: np.array([0.0, 1.0]) for t in self._all_timesteps}
 
@@ -54,7 +57,7 @@ def _run_script(monkeypatch: pytest.MonkeyPatch, tmp_path: Path, extra: list[str
     module = _load_script()
     calls: list[tuple] = []
     monkeypatch.setattr(module, "FastPPLPlotter", _FakePlotter)
-    monkeypatch.setattr(module, "_plot_profile", lambda pos, vals, var, br, ts, out: calls.append((ts, out, list(vals))))
+    monkeypatch.setattr(module, "_plot_profile", lambda pos, vals, var, br, ts, out, unit=None: calls.append((ts, out, list(vals))))
     source = tmp_path / "case.ppl"
     source.write_bytes(b"profile")
     monkeypatch.setattr(sys, "argv", ["fast_ppl_plotter.py", str(source), "--branch", "MAIN", "--var", "HOL", "--out-dir", str(tmp_path), *extra])

@@ -19,9 +19,9 @@ COMMANDS = (
 )
 CASES = [
     ("README.md", "Use without the app (Claude Code plugin)", "Local CLI provider",
-     ("permission", "new file", "never overwritten", "Windows", "same engine")),
+     ("permission", "new file", "never overwritten", "Windows", "same engine", "from an `.mfl`")),
     ("README.ko.md", "앱 없이 쓰기 (Claude Code 플러그인)", "로컬 CLI 연결",
-     ("권한", "새 파일", "덮어쓰지", "Windows", "같은 엔진")),
+     ("권한", "새 파일", "덮어쓰지", "Windows", "같은 엔진", "`.mfl`에서")),
 ]
 
 

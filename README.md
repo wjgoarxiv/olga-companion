@@ -266,7 +266,7 @@ Inside a Claude Code session the same commands are `/plugin marketplace add wjgo
 - **Files live where you work.** The tools read and write in the folder Claude Code started in.
 - **Claude Code's permission prompt is the approval.** Every tool that writes, runs or stops something asks your permission on each call, even in modes that skip other prompts. A non-interactive `claude -p` run cannot approve them, so they are refused there.
 - **A write always makes a new file.** An existing case, table or result is never overwritten; a run works on a copy in its own new folder.
-- **What works where.** Reading, checking and drafting cases and tables work on Windows, macOS and Linux. Running OLGA or opening Multiflash needs Windows with those programs installed.
+- **What works where.** Reading, checking and drafting cases and tables work on Windows, macOS and Linux. Making a PVT table (`.tab`) from an `.mfl`, running OLGA and opening Multiflash need Windows with OLGA and Multiflash installed.
 - **Same engine as the app.** The plugin's version always matches the app release it comes from, so a case made in one opens the same way in the other.
 
 ## How to tell a genuine download

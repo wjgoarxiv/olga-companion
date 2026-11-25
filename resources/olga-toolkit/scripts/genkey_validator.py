@@ -202,6 +202,11 @@ class GenkeyValidator:
         return [raw]
 
     @staticmethod
+    def _length_unit(raw):
+        """The unit written with a length, in lower case; OLGA's default is m."""
+        return str(raw.get("unit", "m")).lower() if isinstance(raw, dict) else "m"
+
+    @staticmethod
     def _is_numeric_tag(val):
         """True if a FLUID tag is a bare number (1, '1', 2.0) rather than a label."""
         if isinstance(val, bool):
@@ -308,6 +313,15 @@ class GenkeyValidator:
                         summed = sum(float(value) for value in lsegments)
                     except (TypeError, ValueError):
                         declared = summed = None
+                    # Each may carry its own unit; OLGA reads a bare number as metres.
+                    unit, seg_unit = self._length_unit(params["LENGTH"]), self._length_unit(params["LSEGMENT"])
+                    if declared is not None and unit != seg_unit:
+                        if unit in _LENGTH_TO_M and seg_unit in _LENGTH_TO_M:
+                            declared *= _LENGTH_TO_M[unit]
+                            summed *= _LENGTH_TO_M[seg_unit]
+                            unit = "m"
+                        else:
+                            declared = None
                     if (
                         declared is not None
                         and summed
@@ -316,7 +330,7 @@ class GenkeyValidator:
                         self._add(
                             "X012", "ERROR", "solver-syntax",
                             f"PIPE '{pipe_lbl}' in '{tag}' declares LENGTH="
-                            f"{declared:g} but its LSEGMENT sum is {summed:g}; "
+                            f"{declared:g} {unit} but its LSEGMENT sum is {summed:g} {unit}; "
                             f"OLGA rejects the mismatch (1% tolerance)",
                             location=loc,
                             suggestion="Make LENGTH equal the LSEGMENT sum, or drop LENGTH",
@@ -881,6 +895,10 @@ _TO_FT: dict[str, float] = {
     "cm":  0.0328084,
     "mm":  0.00328084,
 }
+
+
+# Exact factors to metres, to compare a pipe LENGTH with its LSEGMENT sum (X012)
+_LENGTH_TO_M: dict[str, float] = {"m": 1.0, "km": 1000.0, "cm": 0.01, "mm": 0.001, "ft": 0.3048, "in": 0.0254}
 
 
 def _unit(val) -> str:

@@ -1,0 +1,23 @@
+[
+  {
+    "term": "GASFRACTION",
+    "file": "OLGA 2022.1 NODEkeyinfo.txt",
+    "line": 13,
+    "meaning": "Share of the inflowing gas and oil, by mass, that is gas (a mass fraction). Enter -1 to take the equilibrium share from the PVT table.",
+    "unit": "- (dimensionless)"
+  },
+  {
+    "term": "TOTALWATERFRACTION",
+    "file": "OLGA 2022.1 NODEkeyinfo.txt",
+    "line": 15,
+    "meaning": "Mass fraction of all water, free water plus water vapour, in the fluid at the boundary. Enter -1 to take it from the PVT table. Give this or WATERFRACTION, never both.",
+    "unit": "- (dimensionless)"
+  },
+  {
+    "term": "WATERFRACTION",
+    "file": "OLGA 2022.1 NODEkeyinfo.txt",
+    "line": 14,
+    "meaning": "Mass fraction of the free water alone in the fluid at the boundary. Give this or TOTALWATERFRACTION, never both.",
+    "unit": "- (dimensionless)"
+  }
+]

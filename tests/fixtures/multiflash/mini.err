@@ -14,3 +14,8 @@ Module: Test module
 Subprogram: TESTB
 Error: 20576
 Test record three detail.
+Test record four title.
+Module: Test module
+Subprogram: TESTC
+Warning: -20573
+Test record four detail.

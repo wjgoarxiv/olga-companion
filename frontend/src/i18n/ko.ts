@@ -343,6 +343,7 @@ export const ko = {
   'approval.head.fluids_draft_mfl': 'Multiflash 초안 파일 쓰기',
   'approval.head.fluids_generate_tab': '유체 표(.tab) 생성',
   'approval.head.fluids_starter_tab': '범용 공기-물 표(.tab) 추가',
+  'approval.head.fluids_make_tab': 'Multiflash로 표(.tab) 만들기',
   'approval.head.fluids_import_tab': '내 표로 .tab 만들기',
   'approval.head.multiflash_open': 'Multiflash에서 초안 열기',
   'approval.head.genkey_save': '생성한 사례 파일 저장',

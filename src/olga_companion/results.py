@@ -23,7 +23,7 @@ from .result_selection import (
 )
 from .result_series_view import ResultSeriesDataError, apply_series_view
 from .workspace import resolve_result
-from .publication_plot import publication_renderer_status, render_publication_series
+from .publication_plot import publication_renderer_status, render_publication_profile, render_publication_series
 
 RESULT_SCRIPTS = {
     "result_parser": "result_parser.py",
@@ -298,6 +298,7 @@ def plot_result(
     quantity_kind: str = "point",
     range_spec: dict[str, Any] | None = None,
     timestep: float | None = None,
+    profile_pdf: bool = False,
 ) -> dict[str, Any]:
     return _plot_result(
         path_value,
@@ -318,6 +319,9 @@ def plot_result(
         run_tool=run_tool,
         result_scripts=RESULT_SCRIPTS,
         plot_timeout_s=PLOT_TIMEOUT_S,
+        profile_pdf=profile_pdf,
+        profile_reader=variable_profile,
+        profile_renderer=render_publication_profile,
     )
 
 

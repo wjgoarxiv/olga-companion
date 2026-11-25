@@ -1,4 +1,4 @@
-"""A failed run names its cause from OLGA's own stop message, using recorded real failures."""
+"""A failed run names its cause from OLGA's own stop message, using short hand-written logs with that wording."""
 
 from __future__ import annotations
 
@@ -85,7 +85,7 @@ def test_a_pipe_stop_points_at_the_pipe_and_section() -> None:
 
 
 def test_a_temperature_stop_reads_the_same_way() -> None:
-    # Synthetic: the recorded node stop with OLGA's temperature wording in place of the pressure one.
+    # Synthetic: the node stop with OLGA's temperature wording in place of the pressure one.
     out = _read("pressure_above", "case.out").replace("PRESSURE ABOVE", "TEMPERATURE BELOW")
     reason = explain_stop(out, "", 64)
     assert reason["code"] == "temperature_below_table"

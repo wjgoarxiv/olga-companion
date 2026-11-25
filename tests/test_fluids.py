@@ -114,6 +114,8 @@ def test_inspect_mfl_fixture() -> None:
     result = inspect_mfl(str(VALID_MFL))
     assert result["ok"] is True
     assert result["parsed"]["components"] == ["CO2", "N2"]
+    # Hand-written, so no Multiflash session header.
+    assert b"Multiflash version" not in before
     assert result["source_mutated"] is False
     assert VALID_MFL.read_bytes() == before
 

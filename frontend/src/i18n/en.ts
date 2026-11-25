@@ -345,6 +345,7 @@ export const en: Record<I18nKey, string> = {
   'approval.head.fluids_draft_mfl': 'Write the Multiflash draft file',
   'approval.head.fluids_generate_tab': 'Generate the fluid table (.tab)',
   'approval.head.fluids_starter_tab': 'Add the generic air-water table (.tab)',
+  'approval.head.fluids_make_tab': 'Make the .tab with Multiflash',
   'approval.head.fluids_import_tab': 'Write the .tab from your table',
   'approval.head.multiflash_open': 'Open the draft in Multiflash',
   'approval.head.genkey_save': 'Save the generated case file',

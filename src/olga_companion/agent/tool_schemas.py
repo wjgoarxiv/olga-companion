@@ -228,6 +228,7 @@ def build_tools(handlers: Mapping[str, ToolHandler], *, native_tab: bool | None 
         ),
         bind_side_effect("fluids_draft_mfl"),
         bind_side_effect("fluids_starter_tab"),
+        bind_side_effect("fluids_make_tab"),
         bind_side_effect("fluids_import_tab"),
         *([bind_side_effect("fluids_generate_tab")] if native else []),
         bind_side_effect("multiflash_open"),
@@ -278,7 +279,8 @@ def build_tools(handlers: Mapping[str, ToolHandler], *, native_tab: bool | None 
         bind(
             "results_plot",
             "Render a plot of selected result variables. For a .ppl profile along the pipe, give "
-            "branch and one variable; timestep picks the time (default: the last).",
+            "branch and one variable; timestep picks the time (default: the last) and value_unit the "
+            "unit to draw in (for example bar).",
             {"path": "string", "variables": "array", "branch": "string"},
             ["path", "variables"],
         ),

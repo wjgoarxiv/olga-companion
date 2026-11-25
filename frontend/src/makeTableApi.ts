@@ -6,6 +6,7 @@ export type MakeTableResult = {
   readonly tab_name: string;
   readonly fluid_label: string;
   readonly grid_source: 'mfl' | 'default';
+  readonly engine_warnings?: readonly string[];
   readonly points: { readonly pressures: number; readonly temperatures: number };
 };
 

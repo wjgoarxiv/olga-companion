@@ -148,7 +148,7 @@ export default function ApprovalCard({
   const hasFields = reviewedFields.length > 0;
   const headKey = `approval.head.${request.name}`;
   const headLabel = t(headKey);
-  const isWrite = request.name === 'fluids_draft_mfl' || request.name === 'fluids_generate_tab' || request.name === 'fluids_starter_tab' || request.name === 'fluids_import_tab' || request.name === 'genkey_save';
+  const isWrite = request.name === 'fluids_draft_mfl' || request.name === 'fluids_generate_tab' || request.name === 'fluids_starter_tab' || request.name === 'fluids_make_tab' || request.name === 'fluids_import_tab' || request.name === 'genkey_save';
   const isOpen = request.name === 'multiflash_open';
   const isCancel = request.name === 'run_cancel' || request.name === 'sweep_cancel';
   const source = String(isRun ? reviewed.case ?? '' : request.args.source ?? '');

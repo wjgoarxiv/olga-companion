@@ -193,6 +193,18 @@ _SIDE_EFFECT_PARAMETER_SCHEMAS: Final = {
         },
         ["tab_rel", "approval_token", "idempotency_key"],
     ),
+    "fluids_make_tab": _object(
+        {
+            "source_rel": {**_PATH, "description": "Workspace-relative Multiflash .mfl to make the table from."},
+            "tab_rel": {
+                **_PATH,
+                "description": "New workspace-relative .tab file in the .mfl's folder; it must not exist yet.",
+            },
+            "approval_token": _APPROVAL,
+            "idempotency_key": _IDEMPOTENCY,
+        },
+        ["source_rel", "tab_rel", "approval_token", "idempotency_key"],
+    ),
     "fluids_import_tab": _object(
         {
             "source_rel": {**_PATH, "description": "Workspace-relative .csv or .xlsx with the user's property values."},

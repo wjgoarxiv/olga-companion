@@ -45,10 +45,12 @@ DEFAULT_PRESSURES_BARA = [0.5, 1, 2, 3, 5, 7.5, 10, 15, 20, 30, 40, 50, 60, 80, 
 
 _LEADING_COMMENT = re.compile(r"(?m)^\s*#[^#]*#")
 _TABLE = re.compile(r'\btable\s+olga\s+"([^"]*)"(.*?);\s*;', re.IGNORECASE | re.DOTALL)
+_TABLE_COMMAND = re.compile(r"\btable\s+olga\b", re.IGNORECASE)
 _UNITS = re.compile(r"\bunits\b(.*?);", re.IGNORECASE | re.DOTALL)
 _COMPONENTS = re.compile(r"\bcomponents\s+(?:overwrite\s+)?(.*?);", re.IGNORECASE | re.DOTALL)
 _COMPONENT_ENTRY = re.compile(r"(\d+)\s+([A-Za-z0-9][^\s;]*)")
 _AMOUNTS = re.compile(r"(?im)^\s*amounts\s+([-+0-9.][^;]*);")
+_HAWATER = re.compile(r"\bHAWATER\b", re.IGNORECASE)
 _TITLE = re.compile(r'\btitle\s+"([^"]*)"', re.IGNORECASE)
 _TEMPS = re.compile(r"\btemperatures\s+(.*?)(?:;|$)", re.IGNORECASE | re.DOTALL)
 _PRESS = re.compile(r"\bpressures\s+(.*?)(?:;|$)", re.IGNORECASE | re.DOTALL)
@@ -107,8 +109,12 @@ def read_table_request(mfl_text: str) -> dict[str, Any]:
 
     table = _TABLE.search(text)
     if table is None:
+        if _TABLE_COMMAND.search(text):
+            raise FluidTableError(
+                'The .mfl has a table olga command the app cannot read: it needs the file name in quotes and ; ; at its end.'
+            )
         return {
-            "components": components, "moles": moles, "label": None, "grid_source": "default",
+            "components": components, "moles": moles, "label": None, "grid_source": "default", "ha_water": False,
             "temperatures_k": _to_k(DEFAULT_TEMPERATURES_C, "degC"),
             "pressures_pa": _to_pa([float(p) for p in DEFAULT_PRESSURES_BARA], "bar"),
         }
@@ -123,6 +129,8 @@ def read_table_request(mfl_text: str) -> dict[str, Any]:
     return {
         "components": components, "moles": moles, "label": title.group(1).strip() if title else None,
         "grid_source": "mfl",
+        # As in Multiflash, the high-accuracy water model is used only when the table command asks for it.
+        "ha_water": bool(_HAWATER.search(re.sub(r'"[^"]*"', " ", table.group(2)))),
         "temperatures_k": fluid_table.validate_grid(_to_k(temperatures, t_unit), "temperature"),
         "pressures_pa": fluid_table.validate_grid(_to_pa(pressures, p_unit), "pressure"),
     }
@@ -144,23 +152,27 @@ def _refuse_repeated_components(components: list[str]) -> None:
         seen[canonical] = name
 
 
+def _plain_code(code: int) -> str:
+    return f"Multiflash {'warning' if code < 0 else 'error'} {code}."
+
+
 def explain_error(code: int, error_file: Path) -> str:
     """The engine's own title and explanation for an error code, from its mflash.err list."""
     try:
         raw = error_file.read_text(encoding="latin-1")
     except OSError:
-        return f"Multiflash error {code}."
+        return _plain_code(code)
     lines = raw.splitlines() if "\n" in raw else [raw[i:i + 80] for i in range(0, len(raw), 80)]
     lines = [line.rstrip() for line in lines]
     for index, line in enumerate(lines):
-        if re.fullmatch(rf"Error:\s+{code}", line.strip()) and index >= 3:
+        if re.fullmatch(rf"(?:Error|Warning):\s+{code}", line.strip()) and index >= 3:
             detail: list[str] = []
             for follow in range(index + 1, len(lines)):
                 if follow + 1 < len(lines) and lines[follow + 1].startswith("Module:"):
                     break
                 detail.append(lines[follow].strip())
             return " ".join([lines[index - 3].strip(), *[part for part in detail if part]])
-    return f"Multiflash error {code}."
+    return _plain_code(code)
 
 
 def _label_for(request: dict[str, Any], mfl: Path) -> str:
@@ -211,12 +223,23 @@ def run_engine(request: dict[str, Any]) -> dict[str, Any]:
         result_file.unlink(missing_ok=True)
 
 
+def engine_available() -> str | None:
+    """Why no table can be made on this PC, or None when the engine is ready to be tried."""
+    discovery = fluid_table.find_multiflash()
+    if not discovery.get("found"):
+        return str(discovery.get("message") or "Multiflash was not found on this PC.")
+    if os.name != "nt" and not os.environ.get(WINDOWS_PYTHON_ENV):
+        return "Making a table with Multiflash needs Windows."
+    return None
+
+
 def make_tab(
     mfl_path: str,
     tab_name: str | None,
     *,
     engine: Engine | None = None,
     error_file: Path | None = None,
+    expected_sha256: str | None = None,
 ) -> dict[str, Any]:
     """Write a new, validated .tab beside the .mfl; never overwrite and leave nothing on failure."""
     mfl = Path(mfl_path)
@@ -230,6 +253,8 @@ def make_tab(
         mfl_bytes = mfl.read_bytes()
     except OSError as exc:
         raise FluidTableError(f"File not found: {mfl.name}") from exc
+    if expected_sha256 is not None and hashlib.sha256(mfl_bytes).hexdigest() != expected_sha256:
+        raise FluidTableError(f"{mfl.name} changed after the approval was asked for; nothing was made. Ask again.")
     mfl_text = mfl_bytes.decode("utf-8", errors="replace")
     request = read_table_request(mfl_text)
     label = _label_for(request, mfl)
@@ -247,18 +272,25 @@ def make_tab(
         "mfl_text": mfl_text, "moles": request["moles"], "title": label,
         "pressures_pa": request["pressures_pa"], "temperatures_k": request["temperatures_k"],
         "tab_path": str(partial) if engine is not None else fluid_table.multiflash_path(str(partial)),
-        "work_dir": str(mfl.parent), "token": token,
+        "work_dir": str(mfl.parent), "token": token, "ha_water": request["ha_water"],
     }
     try:
         outcome = (engine or run_engine)(job)
-        codes = [int(code) for code in outcome.get("errors") or []]
-        if codes or not outcome.get("ok"):
+        table_codes = [int(code) for code in outcome.get("errors") or []]
+        load_codes = [int(code) for code in outcome.get("load_errors") or []]
+        # Multiflash numbers its warnings below zero: the table is written and the warning describes it.
+        codes = [code for code in table_codes if code >= 0]
+        if codes or (not outcome.get("ok") and not table_codes):
             reason = explain_error(codes[0], error_file) if codes and error_file else "the engine reported a failure"
             raise FluidTableError(f"Multiflash could not make the table (error {codes[0] if codes else '?'}): {reason}")
-        load_codes = [int(code) for code in outcome.get("load_errors") or []]
-        if load_codes:
-            reason = explain_error(load_codes[0], error_file) if error_file else "the engine could not read the file"
-            raise FluidTableError(f"Multiflash could not read {mfl.name} (error {load_codes[0]}): {reason}")
+        load_failures = [code for code in load_codes if code >= 0]
+        if load_failures:
+            reason = explain_error(load_failures[0], error_file) if error_file else "the engine could not read the file"
+            raise FluidTableError(f"Multiflash could not read {mfl.name} (error {load_failures[0]}): {reason}")
+        engine_warnings = [
+            explain_error(code, error_file) if error_file else _plain_code(code)
+            for code in dict.fromkeys([*load_codes, *table_codes])
+        ]
         if not partial.is_file() or partial.stat().st_size == 0:
             raise FluidTableError("Multiflash finished but wrote no table.")
         check = fluid_table.pickup_tab(str(partial), label)
@@ -284,7 +316,8 @@ def make_tab(
         record_name = None
     return {
         **result, "tab_name": name, "fluid_label": label, "grid_source": request["grid_source"],
-        "provenance": record_name,
+        "hawater": request["ha_water"],
+        "provenance": record_name, "engine_warnings": engine_warnings,
         **({} if record_name else {"provenance_error": "record_not_written"}),
         "points": {"pressures": len(request["pressures_pa"]), "temperatures": len(request["temperatures_k"])},
     }

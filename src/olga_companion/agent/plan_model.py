@@ -16,7 +16,7 @@ STEP_KINDS = ("fluids_draft_mfl", "fluids_generate_tab", "case_publish", "run_ex
 # set OLGA_COMPANION_NATIVE_TAB=1. Everywhere else it is accepted by shape and refused.
 UNAVAILABLE_KINDS = frozenset({"fluids_generate_tab"})
 OFFERED_KINDS = tuple(kind for kind in STEP_KINDS if kind not in UNAVAILABLE_KINDS)
-NEVER_IN_PLAN = ("run_cancel", "sweep_cancel", "sweep_execute", "genkey_save", "multiflash_open", "fluids_starter_tab", "fluids_import_tab")
+NEVER_IN_PLAN = ("run_cancel", "sweep_cancel", "sweep_execute", "genkey_save", "multiflash_open", "fluids_starter_tab", "fluids_make_tab", "fluids_import_tab")
 CAPABILITY_KEYS = frozenset({"approval_token", "idempotency_key"})
 _STEP_KEYS = frozenset({"kind", "args", "source_from_step"})
 

@@ -29,7 +29,7 @@ def case(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
 
 
 def _engine(request: dict[str, Any]) -> dict[str, Any]:
-    table = (FIX / "generated_cpa_3x3.tab").read_text(encoding="utf-8")
+    table = (FIX / "handwritten_3x3.tab").read_text(encoding="utf-8")
     Path(request["tab_path"]).write_text(table.replace("LABEL = probe", f"LABEL = {request['title']}", 1), encoding="utf-8")
     return {"ok": True, "errors": []}
 
@@ -74,3 +74,12 @@ def test_the_reference_and_mfl_must_be_plain_names_in_the_case_folder(case: Path
         response = _post({"source": str(case), "reference": reference, "mfl": mfl, "approved": True})
         assert response.status_code == 400, (reference, mfl)
     assert sorted(p.name for p in case.parent.iterdir()) == ["gas_water.mfl", "pipe.genkey"]
+
+
+def test_an_engine_warning_comes_back_with_the_table(case: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    real = multiflash_direct.make_tab
+    engine = lambda request: {**_engine(request), "ok": False, "errors": [-20573]}  # noqa: E731
+    monkeypatch.setattr(multiflash_direct, "make_tab", lambda *a, **k: real(*a, **{**k, "engine": engine}))
+    body = _post({"source": str(case), "reference": "fluid.tab", "mfl": "gas_water.mfl", "approved": True})
+    assert body.status_code == 200
+    assert "-20573" in body.json()["engine_warnings"][0]

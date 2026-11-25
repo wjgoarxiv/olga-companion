@@ -82,6 +82,22 @@ def _validate_compare_lengths(args: dict[str, Any]) -> None:
         raise ToolError("Invalid report comparison: labels must match the number of files.")
 
 
+def _is_profile(args: dict[str, Any]) -> bool:
+    return str(args.get("path", "")).casefold().endswith(".ppl")
+
+
+def _validate_plot_selection(args: dict[str, Any]) -> None:
+    """A .ppl profile figure also takes a unit and a PDF; everything else is a trend selection."""
+    if not _is_profile(args):
+        _validate_export_selection(args)
+        return
+    if {"time_unit", "time_range"}.intersection(args) or args.get("quantity_kind", "point") != "point":
+        raise ToolError(
+            "A .ppl profile shows one time: pick it with timestep. time_range, time_unit and "
+            "quantity_kind belong to .tpl trends."
+        )
+
+
 def _validate_export_selection(args: dict[str, Any]) -> None:
     _validate_series_range(args)
     view_fields = {
@@ -97,7 +113,7 @@ def _validate_export_selection(args: dict[str, Any]) -> None:
         return
     # A .ppl profile picks its time with timestep alone; it has no position.
     if (
-        str(args.get("path", "")).casefold().endswith(".ppl")
+        _is_profile(args)
         and view_fields.intersection(args) == {"timestep"}
         and args.get("format") != "pdf"
     ):
@@ -134,7 +150,7 @@ _SEMANTIC_VALIDATORS: Final = {
     "results_series": _validate_series_range,
     "report_compare": _validate_compare_lengths,
     "results_csv": _validate_export_selection,
-    "results_plot": _validate_export_selection,
+    "results_plot": _validate_plot_selection,
 }
 _SIDE_EFFECT_TOOLS: Final = {
     "action_plan",
@@ -143,6 +159,7 @@ _SIDE_EFFECT_TOOLS: Final = {
     "fluids_draft_mfl",
     "fluids_generate_tab",
     "fluids_starter_tab",
+    "fluids_make_tab",
     "fluids_import_tab",
     "multiflash_open",
     "run_execute",

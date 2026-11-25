@@ -1,8 +1,8 @@
 """0.1.21 row 6 (PVT): the controller output CONTR trended by a PID loop can be charted.
 
 The trend catalog line is `CONTR 'CONTROLLER:' 'PC' '(-)' 'Controller output'`; the variable list offers
-it as "CONTROLLER - PC", and fetching that series must return OLGA's values. Fixture: the trend file of
-an app-built loop case run in OLGA 2022.1.0 (setpoint above every pressure, gain +0.5, bias 0.3).
+it as "CONTROLLER - PC", and fetching that series must return the file's values. Fixture: hand-written
+by tests/fixtures/make_handwritten.py (a loop output that falls from its bias 0.3 to 0).
 """
 from __future__ import annotations
 
