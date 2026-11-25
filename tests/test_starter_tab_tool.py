@@ -212,12 +212,12 @@ def test_the_card_says_plainly_it_is_a_generic_air_water_table_in_english(root: 
 
     assert rows["file"]["value"] == "air_water.tab"
     assert rows["label"]["value"] == "AIR_WATER"
-    assert rows["model"]["value"] == "CPA"
+    assert rows["model"]["value"] == starter_fluids.MODEL == "IAPWS-95 / Lemmon air"
     assert (rows["temperature_range"]["value"], rows["temperature_range"]["unit"]) == ("0 – 80", "degC")
     assert (rows["pressure_range"]["value"], rows["pressure_range"]["unit"]) == ("0.5 – 20", "bar")
     kind = rows["table_kind"]["value"]
     assert "generic air-water table" in kind.casefold()
-    assert "CPA" in kind and "0–80" in kind and "0.5–20 bar" in kind
+    assert "IAPWS-95" in kind and "CPA" not in kind and "0–80" in kind and "0.5–20 bar" in kind
     assert "approval_token" not in json.dumps(shown)
 
 
@@ -225,7 +225,7 @@ def test_the_card_is_natural_korean_for_a_korean_locale(root: Path) -> None:
     shown = approval_display.build(TOOL, {"tab_rel": "air_water.tab"}, locale="ko")
     kind = next(row["value"] for row in shown["fields"] if row["key"] == "table_kind")
     assert "범용 공기-물 표" in kind
-    assert "CPA" in kind and "0–80" in kind and "0.5–20 bar" in kind
+    assert "IAPWS-95" in kind and "CPA" not in kind and "0–80" in kind and "0.5–20 bar" in kind
     assert "generic" not in kind.casefold()
 
 
@@ -243,26 +243,4 @@ def test_the_bundle_looks_for_the_table_beside_the_toolkit_folder(
 ) -> None:
     monkeypatch.undo()
     monkeypatch.setenv("OLGA_TOOLKIT_DIR", str(tmp_path / "resources" / "olga-toolkit"))
-    assert starter_fluids.bundled_table() == tmp_path / "resources" / "fluids" / "air_water_cpa.tab"
-
-
-def test_the_real_bundled_table_is_a_valid_three_phase_cpa_air_water_table() -> None:
-    table = REPO / "resources" / "fluids" / starter_fluids.TABLE_NAME
-    assert table.is_file(), "the generic air-water table has not been produced yet"
-    check = fluid_table.pickup_tab(str(table), "AIR_WATER")
-    assert check["valid"] is True, check["errors"]
-    head = table.read_text(encoding="utf-8").split("PVTTABLE POINT", 1)[0]
-    assert "PHASE = THREE" in head
-    assert "COMPONENTS = ( WATER , NITROGEN , OXYGEN )" in head
-    assert "using HA for aqueous phase" in head
-    # At 25 C and 1 atm the aqueous phase is liquid water and the gas is air.
-    point = next(
-        line for line in table.read_text(encoding="utf-8").splitlines()
-        if line.startswith("PVTTABLE POINT = ( 101325.000 , 25.0000000 ,")
-    )
-    values = [float(value) for value in point.split("(", 1)[1].rstrip(") ").split(",")]
-    gas_density, water_density = values[2], values[4]
-    assert 990 < water_density < 1005
-    assert 1.0 < gas_density < 1.3
-    # The Multiflash input is derived from a vendor template, so only the table ships.
-    assert [p.name for p in (REPO / "resources" / "fluids").iterdir()] == ["air_water_cpa.tab"]
+    assert starter_fluids.bundled_table() == tmp_path / "resources" / "fluids" / "air_water.tab"

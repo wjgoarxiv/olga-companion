@@ -53,7 +53,7 @@ def wheel(tmp_path_factory: pytest.TempPathFactory) -> Path:
 
 def test_the_wheel_ships_the_bundled_folders_and_the_console_script(wheel: Path):
     names = set(zipfile.ZipFile(wheel).namelist())
-    assert "olga_companion/resources/bundled/fluids/air_water_cpa.tab" in names
+    assert "olga_companion/resources/bundled/fluids/air_water.tab" in names
     assert "olga_companion/resources/bundled/olga-toolkit/scripts/genkey_builder.py" in names
     assert "olga_companion/resources/bundled/examples/catalog.json" in names
     entry = next(n for n in names if n.endswith(".dist-info/entry_points.txt"))

@@ -18,10 +18,10 @@ VENDOR_MARKS = (
 
 
 def _files() -> list[Path]:
-    return sorted(path for path in FIXTURES.rglob("*") if path.is_file())
+    return sorted(path for root in (FIXTURES, REPO / "resources" / "fluids") for path in root.rglob("*") if path.is_file())
 
 
-@pytest.mark.parametrize("path", _files(), ids=lambda path: path.relative_to(FIXTURES).as_posix())
+@pytest.mark.parametrize("path", _files(), ids=lambda path: path.relative_to(REPO).as_posix())
 def test_a_fixture_carries_no_vendor_output(path: Path) -> None:
     content = path.read_bytes()
     assert [mark for mark in VENDOR_MARKS if mark in content] == []

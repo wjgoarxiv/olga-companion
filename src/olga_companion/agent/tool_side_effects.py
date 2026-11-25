@@ -40,7 +40,7 @@ SIDE_EFFECT_TOOL_METADATA: Final = {
     ),
     "fluids_starter_tab": (
         "Copy the generic air-water PVT table (.tab) that ships with the app into the workspace as a "
-        "new file after explicit human approval. It is a generic table (CPA, 0-80 C, 0.5-20 bar, "
+        "new file after explicit human approval. It is a generic table (open equations, 0-80 C, 0.5-20 bar, "
         "fluid label AIR_WATER), not made for the user's case. The file must not exist yet; it is "
         "never overwritten.",
         {},

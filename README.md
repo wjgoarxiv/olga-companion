@@ -362,7 +362,7 @@ npm run dev:app        # frontend :5273, sidecar :8865
 - **Windows only.** OLGA itself is Windows software.
 - **Real runs need a licensed OLGA installation.**
 - **Descriptive, not prescriptive.** Summaries describe what the run shows; whether a design passes is the engineer's call.
-- **The bundled air-water table is generic** (CPA, 0–80 °C, 0.5–20 bar) and meant for learning and quick checks. OLGA reports table-value warnings with it; use a case-specific table for real work.
+- **The bundled air-water table is generic** (computed from open equations: IAPWS-95 water and Lemmon air; 0–80 °C, 0.5–20 bar) and meant for learning and quick checks. Use a case-specific table for real work.
 - **Making a table from an `.mfl` needs the Multiflash engine that comes with OLGA** (tested with OLGA 2022.1.0, Multiflash 7.3). It writes the OLGA table only; hydrate and wax files are still made in Multiflash.
 - **The independent fluid-table generator is available in local builds only.** Release builds leave it out, and its tables are not Multiflash-identical.
 - **AI models can stall or return an empty reply.** The app shows a retry notice; asking again continues the work.

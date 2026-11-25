@@ -166,7 +166,7 @@ __NATIVE_TAB_FLOW__- When a case's PVTFILE is missing and an .mfl is in the case
   reason and use it only after they accept. If the user needs an ordinary
   air-water fluid (for example a lab airlift loop) and has no PVT table, offer
   fluids_starter_tab: one approval copies the bundled generic air-water table
-  (CPA, 0-80 C, 0.5-20 bar, fluid label AIR_WATER) into the workspace as a new
+  (open equations, 0-80 C, 0.5-20 bar, fluid label AIR_WATER) into the workspace as a new
   file. Say plainly that it is generic, check that the case stays inside that
   range, then link it through case_edit_plan and case_publish. Never use it for
   hydrocarbon or other fluids.

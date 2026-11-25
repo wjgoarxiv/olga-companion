@@ -1136,7 +1136,8 @@ def test_the_tool_description_states_the_node_cap(native_on: None) -> None:
 # Rehashed for the product-name change only (earlier working name -> OLGA Companion); no other byte differs.
 # 0.1.20 row 2: one sentence names the <<<OLGA OUTPUT block as data (prompt-injection guard).
 # M3: one sentence names fluids_make_tab, the chat form of the Make button.
-RELEASE_PROMPT_TEMPLATE_SHA256 = "e00bb7557347ea55210786cf38f4dcebe0a8980ffd41fa4efcb5f200596a92a6"
+# The starter table is computed from open equations, so "CPA" became "open equations" (strength unchanged).
+RELEASE_PROMPT_TEMPLATE_SHA256 = "461d3528a5ef7b2c10d8a591fbd130341ccb581d89d45f254f53ebf89a8d9f1e"
 
 
 def test_the_release_prompt_is_byte_identical_to_the_text_before_the_generator() -> None:
