@@ -37,14 +37,26 @@
   }
   .tab:hover { border-color: var(--c-accent); }
   .tab[aria-current="page"] { background: var(--c-accent); border-color: var(--c-accent); color: var(--c-on-accent); }
-  .tab:focus-visible, .gh:focus-visible { outline: 2px solid var(--c-focus); outline-offset: 2px; }
-  .gh { margin-left: auto; color: var(--c-ink-3); text-decoration: none; white-space: nowrap; }
+  .tab:focus-visible, .gh:focus-visible, .dl:focus-visible { outline: 2px solid var(--c-focus); outline-offset: 2px; }
+  .end { margin-left: auto; display: flex; align-items: center; gap: 16px; }
+  .dl {
+    display: inline-flex; align-items: center; gap: 6px; min-height: 32px; padding: 0 12px;
+    border: 1px dashed var(--c-ink-3); color: var(--c-ink); text-decoration: none; white-space: nowrap;
+  }
+  .dl:hover { border-style: solid; border-color: var(--c-accent); color: var(--c-accent); }
+  .dl .short { display: none; }
+  .gh { color: var(--c-ink-3); text-decoration: none; white-space: nowrap; }
   .gh:hover { color: var(--c-accent); }
   iframe { flex: 1 1 auto; width: 100%; min-height: 0; border: 0; display: block; background: var(--c-canvas); }
+  iframe[hidden] { display: none; }
   @media (max-width: 560px) {
     header { gap: 10px; padding: 0 12px; }
-    .brand small, .gh { display: none; }
-    .tab { padding: 0 10px; }
+    .brand small, .gh, .dl .long { display: none; }
+    .dl .short { display: inline; }
+    .tab, .dl { padding: 0 10px; }
+  }
+  @media (max-width: 440px) {
+    .brand { display: none; }
   }
 </style>
 </head>
@@ -55,28 +67,37 @@
     <a class="tab" href="#intro" data-src="intro.html">소개 슬라이드</a>
     <a class="tab" href="#tutorial" data-src="tutorial/">튜토리얼</a>
   </nav>
-  <a class="gh" href="https://github.com/wjgoarxiv/olga-companion">GitHub ↗</a>
+  <span class="end">
+    <a class="dl" href="olga-companion-offline.html" download data-online-only><span aria-hidden="true">↓</span><span class="long">오프라인 HTML 받기</span><span class="short">HTML</span></a>
+    <a class="gh" href="https://github.com/wjgoarxiv/olga-companion">GitHub ↗</a>
+  </span>
 </header>
 <iframe id="view" title="OLGA Companion" src="intro.html" data-shown="intro.html"></iframe>
 <script>
   /* One page, two views: #intro (the slides) and #tutorial (the practice copy of the app).
-     Each view is its own page in the frame, so their styles and keys never meet. */
+     Each view is its own page in a frame, so their styles and keys never meet. The offline
+     file (scripts/build_offline_site.py) carries both pages in two frames and only shows one. */
   (function () {
     var view = document.getElementById('view');
+    var frames = Array.prototype.slice.call(document.querySelectorAll('iframe[data-view]'));
     var tabs = Array.prototype.slice.call(document.querySelectorAll('.tab'));
     function show(focus) {
       var id = location.hash.slice(1);
       var tab = tabs.filter(function (t) { return t.getAttribute('href') === '#' + id; })[0] || tabs[0];
       tabs.forEach(function (t) { if (t === tab) t.setAttribute('aria-current', 'page'); else t.removeAttribute('aria-current'); });
       var src = tab.getAttribute('data-src');
-      // replace() keeps the switch out of the browser history, so Back follows the tabs only.
-      if (view.getAttribute('data-shown') !== src) {
+      if (frames.length) {
+        frames.forEach(function (f) { f.hidden = '#' + f.getAttribute('data-view') !== tab.getAttribute('href'); });
+        view = frames.filter(function (f) { return !f.hidden; })[0];
+      } else if (view.getAttribute('data-shown') !== src) {
+        // replace() keeps the switch out of the browser history, so Back follows the tabs only.
         view.setAttribute('data-shown', src);
         view.contentWindow.location.replace(new URL(src, location.href).href);
       }
       view.title = tab.textContent;
       document.title = tab.textContent + ' · OLGA Companion';
-      if (focus) view.addEventListener('load', function once() { view.removeEventListener('load', once); view.focus(); });
+      if (focus && frames.length) view.focus();
+      else if (focus) view.addEventListener('load', function once() { view.removeEventListener('load', once); view.focus(); });
     }
     window.addEventListener('hashchange', function () { show(true); });
     show(false);
