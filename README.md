@@ -408,6 +408,15 @@ Issues and pull requests are welcome. Branch from `master`, keep changes small, 
 - [Code of conduct](./CODE_OF_CONDUCT.md): Contributor Covenant 2.1
 - [License](./LICENSE): Apache 2.0
 
+## Cite
+
+If you use OLGA Companion in your work, please cite the technical note and the archived source code. Both are on Zenodo:
+
+- Technical note (preprint): Go, W. (2026). *OLGA Companion: An Approval-Gated Language-Model Assistant for OLGA Multiphase Flow Simulation*. Zenodo. [https://doi.org/10.5281/zenodo.24554103](https://doi.org/10.5281/zenodo.24554103)
+- Source code, all versions: [https://doi.org/10.5281/zenodo.24554046](https://doi.org/10.5281/zenodo.24554046) (version 0.1.32: [10.5281/zenodo.24554047](https://doi.org/10.5281/zenodo.24554047))
+
+[CITATION.cff](./CITATION.cff) holds the same data in a machine-readable form; GitHub's "Cite this repository" button reads it.
+
 ## License
 
 The source code is under the [Apache License 2.0](./LICENSE). The Windows installer also contains [pyfas](https://github.com/gpagliuca/pyfas) (GPL-3.0) and easydict (LGPL-3.0), so the installer as a whole is distributed under [GPL-3.0](./licenses/GPL-3.0.txt). See [NOTICE](./NOTICE) and [THIRD-PARTY-LICENSES.txt](./THIRD-PARTY-LICENSES.txt). The engine folder [`src/olga_companion/pvt_engine/`](src/olga_companion/pvt_engine/LICENSE) is MIT-licensed. The tutorial page bundles Pretendard (SIL OFL 1.1) and Meslo LGS NF (Apache 2.0); their licence texts are in [`docs/tutorial/assets/fonts/`](docs/tutorial/assets/fonts/).

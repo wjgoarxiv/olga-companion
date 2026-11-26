@@ -1,0 +1,40 @@
+cff-version: 1.2.0
+message: "If you use OLGA Companion, please cite it as below."
+type: software
+title: "OLGA Companion"
+version: "0.1.32"
+date-released: "2026-11-26"
+doi: "10.5281/zenodo.24554046"
+license: "Apache-2.0"
+repository-code: "https://github.com/wjgoarxiv/olga-companion"
+url: "https://wjgoarxiv.github.io/olga-companion/"
+authors:
+  - family-names: "Go"
+    given-names: "Woojin"
+keywords:
+  - OLGA
+  - multiphase flow
+  - flow assurance
+  - large language model
+  - human-in-the-loop
+  - Model Context Protocol
+identifiers:
+  - type: doi
+    value: "10.5281/zenodo.24554046"
+    description: "All versions of the source code (resolves to the latest)"
+  - type: doi
+    value: "10.5281/zenodo.24554047"
+    description: "Source code of version 0.1.32"
+  - type: doi
+    value: "10.5281/zenodo.24554103"
+    description: "Technical note (preprint)"
+preferred-citation:
+  type: article
+  title: "OLGA Companion: An Approval-Gated Language-Model Assistant for OLGA Multiphase Flow Simulation"
+  authors:
+    - family-names: "Go"
+      given-names: "Woojin"
+  doi: "10.5281/zenodo.24554103"
+  year: 2026
+  publisher:
+    name: "Zenodo"

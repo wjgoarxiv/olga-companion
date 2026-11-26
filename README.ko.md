@@ -428,6 +428,15 @@ npm run dev:app        # 프론트엔드 :5273, 사이드카 :8865
 
 안내 문서는 영어로 되어 있습니다.
 
+## 인용
+
+연구나 업무에 OLGA Companion을 쓰셨다면 기술 노트와 보관된 소스 코드를 인용해 주세요. 둘 다 Zenodo에 있습니다.
+
+- 기술 노트(preprint): Go, W. (2026). *OLGA Companion: An Approval-Gated Language-Model Assistant for OLGA Multiphase Flow Simulation*. Zenodo. [https://doi.org/10.5281/zenodo.24554103](https://doi.org/10.5281/zenodo.24554103)
+- 소스 코드, 전체 버전: [https://doi.org/10.5281/zenodo.24554046](https://doi.org/10.5281/zenodo.24554046) (0.1.32 버전: [10.5281/zenodo.24554047](https://doi.org/10.5281/zenodo.24554047))
+
+같은 정보가 [CITATION.cff](./CITATION.cff)에 기계가 읽는 형식으로 들어 있고, GitHub의 "Cite this repository" 버튼이 이 파일을 씁니다.
+
 ## 라이선스
 
 소스 코드는 [Apache License 2.0](./LICENSE)입니다. Windows 설치 파일에는 [pyfas](https://github.com/gpagliuca/pyfas)(GPL-3.0)와 easydict(LGPL-3.0)도 들어 있어, 설치 파일 전체는 [GPL-3.0](./licenses/GPL-3.0.txt) 조건으로 배포합니다. [NOTICE](./NOTICE)와 [THIRD-PARTY-LICENSES.txt](./THIRD-PARTY-LICENSES.txt)를 참고하세요. 엔진 폴더 [`src/olga_companion/pvt_engine/`](src/olga_companion/pvt_engine/LICENSE)는 MIT 라이선스입니다. 튜토리얼 페이지에는 Pretendard(SIL OFL 1.1)와 Meslo LGS NF(Apache 2.0)가 들어 있으며, 라이선스 전문은 [`docs/tutorial/assets/fonts/`](docs/tutorial/assets/fonts/)에 있습니다.
