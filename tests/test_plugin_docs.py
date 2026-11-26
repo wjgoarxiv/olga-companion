@@ -48,4 +48,4 @@ def test_the_intro_slides_link_opens_the_rendered_page() -> None:
     for name in ("README.md", "README.ko.md"):
         text = (Path(__file__).resolve().parents[1] / name).read_text(encoding="utf-8")
         assert "./docs/intro.html" not in text
-        assert 'href="https://wjgoarxiv.github.io/olga-companion/intro.html"' in text
+        assert 'href="https://wjgoarxiv.github.io/olga-companion/#intro"' in text

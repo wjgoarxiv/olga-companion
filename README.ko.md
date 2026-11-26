@@ -26,7 +26,7 @@
 <p>
   <a href="#quick-start">빠른 시작</a> ·
   <a href="#try-the-tutorial">튜토리얼</a> ·
-  <a href="https://wjgoarxiv.github.io/olga-companion/intro.html">소개 슬라이드</a> ·
+  <a href="https://wjgoarxiv.github.io/olga-companion/#intro">소개 슬라이드</a> ·
   <a href="#five-steps">다섯 단계</a> ·
   <a href="#features">기능</a> ·
   <a href="#safety-model">안전 장치</a> ·
@@ -55,7 +55,7 @@ OLGA Companion은 OLGA를 쓰는 엔지니어와 OLGA를 배우는 사람을 위
 
 ## 튜토리얼 체험하기
 
-<a href="https://wjgoarxiv.github.io/olga-companion/tutorial/">
+<a href="https://wjgoarxiv.github.io/olga-companion/#tutorial">
   <picture>
     <source media="(prefers-reduced-motion: reduce) and (prefers-color-scheme: dark)" srcset="./docs/assets/readme/tutorial-preview-dark.png" />
     <source media="(prefers-reduced-motion: reduce)" srcset="./docs/assets/readme/tutorial-preview-light.png" />
@@ -64,7 +64,7 @@ OLGA Companion은 OLGA를 쓰는 엔지니어와 OLGA를 배우는 사람을 위
   </picture>
 </a>
 
-**[브라우저에서 튜토리얼 열기](https://wjgoarxiv.github.io/olga-companion/tutorial/)**. 앱 화면을 그대로 옮긴 연습용 페이지라 직접 눌러 보며 따라갈 수 있습니다. 화면 배치, 색, 단계 막대, 승인 카드, 움직임이 앱과 같고, 두 길 모두 앱 안의 **튜토리얼** 버튼과 같은 일곱 단계를 따라갑니다. OLGA나 AI 공급자에는 연결하지 않으며, 나오는 값은 모두 연습용으로 만든 값입니다.
+**[브라우저에서 튜토리얼 열기](https://wjgoarxiv.github.io/olga-companion/#tutorial)**. 소개 슬라이드와 튜토리얼은 한 페이지에 있고, 위쪽 탭 두 개로 오갑니다. 튜토리얼은 앱 화면을 그대로 옮긴 연습용 페이지라 직접 눌러 보며 따라갈 수 있습니다. 화면 배치, 색, 단계 막대, 승인 카드, 움직임이 앱과 같고, 두 길 모두 앱 안의 **튜토리얼** 버튼과 같은 일곱 단계를 따라갑니다. OLGA나 AI 공급자에는 연결하지 않으며, 나오는 값은 모두 연습용으로 만든 값입니다.
 
 - **두 가지 길.** “데모로 둘러보기”는 연습용 공기–물 수평관을 설치해 검증부터 결과까지 이어 갑니다. “내 배관표로 시작”은 배관표 마법사(표 고르기 → 내용 확인 → 끝점 값 → 요청 넣기)로 요청을 보내고, 저장 카드를 승인한 뒤, 표에 적힌 이름 그대로 검증·실행하고 분리기 유량을 읽습니다.
 - **앱에만 있는 세 번째 길.** 앱 안의 **튜토리얼** 버튼에는 “따라 하기: 값 하나 바꾸기”도 있습니다. 데모 사례의 끝 시간을 수정 표에서 바꾸고, 사본을 승인해 실행한 뒤 결과를 읽는 여섯 단계 수업입니다. 검증 단계가 없고 웹 페이지에는 없습니다.
@@ -404,7 +404,8 @@ npm run dev:app        # 프론트엔드 :5273, 사이드카 :8865
 
 | 문서 | 내용 |
 |---|---|
-| [체험용 튜토리얼](https://wjgoarxiv.github.io/olga-companion/tutorial/) | 연습 페이지: 데모 길과 배관표 길, 각각 일곱 단계 |
+| [소개 슬라이드](https://wjgoarxiv.github.io/olga-companion/#intro) | 앱이 하는 일을 슬라이드 14장으로 소개 (한국어·영어) |
+| [체험용 튜토리얼](https://wjgoarxiv.github.io/olga-companion/#tutorial) | 연습 페이지: 데모 길과 배관표 길, 각각 일곱 단계 |
 | [Architecture](docs/ARCHITECTURE.md) | 구성 요소와 저장 경계 |
 | [Safety Gates](docs/SAFETY_GATES.md) | 파일, 실행, 결과 규칙 전체 |
 | [Pipe tables](docs/PIPE_TABLE.md) | 배관표 가져오기의 열, 끝점, 분기점, 한계 |

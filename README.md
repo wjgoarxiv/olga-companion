@@ -26,7 +26,7 @@
 <p>
   <a href="#quick-start">Quick start</a> ·
   <a href="#try-the-tutorial">Tutorial</a> ·
-  <a href="https://wjgoarxiv.github.io/olga-companion/intro.html">Intro slides</a> ·
+  <a href="https://wjgoarxiv.github.io/olga-companion/#intro">Intro slides</a> ·
   <a href="#your-first-simulation-in-five-steps">Five steps</a> ·
   <a href="#features">Features</a> ·
   <a href="#safety-model">Safety model</a> ·
@@ -51,7 +51,7 @@ OLGA Companion is a local Windows desktop app for engineers who use OLGA or are 
 
 ## Try the tutorial
 
-<a href="https://wjgoarxiv.github.io/olga-companion/tutorial/">
+<a href="https://wjgoarxiv.github.io/olga-companion/#tutorial">
   <picture>
     <source media="(prefers-reduced-motion: reduce) and (prefers-color-scheme: dark)" srcset="./docs/assets/readme/tutorial-preview-dark.png" />
     <source media="(prefers-reduced-motion: reduce)" srcset="./docs/assets/readme/tutorial-preview-light.png" />
@@ -60,7 +60,7 @@ OLGA Companion is a local Windows desktop app for engineers who use OLGA or are 
   </picture>
 </a>
 
-**[Open the tutorial in your browser](https://wjgoarxiv.github.io/olga-companion/tutorial/)**. It is a practice copy of the app's screen that you can click through. It uses the same layout, colours, step bar, approval card and stepped motion, and its two paths follow the same seven-step tours as the **Tutorial** button inside the app. Nothing in it connects to OLGA or to an AI provider, and every value is synthetic.
+**[Open the tutorial in your browser](https://wjgoarxiv.github.io/olga-companion/#tutorial)**. The intro slides and the tutorial share one page; switch between them with the two tabs at the top. The tutorial is a practice copy of the app's screen that you can click through. It uses the same layout, colours, step bar, approval card and stepped motion, and its two paths follow the same seven-step tours as the **Tutorial** button inside the app. Nothing in it connects to OLGA or to an AI provider, and every value is synthetic.
 
 - **Two paths.** “데모로 둘러보기” installs the synthetic air–water horizontal pipe and takes it from check to results. “내 배관표로 시작” goes through the pipe-table wizard (표 고르기 → 내용 확인 → 끝점 값 → 요청 넣기), sends the request, approves the save card, then checks, runs and reads the separator flow with the table's own names.
 - **A third path in the app.** The in-app **Tutorial** button also offers “따라 하기: 값 하나 바꾸기”, a six-step lesson that changes the end time of the demo case in the edit table, approves the copy, runs it and reads its result. It has no check step and is not on the web page.
@@ -389,7 +389,8 @@ npm run dev:app        # frontend :5273, sidecar :8865
 
 | Document | What it covers |
 |---|---|
-| [Interactive tutorial](https://wjgoarxiv.github.io/olga-companion/tutorial/) | The practice page: demo and pipe-table paths, seven steps each |
+| [Intro slides](https://wjgoarxiv.github.io/olga-companion/#intro) | What the app does, in fourteen slides (Korean and English) |
+| [Interactive tutorial](https://wjgoarxiv.github.io/olga-companion/#tutorial) | The practice page: demo and pipe-table paths, seven steps each |
 | [Architecture](docs/ARCHITECTURE.md) | Components and storage boundaries |
 | [Safety Gates](docs/SAFETY_GATES.md) | File, run and result rules in full |
 | [Pipe tables](docs/PIPE_TABLE.md) | Columns, endpoints, junctions and limits of the pipe-table import |

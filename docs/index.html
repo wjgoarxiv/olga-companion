@@ -1,14 +1,86 @@
 <!doctype html>
-<html lang="en">
+<html lang="ko">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>OLGA Companion</title>
-<meta http-equiv="refresh" content="0; url=./tutorial/" />
-<link rel="canonical" href="./tutorial/" />
-<style>body{margin:0;padding:32px 16px;font:16px/1.5 system-ui,sans-serif;background:#16161e;color:#c0caf5}a{color:#7aa2f7}</style>
+<meta name="description" content="OLGA Companion 소개 슬라이드와 체험용 튜토리얼을 한 페이지에서 봅니다. / The OLGA Companion intro slides and practice tutorial on one page." />
+<style>
+  :root {
+    --c-canvas: #e1e2e7; --c-bar: #d5d6db; --c-ink: #343b58; --c-ink-3: #5d6aa3;
+    --c-line: #c4c8da; --c-accent: #2459c9; --c-on-accent: #ffffff; --c-focus: #2459c9;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --c-canvas: #16161e; --c-bar: #1a1b26; --c-ink: #c0caf5; --c-ink-3: #9aa5ce;
+      --c-line: #292e42; --c-accent: #7aa2f7; --c-on-accent: #16161e; --c-focus: #7dcfff;
+      color-scheme: dark;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    display: flex; flex-direction: column; background: var(--c-canvas); color: var(--c-ink);
+    font: 500 15px/1.4 "Pretendard Variable", "Pretendard", "Segoe UI", "Malgun Gothic", system-ui, sans-serif;
+  }
+  header {
+    flex: none; display: flex; align-items: center; gap: 16px; min-height: 48px; padding: 0 16px;
+    background: var(--c-bar); border-bottom: 1px solid var(--c-line);
+  }
+  .brand { font-weight: 800; letter-spacing: .02em; white-space: nowrap; }
+  .brand small { font-weight: 500; color: var(--c-ink-3); letter-spacing: 0; margin-left: 4px; }
+  nav { display: flex; gap: 4px; }
+  .tab {
+    display: inline-flex; align-items: center; min-height: 32px; padding: 0 14px; border: 1px solid var(--c-line);
+    color: var(--c-ink); text-decoration: none; white-space: nowrap;
+  }
+  .tab:hover { border-color: var(--c-accent); }
+  .tab[aria-current="page"] { background: var(--c-accent); border-color: var(--c-accent); color: var(--c-on-accent); }
+  .tab:focus-visible, .gh:focus-visible { outline: 2px solid var(--c-focus); outline-offset: 2px; }
+  .gh { margin-left: auto; color: var(--c-ink-3); text-decoration: none; white-space: nowrap; }
+  .gh:hover { color: var(--c-accent); }
+  iframe { flex: 1 1 auto; width: 100%; min-height: 0; border: 0; display: block; background: var(--c-canvas); }
+  @media (max-width: 560px) {
+    header { gap: 10px; padding: 0 12px; }
+    .brand small, .gh { display: none; }
+    .tab { padding: 0 10px; }
+  }
+</style>
 </head>
 <body>
-<p>Opening the OLGA Companion tutorial. <a href="./tutorial/">Open it</a> if nothing happens.</p>
+<header>
+  <span class="brand">OLGA Companion<small>소개 · 튜토리얼</small></span>
+  <nav aria-label="페이지 / Page">
+    <a class="tab" href="#intro" data-src="intro.html">소개 슬라이드</a>
+    <a class="tab" href="#tutorial" data-src="tutorial/">튜토리얼</a>
+  </nav>
+  <a class="gh" href="https://github.com/wjgoarxiv/olga-companion">GitHub ↗</a>
+</header>
+<iframe id="view" title="OLGA Companion" src="intro.html" data-shown="intro.html"></iframe>
+<script>
+  /* One page, two views: #intro (the slides) and #tutorial (the practice copy of the app).
+     Each view is its own page in the frame, so their styles and keys never meet. */
+  (function () {
+    var view = document.getElementById('view');
+    var tabs = Array.prototype.slice.call(document.querySelectorAll('.tab'));
+    function show(focus) {
+      var id = location.hash.slice(1);
+      var tab = tabs.filter(function (t) { return t.getAttribute('href') === '#' + id; })[0] || tabs[0];
+      tabs.forEach(function (t) { if (t === tab) t.setAttribute('aria-current', 'page'); else t.removeAttribute('aria-current'); });
+      var src = tab.getAttribute('data-src');
+      // replace() keeps the switch out of the browser history, so Back follows the tabs only.
+      if (view.getAttribute('data-shown') !== src) {
+        view.setAttribute('data-shown', src);
+        view.contentWindow.location.replace(new URL(src, location.href).href);
+      }
+      view.title = tab.textContent;
+      document.title = tab.textContent + ' · OLGA Companion';
+      if (focus) view.addEventListener('load', function once() { view.removeEventListener('load', once); view.focus(); });
+    }
+    window.addEventListener('hashchange', function () { show(true); });
+    show(false);
+  })();
+</script>
 </body>
 </html>
