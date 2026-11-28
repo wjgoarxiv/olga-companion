@@ -173,3 +173,24 @@ def test_an_exported_figure_says_where_it_was_saved(monkeypatch: pytest.MonkeyPa
 
 def test_only_exports_carry_a_saved_path():
     assert "saved_path" not in _call("olga_glossary", {"term": "PIPE"})["content"][0]["text"]
+
+
+@pytest.mark.parametrize(
+    ("name", "says", "never"),
+    [
+        ("run_execute", "Starts a simulation run on a copy of the case", "Writes a new file"),
+        ("sweep_execute", "Starts simulation runs on copies of the case", "Writes a new file"),
+        ("multiflash_open", "Opens the Multiflash program", "Writes a new file"),
+        ("run_cancel", "Stops a running job", "Writes a new file"),
+        ("sweep_cancel", "Stops a running job", "Writes a new file"),
+        ("genkey_save", "Writes a new file; nothing existing is overwritten", "Starts"),
+        ("fluids_draft_mfl", "Writes a new file; nothing existing is overwritten", "Starts"),
+    ],
+)
+def test_the_permission_text_says_what_the_tool_does(name: str, says: str, never: str):
+    # Review 2026-11-27: runs and Multiflash were described as "Writes a new file".
+    (reply,) = _rpc({"jsonrpc": "2.0", "id": 1, "method": "tools/list"})
+    described = {tool["name"]: tool["description"] for tool in reply["result"]["tools"]}[name]
+    assert says in described
+    assert never not in described
+    assert described.endswith(headless_mcp.ASKS_FIRST)

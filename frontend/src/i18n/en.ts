@@ -954,6 +954,7 @@ export const en: Record<I18nKey, string> = {
   'run.makeTableBusy': 'Multiflash is making the table...',
   'run.makeTableDone': 'Made {name} (fluid {label}, {p} pressures x {t} temperatures). Nothing was run. Preview again to check that the run finds it.',
   'run.makeTableDefaultGrid': 'The .mfl had no table range, so the app used -20 to 150 °C and 0.5 to 300 bar.',
+  'run.makeTableWarning': 'Multiflash warning: {text}',
   'run.companionCopyLabel': 'Table to copy for {reference}',
   'run.companionCopyPlaceholder': 'Choose a .tab file from the workspace',
   'run.companionCopyEmpty': 'The workspace has no .tab file to copy.',

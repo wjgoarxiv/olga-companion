@@ -128,14 +128,17 @@ def inventory(args: dict[str, Any], paths: PathBindings = DEFAULT_PATHS) -> dict
                 **({"case_title": title} if title else {}),
             }
         )
-    total = len(entries)
+    total = max(len(entries), int(snapshot.get("total_results", 0)))
     return {
         "results": public,
         "total_results": total,
         "returned_results": len(public),
         "offset": request.offset,
         "limit": request.limit,
-        "truncated": request.offset + len(public) < total,
+        # Another page can be fetched. Paging ends at the last listable result even when capped.
+        "truncated": request.offset + len(public) < len(entries),
+        # Only the newest results can be listed; older ones exist but no page reaches them.
+        "capped": bool(snapshot.get("capped", False)),
         "workspace_generation": int(snapshot.get("generation", 0)),
     }
 

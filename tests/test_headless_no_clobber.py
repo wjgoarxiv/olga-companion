@@ -124,7 +124,8 @@ def test_an_unexpected_tool_failure_is_an_error_answer_not_a_dead_server(monkeyp
     stdout = io.StringIO()
     headless_mcp.serve(stdin, stdout)
     answers = [json.loads(line) for line in stdout.getvalue().splitlines()]
-    assert [a["id"] for a in answers] == [1, 2]
+    # Tool calls run on worker threads (review 2026-11-27, row 1), so replies match by id, not arrival order.
+    assert sorted(a["id"] for a in answers) == [1, 2]
     assert all(a["result"]["isError"] is True for a in answers)
     assert "denied by the OS" not in stdout.getvalue()
 

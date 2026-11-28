@@ -8,6 +8,7 @@ import json
 import logging
 import os
 import pathlib
+import sys
 import traceback
 
 import pytest
@@ -35,7 +36,15 @@ def _deny_directories(real_open, error: OSError):
     return open_path
 
 
+# Off Windows these tests pretend to be Windows by swapping pathlib.WindowsPath. From Python 3.13
+# pathlib picks the class inside pathlib._local, so the swap no longer takes and a path built
+# there becomes a backslash-named folder in the current directory.
+SIMULATES_WINDOWS = sys.platform == "win32" or sys.version_info < (3, 13)
+
+
 def _windows(monkeypatch: pytest.MonkeyPatch) -> None:
+    if not SIMULATES_WINDOWS:
+        pytest.skip("Python 3.13+ cannot pretend to be Windows; this runs on Windows and on 3.11-3.12.")
     monkeypatch.setattr(os, "name", "nt")
     monkeypatch.setattr(pathlib, "WindowsPath", pathlib.PosixPath)
     monkeypatch.setattr(

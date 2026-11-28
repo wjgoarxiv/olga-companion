@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { parseMarkdown } from './markdownParser';
-import type { Block, Inline } from './markdownParser';
+import type { Block, Inline, ListItem } from './markdownParser';
 import { formatSignificant, type SignificantFigures } from './significantFigures.mjs';
 import { useSignificantFigures } from './useSignificantFigures';
 
@@ -54,6 +54,15 @@ function headingTag(level: number): 'h3' | 'h4' | 'h5' | 'h6' {
   return 'h6';
 }
 
+function renderItem(it: ListItem, key: number, significantFigures: SignificantFigures): ReactNode {
+  return (
+    <li key={key}>
+      {renderInline(it.children)}
+      {it.blocks.map((bb, i) => renderBlock(bb, i, significantFigures))}
+    </li>
+  );
+}
+
 function renderBlock(b: Block, key: number, significantFigures: SignificantFigures): ReactNode {
   switch (b.type) {
     case 'p':
@@ -71,17 +80,13 @@ function renderBlock(b: Block, key: number, significantFigures: SignificantFigur
     case 'ul':
       return (
         <ul key={key}>
-          {b.items.map((it, i) => (
-            <li key={i}>{renderInline(it)}</li>
-          ))}
+          {b.items.map((it, i) => renderItem(it, i, significantFigures))}
         </ul>
       );
     case 'ol':
       return (
         <ol key={key} start={b.start}>
-          {b.items.map((it, i) => (
-            <li key={i}>{renderInline(it)}</li>
-          ))}
+          {b.items.map((it, i) => renderItem(it, i, significantFigures))}
         </ol>
       );
     case 'blockquote':

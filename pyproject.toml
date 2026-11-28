@@ -4,11 +4,20 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "olga-companion"
-version = "0.1.32"
+version = "0.1.33"
 description = "Standalone OLGA Companion sidecar"
-requires-python = ">=3.11"
+# The full test suite passes on 3.11, 3.12 and 3.13; raise the cap after it passes on the next one.
+requires-python = ">=3.11,<3.14"
 # httpx: codex_oauth transport; aiohttp: antigravity client transport.
-dependencies = ["fastapi", "uvicorn", "httpx", "aiohttp"]
+# The plugin's uvx resolves these fresh, without uv.lock. Each lower bound is the locked
+# version and each upper bound the next breaking release (the next minor for 0.x); raise
+# them together with uv.lock.
+dependencies = [
+    "fastapi>=0.139.0,<0.140",
+    "uvicorn>=0.51.0,<0.52",
+    "httpx>=0.28.1,<0.29",
+    "aiohttp>=3.14.1,<4",
+]
 
 [project.scripts]
 olga-companion-mcp = "olga_companion.headless_mcp:main"
@@ -23,13 +32,14 @@ dev = ["pytest"]
 # without importing any of them.
 results = [
     "pyfas @ git+https://github.com/gpagliuca/pyfas.git@d7432ec89cbeea1afc88dc7cf617c6df00b11b5e",
-    "easydict",
-    "matplotlib",
-    "pandas",
-    "numpy",
+    "easydict>=1.13,<2",
+    "matplotlib>=3.11.0,<4",
+    "pandas>=3.0.3,<4",
+    "numpy>=2.4.6,<3",
     # pyfas.pilink imports win32com at package load; without pywin32 the whole
     # `import pyfas` fails on native Windows and result_analysis gates off.
-    "pywin32; sys_platform == 'win32'",
+    # pywin32 numbers builds, not semver, and each build adds wheels for new Pythons: no upper bound.
+    "pywin32>=312; sys_platform == 'win32'",
 ]
 
 [tool.setuptools.packages.find]

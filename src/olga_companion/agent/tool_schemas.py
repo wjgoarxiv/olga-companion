@@ -240,7 +240,9 @@ def build_tools(handlers: Mapping[str, ToolHandler], *, native_tab: bool | None 
         ),
         bind(
             "results_inventory",
-            "Discover bounded workspace results by opaque result identity.",
+            "Discover bounded workspace results by opaque result identity, newest first. truncated=true means "
+            "another page follows; capped=true means older results exist beyond the last page (total_results "
+            "counts them).",
             {"offset": "integer", "limit": "integer"},
             [],
         ),

@@ -90,8 +90,10 @@ def test_writer_descriptions_say_the_harness_asks_first():
         assert "Claude Code asks your permission before this runs." in listed[name], name
     for name in {"run_cancel", "sweep_cancel"}:
         assert "Stops" in listed[name]
-    for name in DIRECT - {"run_cancel", "sweep_cancel"}:
-        assert "new file" in listed[name]
+    # Runs, sweeps and opening Multiflash write no file; their own sentence is checked in
+    # test_headless_mcp.test_the_permission_text_says_what_the_tool_does.
+    for name in DIRECT - set(headless_mcp.EFFECTS):
+        assert "new file" in listed[name], name
     for name in set(listed) - SIDE_EFFECT:
         assert "permission" not in listed[name], name
 

@@ -21,6 +21,7 @@ from .. import (
     genkey_static,
     reports,
     results,
+    run_model,
     run_patrol,
     runner,
     sweep_execution,
@@ -436,6 +437,8 @@ def dispatch(name: str, args: dict[str, Any]) -> dict[str, Any]:
         approvals.ApprovalError,
     ) as exc:
         raise ToolError(str(exc)) from exc
+    except run_model.UnknownRunError as exc:
+        raise ToolError(f"Unknown run id: {exc.args[0] if exc.args else ''}") from exc
     except KeyError as exc:
         raise ToolError(f"Missing required argument: {exc}") from exc
     except (TypeError, ValueError) as exc:

@@ -82,7 +82,7 @@ They read and write files in the folder this session started in.
 | `report_figure` | no | Render a publication figure from a result. |
 | `report_markdown` | no | Generate an auditable Markdown report with a Sources footer. |
 | `results_csv` | no | Export selected variables of a result to CSV. |
-| `results_inventory` | no | Discover bounded workspace results by opaque result identity. |
+| `results_inventory` | no | Discover bounded workspace results by opaque result identity, newest first. |
 | `results_load` | no | List variables + metadata of a .tpl/.ppl result. |
 | `results_plot` | no | Render a plot of selected result variables. |
 | `results_profile` | no | Read one variable along a branch of a .ppl result at one time (default: the last time), as position/value rows with the maximum and minimum and where they are. |

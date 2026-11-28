@@ -8,6 +8,7 @@ modules imported), never the wall clock, and check the answers are the ones pyfa
 """
 from __future__ import annotations
 
+import ast
 import builtins
 import importlib.util
 import json
@@ -143,6 +144,14 @@ print(sorted(name for name in ("pyfas", "pandas", "numpy") if name in sys.module
     assert done.stdout.strip() == "[]"
 
 
+def _sorted_available(message: str) -> str:
+    """pyfas lists branches in hash-seed order; ours are in file order (test_ppl_branch_order)."""
+    head, sep, listed = message.partition("Available: ")
+    if not sep:
+        return message
+    return head + sep + str(sorted(ast.literal_eval(listed)))
+
+
 def _answers(parser, branches: list[str], keyed: list[str], names: list[str]) -> str:
     answers: dict[str, object] = {
         "variables": parser.list_variables(),
@@ -160,7 +169,7 @@ def _answers(parser, branches: list[str], keyed: list[str], names: list[str]) ->
                     # pyfas's own route loses the unit of a respelled name (BR_2); ours is checked below.
                     found = {key: value for key, value in found.items() if key != "unit"}
                 except ValueError as exc:
-                    found = f"ValueError: {exc}"
+                    found = f"ValueError: {_sorted_available(str(exc))}"
                 answers[f"{branch} {name} {timestep}"] = found
     return json.dumps(answers, indent=2, default=str)
 

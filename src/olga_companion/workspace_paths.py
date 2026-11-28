@@ -197,10 +197,14 @@ def list_results_at(
     walk_cap: int,
     scan_workspace,
     scan_runs,
+    counts: dict | None = None,
 ) -> list[dict]:
-    """List workspace and run-sandbox results by opaque result identifier."""
-    workspace_results = scan_workspace(root, list_cap=list_cap, walk_cap=walk_cap)
-    run_results = scan_runs(runs_root, list_cap=list_cap, walk_cap=walk_cap)
+    """The newest ``list_cap`` workspace and run-sandbox results, by opaque result identifier.
+
+    ``counts`` receives how many results were found in all and whether a walk was cut short.
+    """
+    workspace_results = scan_workspace(root, list_cap=list_cap, walk_cap=walk_cap, counts=counts)
+    run_results = scan_runs(runs_root, list_cap=list_cap, walk_cap=walk_cap, counts=counts)
     return sorted(
         [*workspace_results, *run_results],
         key=lambda item: (-item["modified_ns"], item["id"].lower()),

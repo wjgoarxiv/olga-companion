@@ -85,12 +85,18 @@ def test_a_server_that_never_answers_times_out() -> None:
     port = _free_port()
 
     async def body() -> proxy_probe.ProbeResult:
+        # The handler holds the connection until the probe is done, then closes it: from Python 3.12.1
+        # `wait_closed()` also waits for open connections, so one left open would hang the test.
+        done = asyncio.Event()
+
         async def handle(reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:  # noqa: ARG001
-            await asyncio.sleep(5.0)
+            await done.wait()
+            writer.close()
         server = await asyncio.start_server(handle, "127.0.0.1", port)
         try:
             return await proxy_probe.probe("127.0.0.1", port, "api.openai.com", 443, timeout_s=0.2)
         finally:
+            done.set()
             server.close()
             await server.wait_closed()
 

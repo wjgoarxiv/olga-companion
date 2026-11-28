@@ -32,15 +32,50 @@ def _plot(tmp_path: Path, **view: Any) -> tuple[dict[str, Any], list[dict[str, A
         pdf.write_bytes(b"pdf")
         return {"png": str(png), "pdf": str(pdf)}
 
+    profile = view.pop("profile", PROFILE)
     options = {"value_unit": None, "time_unit": None, "quantity_kind": "point", "range_spec": None, **view}
     result = result_plot_exports.plot_result(
         str(source), ["PT"], "LINE", None, **options,
         resolve_result=Path, hash_file=file_sha256, exports_root=lambda: tmp_path / "exports",
         require_tokens=lambda values, _kind: values, series_reader=None, publication_renderer=None,
         run_tool=None, result_scripts={}, plot_timeout_s=5,
-        profile_reader=lambda *_a: dict(PROFILE), profile_renderer=renderer,
+        profile_reader=lambda *_a: dict(profile), profile_renderer=renderer,
     )
     return result, drawn
+
+
+def test_a_profile_pdf_with_an_empty_unit_still_draws(tmp_path: Path) -> None:
+    # Review 2026-11-27: a pyfas fallback can return unit '' and convert_values refused it.
+    result, (drawn,) = _plot(tmp_path, profile={**PROFILE, "unit": ""}, profile_pdf=True)
+    assert drawn["values"] == [4.1e6, None, 4.0e6]
+    assert result["ok"] is True
+
+
+def test_a_unit_asked_of_a_unitless_profile_is_refused_in_words(tmp_path: Path) -> None:
+    with pytest.raises(OlgaInputError, match="from no unit to bar"):
+        _plot(tmp_path, profile={**PROFILE, "unit": ""}, value_unit="bar")
+
+
+def test_the_catalog_unit_of_a_dash_named_branch_is_found(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(sys, "dont_write_bytecode", True)
+    spec = importlib.util.spec_from_file_location("result_parser_units", SCRIPT.with_name("result_parser.py"))
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    path = tmp_path / "case.ppl"
+    path.write_text(
+        "'OLGA 2022.1.0'\nPROFILE PLOT\nGEOMETRY ' (M)  '\n"
+        "BRANCH\n'LINE-1'\n2\n0.0 100.0\n0.0 1.0\n"
+        "BRANCH\n'LINE-10'\n2\n0.0 100.0\n0.0 1.0\n"
+        "CATALOG\n3\n"
+        "PT 'BOUNDARY:' 'BRANCH:' 'LINE-10' '(BARA)' 'Pressure'\n"
+        "PT 'BOUNDARY:' 'BRANCH:' 'LINE-1' '(PA)' 'Pressure'\n"
+        "PTX 'BOUNDARY:' 'BRANCH:' 'LINE-1' '(C)' 'Not the variable asked for'\n"
+        "TIME SERIES  ' (S)  '\n0.0\n1.0 2.0\n3.0 4.0\n5.0 6.0\n"
+    )
+    reader = module._SinglePassPpl(str(path))
+    assert module.ResultParser._catalog_unit(reader, "PT", "LINE_1") == "PA"
+    assert module.ResultParser._catalog_unit(reader, "PT", "LINE-1") == "PA"
+    assert module.ResultParser._catalog_unit(reader, "PT", "LINE-10") == "BARA"
 
 
 def test_a_value_unit_draws_the_converted_profile(tmp_path: Path) -> None:

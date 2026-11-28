@@ -115,6 +115,7 @@ RESULTS_INVENTORY_RESPONSE_SCHEMA: Final = _object(
         "offset": {"type": "integer", "minimum": 0},
         "limit": {"type": "integer", "minimum": 1, "maximum": 100},
         "truncated": {"type": "boolean"},
+        "capped": {"type": "boolean"},
         "workspace_generation": {"type": "integer", "minimum": 0},
     },
     [

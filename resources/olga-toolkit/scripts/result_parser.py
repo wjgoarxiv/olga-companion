@@ -61,6 +61,13 @@ class _PplUnsupported(Exception):
     """The single-pass reader cannot answer this the way pyfas would; use pyfas."""
 
 
+def _branches_in_catalog_order(profiles: dict) -> list[str]:
+    """Each branch once, in the order the catalog first names it. pyfas used a set, whose
+    order follows the hash seed, so the default branch changed from one start to the next."""
+    named = (_SinglePassPpl._branch_of(line) for _idx, line in sorted(profiles.items()))
+    return [branch for branch in dict.fromkeys(named) if branch]
+
+
 class _SinglePassPpl:
     """Reads a .ppl once and extracts a variable only when asked.
 
@@ -105,7 +112,7 @@ class _SinglePassPpl:
         self.geometries = {}
         for begin in branch_idx:
             self._extract_geometry(lines[begin].replace("'", "").replace("\n", ""), begin + 2)
-        self._all_branches = list(set(self._branch_of(line) for line in self.profiles.values()))
+        self._all_branches = _branches_in_catalog_order(self.profiles)
         self._legacy = None
 
     # -- what pyfas.Ppl offers, answered from the lines already in memory --------------
@@ -527,7 +534,9 @@ class ResultParser:
         """
         if self.file_type != "ppl":
             raise ValueError("list_branches() is only available for .ppl files.")
-        return list(self._reader.branches)
+        if isinstance(self._reader, _SinglePassPpl):
+            return list(self._reader.branches)
+        return _branches_in_catalog_order(self._reader.profiles)
 
     def list_timesteps(self) -> list[float]:
         """List all available timesteps (seconds) in a .ppl file.
@@ -635,9 +644,17 @@ class ResultParser:
 
     @staticmethod
     def _catalog_unit(reader, variable: str, branch: str) -> str:
-        """The unit the catalog gives the first line of ``variable`` that names ``branch``."""
-        for _, raw_line in reader.filter_data(variable).items():
-            if branch.lower() in raw_line.lower():
+        """The unit the catalog gives the first line of ``variable`` on ``branch``.
+
+        Both names are matched whole, by their own spelling or the key ``data_in_df`` gives
+        them, so LINE_1 finds 'LINE-1' and never 'LINE-10'.
+        """
+        for _, raw_line in sorted(reader.filter_data(variable).items()):
+            name = raw_line.split(" ")[0].strip()
+            owner = _SinglePassPpl._branch_of(raw_line)
+            if variable not in (name, _safe_key(name)) or owner is None:
+                continue
+            if branch in (owner, _safe_key(owner)):
                 return _parse_catalog_line(raw_line)["unit"]
         return ""
 

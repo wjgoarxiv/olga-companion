@@ -51,7 +51,10 @@ export function MakeTableControl({ source, reference, previewBusy, onPreviewAgai
           {t('run.makeTableDone', { name: result.tab_name, label: result.fluid_label, p: result.points.pressures, t: result.points.temperatures })}
           {result.grid_source === 'default' ? ` ${t('run.makeTableDefaultGrid')}` : ''}
         </p>
-        {(result.engine_warnings ?? []).map((text) => <p className="run-hint" key={text}>Multiflash: {text}</p>)}
+        {(result.engine_warnings ?? []).map((text, index) => (
+          // Two warnings can carry the same text, so the position is the key.
+          <p className="run-hint" key={index}>{t('run.makeTableWarning', { text })}</p>
+        ))}
         <Button variant="secondary" onClick={onPreviewAgain} disabled={previewBusy}>{t('run.companionCopyPreviewAgain')}</Button>
       </div>
     );

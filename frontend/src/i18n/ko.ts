@@ -952,6 +952,7 @@ export const ko = {
   'run.makeTableBusy': 'Multiflash가 표를 만드는 중...',
   'run.makeTableDone': '{name}을(를) 만들었어요 (유체 {label}, 압력 {p}개 x 온도 {t}개). 아직 실행하지 않았어요. 다시 미리 보기로 실행이 표를 찾는지 확인하세요.',
   'run.makeTableDefaultGrid': '.mfl에 표 범위가 없어서 -20~150 °C, 0.5~300 bar로 만들었어요.',
+  'run.makeTableWarning': 'Multiflash 경고: {text}',
   'run.companionCopyLabel': '{reference}에 복사할 표',
   'run.companionCopyPlaceholder': '작업 공간의 .tab 파일 선택',
   'run.companionCopyEmpty': '작업 공간에 복사할 .tab 파일이 없습니다.',

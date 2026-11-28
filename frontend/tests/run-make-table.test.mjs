@@ -36,8 +36,15 @@ test('the table is made only after an explicit approve click and no run starts',
 test('the wording exists in English and Korean', async () => {
   for (const file of ['../src/i18n/en.ts', '../src/i18n/ko.ts']) {
     const text = await read(file);
-    for (const key of ['run.makeTable', 'run.makeTableConfirm', 'run.makeTableApprove', 'run.makeTableBusy', 'run.makeTableDone', 'run.makeTableDefaultGrid']) {
+    for (const key of ['run.makeTable', 'run.makeTableConfirm', 'run.makeTableApprove', 'run.makeTableBusy', 'run.makeTableDone', 'run.makeTableDefaultGrid', 'run.makeTableWarning']) {
       assert.match(text, new RegExp(`'${key.replace('.', '\\.')}':`), `${file} ${key}`);
     }
   }
+});
+
+test('engine warnings use the UI language for their label and never collide as React keys', async () => {
+  // Review 2026-11-27: the prefix was hard-coded English and the text itself was the key.
+  const control = await read('../src/MakeTableControl.tsx');
+  assert.doesNotMatch(control, />Multiflash: \{/);
+  assert.match(control, /engine_warnings[\s\S]*\.map\(\(text, index\) =>[\s\S]*key=\{index\}[\s\S]*t\('run\.makeTableWarning', \{ text \}\)/);
 });

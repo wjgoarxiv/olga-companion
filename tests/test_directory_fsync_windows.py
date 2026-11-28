@@ -6,6 +6,7 @@ import errno
 import hashlib
 import os
 import pathlib
+import sys
 import traceback
 
 import pytest
@@ -65,6 +66,12 @@ def _deny_directories(real_open, error: OSError):
     return open_path
 
 
+# The same limit as in test_directory_fsync_call_sites: from Python 3.13 the WindowsPath swap
+# below no longer takes off Windows.
+@pytest.mark.skipif(
+    sys.platform != "win32" and sys.version_info >= (3, 13),
+    reason="Python 3.13+ cannot pretend to be Windows; this runs on Windows and on 3.11-3.12.",
+)
 def test_windows_directory_eacces_still_saves_and_publishes(tmp_path, monkeypatch):
     from olga_companion import case_publish, case_transaction_store
     from olga_companion.case_publish_types import PublishRequest, PublishTransactionSnapshot

@@ -8,12 +8,14 @@ export type Inline =
   | { type: 'link'; href: string; children: Inline[] }
   | { type: 'break' };
 
+export type ListItem = { type: 'li'; children: Inline[]; blocks: Block[] };
+
 export type Block =
   | { type: 'p'; children: Inline[] }
   | { type: 'heading'; level: number; children: Inline[] }
   | { type: 'code'; value: string }
-  | { type: 'ul'; items: Inline[][] }
-  | { type: 'ol'; start: number; items: Inline[][] }
+  | { type: 'ul'; items: ListItem[] }
+  | { type: 'ol'; start: number; items: ListItem[] }
   | { type: 'blockquote'; blocks: Block[] }
   | { type: 'table'; header: Inline[][]; rows: Inline[][][] };
 

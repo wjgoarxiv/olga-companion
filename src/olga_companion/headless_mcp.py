@@ -11,7 +11,9 @@ import json
 import os
 import secrets
 import sys
+import threading
 from collections.abc import Mapping
+from concurrent.futures import Future, ThreadPoolExecutor
 from pathlib import Path
 from typing import Any, Final, TextIO
 
@@ -39,7 +41,15 @@ def _answer(payload: Any, *, error: bool = False) -> dict[str, Any]:
 
 
 ASKS_FIRST: Final = "Claude Code asks your permission before this runs."
-STOPS: Final = frozenset({"run_cancel", "sweep_cancel"})
+WRITES: Final = "Writes a new file; nothing existing is overwritten."
+# What each gated tool that does not write a file does, in the words of the permission prompt.
+EFFECTS: Final = {
+    "run_cancel": "Stops a running job.",
+    "sweep_cancel": "Stops a running job.",
+    "run_execute": "Starts a simulation run on a copy of the case; the case files are not changed.",
+    "sweep_execute": "Starts simulation runs on copies of the case; the case files are not changed.",
+    "multiflash_open": "Opens the Multiflash program on this computer.",
+}
 # A plan bundles several writes behind one approval, and its runner needs the app's pending
 # store. Here each step is its own tool call, so each write gets its own permission prompt.
 NOT_OFFERED: Final = frozenset({"action_plan"})
@@ -48,8 +58,7 @@ NOT_OFFERED: Final = frozenset({"action_plan"})
 def _description(name: str, text: str, side_effect: bool) -> str:
     if not side_effect:
         return text
-    effect = "Stops a running job." if name in STOPS else "Writes a new file; nothing existing is overwritten."
-    return f"{text} {effect} {ASKS_FIRST}"
+    return f"{text} {EFFECTS.get(name, WRITES)} {ASKS_FIRST}"
 
 
 def tool_list() -> list[dict[str, Any]]:
@@ -172,19 +181,90 @@ def handle(message: Any) -> dict[str, Any] | None:
     return mcp_bridge.handle(message, _post)
 
 
+TOOL_WORKERS = 4
+# Stops get workers of their own, so a cancel is answered even while every tool worker is busy.
+STOPS: Final = frozenset({"run_cancel", "sweep_cancel"})
+STOP_WORKERS: Final = 2
+
+
+def _keyable(request_id: Any) -> bool:
+    """JSON-RPC ids are strings or numbers; only those key the pending map."""
+    return isinstance(request_id, (str, int, float)) and not isinstance(request_id, bool)
+
+
+def _is_tool_call(message: Any) -> bool:
+    return isinstance(message, dict) and message.get("method") == "tools/call" and _keyable(message.get("id"))
+
+
+def _tool_name(message: dict[str, Any]) -> Any:
+    params = message.get("params")
+    return params.get("name") if isinstance(params, dict) else None
+
+
+def _cancelled_id(message: Any) -> Any:
+    if isinstance(message, dict) and message.get("method") == "notifications/cancelled":
+        params = message.get("params")
+        if isinstance(params, dict) and _keyable(params.get("requestId")):
+            return params["requestId"]
+    return None
+
+
 def serve(stdin: TextIO, stdout: TextIO) -> None:
-    for line in stdin:
-        if not line.strip():
-            continue
-        try:
-            message = json.loads(line)
-        except ValueError:
-            response: dict[str, Any] | None = {"jsonrpc": "2.0", "id": None, "error": {"code": -32700, "message": "Parse error."}}
-        else:
-            response = handle(message)
+    """Answer on this thread, except tools/call, which runs on a worker.
+
+    A run_patrol poll or a table build can take minutes; ping, tools/list and a run_cancel sent
+    meanwhile must still be answered. A call cancelled before a worker picks it up never runs.
+    """
+    write_lock = threading.Lock()
+    pending: dict[Any, Future[None]] = {}
+    pending_lock = threading.Lock()
+
+    def reply(response: dict[str, Any] | None) -> None:
         if response is not None:
-            stdout.write(json.dumps(response, ensure_ascii=False) + "\n")
-            stdout.flush()
+            with write_lock:
+                stdout.write(json.dumps(response, ensure_ascii=False) + "\n")
+                stdout.flush()
+
+    def run(message: dict[str, Any]) -> None:
+        try:
+            try:
+                response = handle(message)
+            except Exception as exc:  # noqa: BLE001 - the client must still get an answer for this id
+                print(f"olga-companion-mcp: tools/call failed: {exc!r}", file=sys.stderr, flush=True)
+                response = {"jsonrpc": "2.0", "id": message["id"], "error": {"code": -32603, "message": "Internal error."}}
+            reply(response)
+        except OSError:
+            pass  # stdout is closed: the client has gone and there is no one to answer.
+        finally:
+            with pending_lock:
+                pending.pop(message["id"], None)
+
+    with (
+        ThreadPoolExecutor(max_workers=TOOL_WORKERS, thread_name_prefix="olga-tool") as workers,
+        ThreadPoolExecutor(max_workers=STOP_WORKERS, thread_name_prefix="olga-stop") as stops,
+    ):
+        for line in stdin:
+            if not line.strip():
+                continue
+            try:
+                message = json.loads(line)
+            except ValueError:
+                reply({"jsonrpc": "2.0", "id": None, "error": {"code": -32700, "message": "Parse error."}})
+                continue
+            if _is_tool_call(message):
+                pool = stops if _tool_name(message) in STOPS else workers
+                with pending_lock:
+                    pending[message["id"]] = pool.submit(run, message)
+                continue
+            cancelled = _cancelled_id(message)
+            if cancelled is not None:
+                with pending_lock:
+                    future = pending.get(cancelled)
+                if future is not None and future.cancel():
+                    with pending_lock:
+                        pending.pop(cancelled, None)
+                continue
+            reply(handle(message))
 
 
 def _protocol_streams() -> tuple[TextIO, TextIO]:

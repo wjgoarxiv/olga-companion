@@ -1,6 +1,6 @@
 {
   "name": "olga-companion",
-  "version": "0.1.32",
+  "version": "0.1.33",
   "private": true,
   "type": "module",
   "description": "Standalone OLGA Companion workbench",

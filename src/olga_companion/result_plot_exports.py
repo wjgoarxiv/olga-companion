@@ -42,7 +42,8 @@ def _profile_view(
     defined = [index for index, value in enumerate(raw) if value is not None and profile["positions"][index] is not None]
     if not defined:
         raise OlgaInputError("The profile has no defined values at this time.")
-    converted = convert_values([raw[index] for index in defined], profile.get("unit"), value_unit)
+    # An empty catalog unit means "no unit", which convert_values takes as None.
+    converted = convert_values([raw[index] for index in defined], profile.get("unit") or None, value_unit)
     if converted["conversion"]["status"] == "source_only":
         raise OlgaInputError(f"Cannot convert {variable} from {profile.get('unit') or 'no unit'} to {value_unit}.")
     values: list[float | None] = [None] * len(raw)

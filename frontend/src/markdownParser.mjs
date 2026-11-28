@@ -9,17 +9,27 @@
 
 /** @typedef {{type:'text',value:string}} TextNode */
 
+// A URL may hold one level of balanced parentheses (…/Slug_(software)); a closing
+// parenthesis without its opener ends the URL, so "(see https://a.b/c)" keeps its ")".
+const URL = String.raw`https?:\/\/(?:[^\s()]|\([^\s()]*\))+`;
+
+// Emphasis follows CommonMark's flanking rule: the opening delimiter is not followed
+// by whitespace and the closing one is not preceded by it, so "ρ * g * h" stays literal.
 const INLINE_RULES = [
   // inline code — content is literal, never re-parsed
   { re: /`([^`]+)`/, make: (m) => ({ type: 'code', value: m[1] }) },
   // link — ONLY http/https targets match, so javascript:/data: never become links
-  { re: /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/, make: (m) => ({ type: 'link', href: m[2], children: parseInline(m[1]) }) },
-  { re: /\*\*([^*]+?)\*\*/, make: (m) => ({ type: 'strong', children: parseInline(m[1]) }) },
-  { re: /__([^_]+?)__/, make: (m) => ({ type: 'strong', children: parseInline(m[1]) }) },
-  { re: /\*([^*\n]+?)\*/, make: (m) => ({ type: 'em', children: parseInline(m[1]) }) },
-  { re: /(^|[^_\w])_([^_\n]+?)_(?![_\w])/, make: (m) => ({ type: 'em', children: parseInline(m[2]), lead: m[1] }) },
+  { re: new RegExp(String.raw`\[([^\]]+)\]\((${URL})\)`), make: (m) => ({ type: 'link', href: m[2], children: parseInline(m[1]) }) },
+  // ***both*** is strong around em
+  { re: /\*\*\*(?=[^\s*])([^*\n]+?)(?<=[^\s*])\*\*\*/, make: (m) => ({ type: 'strong', children: [{ type: 'em', children: parseInline(m[1]) }] }) },
+  // bold may hold single-asterisk italics: **bold *nested* more**
+  { re: /\*\*(?=\S)((?:[^*]|\*(?!\*))+?)(?<=\S)\*\*/, make: (m) => ({ type: 'strong', children: parseInline(m[1]) }) },
+  // __bold__ only between word boundaries, and never a dunder name such as __init__
+  { re: /(^|[^_\w])__(?=\S)(?![A-Za-z0-9_]+__(?![_\w]))([^_]+?)(?<=\S)__(?![_\w])/, make: (m) => ({ type: 'strong', children: parseInline(m[2]), lead: m[1] }) },
+  { re: /\*(?=[^\s*])([^*\n]+?)(?<=[^\s*])\*/, make: (m) => ({ type: 'em', children: parseInline(m[1]) }) },
+  { re: /(^|[^_\w])_(?=\S)([^_\n]+?)(?<=\S)_(?![_\w])/, make: (m) => ({ type: 'em', children: parseInline(m[2]), lead: m[1] }) },
   // bare autolink
-  { re: /(https?:\/\/[^\s)]+)/, make: (m) => ({ type: 'link', href: m[1], children: [{ type: 'text', value: m[1] }] }) }
+  { re: new RegExp(`(${URL})`), make: (m) => ({ type: 'link', href: m[1], children: [{ type: 'text', value: m[1] }] }) }
 ];
 
 /** Parse inline markdown into an array of inline nodes. Raw HTML has no matching
@@ -36,7 +46,7 @@ export function parseInline(text) {
     }
     if (!best) { nodes.push({ type: 'text', value: rest }); rest = ''; break; }
     const node = best.rule.make(best.m);
-    // The `_emphasis_` rule captures a leading boundary char; keep it as text.
+    // The `_emphasis_` and `__strong__` rules capture a leading boundary char; keep it as text.
     const lead = node.lead || '';
     delete node.lead;
     const before = rest.slice(0, best.index) + lead;
@@ -55,6 +65,36 @@ const isBlockStart = (line) =>
   /^\s*[-*+]\s+/.test(line) ||
   /^\s*\d+\.\s+/.test(line) ||
   /^>\s?/.test(line);
+
+// One list line: indent width (tab = 4), marker kind, item text.
+const LIST_LINE = /^([ \t]*)([-*+]|\d+\.)\s+(.*)$/;
+const MAX_LIST_DEPTH = 6;
+
+// Build ul/ol blocks from consecutive list lines. A line indented 2+ columns past the
+// list's first line nests under the previous item; past MAX_LIST_DEPTH it stays flat.
+function listBlocks(entries, depth) {
+  const out = [];
+  let k = 0;
+  while (k < entries.length) {
+    const { indent: base, kind } = entries[k];
+    const start = kind === 'ol' ? parseInt(entries[k].marker, 10) : 1;
+    const items = [];
+    const nests = depth + 1 < MAX_LIST_DEPTH;
+    while (k < entries.length) {
+      const e = entries[k];
+      if (nests && items.length && e.indent >= base + 2) {
+        const sub = [];
+        while (k < entries.length && entries[k].indent >= base + 2) sub.push(entries[k++]);
+        items[items.length - 1].blocks = listBlocks(sub, depth + 1);
+      } else if (e.kind === kind) {
+        items.push({ type: 'li', children: parseInline(e.text), blocks: [] });
+        k++;
+      } else break;
+    }
+    out.push(kind === 'ol' ? { type: 'ol', start, items } : { type: 'ul', items });
+  }
+  return out;
+}
 
 const splitRow = (line) => {
   let s = line.trim();
@@ -117,20 +157,15 @@ export function parseMarkdown(src) {
       continue;
     }
 
-    // unordered list
-    if (/^\s*[-*+]\s+/.test(line)) {
-      const items = [];
-      while (i < lines.length && /^\s*[-*+]\s+/.test(lines[i])) { items.push(parseInline(lines[i].replace(/^\s*[-*+]\s+/, ''))); i++; }
-      blocks.push({ type: 'ul', items });
-      continue;
-    }
-
-    // ordered list
-    if (/^\s*\d+\.\s+/.test(line)) {
-      const start = parseInt((line.match(/^\s*(\d+)\./) || [, '1'])[1], 10);
-      const items = [];
-      while (i < lines.length && /^\s*\d+\.\s+/.test(lines[i])) { items.push(parseInline(lines[i].replace(/^\s*\d+\.\s+/, ''))); i++; }
-      blocks.push({ type: 'ol', start, items });
+    // lists (ul/ol, nested by indent)
+    if (LIST_LINE.test(line)) {
+      const entries = [];
+      let m;
+      while (i < lines.length && (m = LIST_LINE.exec(lines[i]))) {
+        entries.push({ indent: m[1].replace(/\t/g, '    ').length, marker: m[2], kind: /\d/.test(m[2]) ? 'ol' : 'ul', text: m[3] });
+        i++;
+      }
+      blocks.push(...listBlocks(entries, 0));
       continue;
     }
 

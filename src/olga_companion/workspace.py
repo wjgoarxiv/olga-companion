@@ -180,7 +180,7 @@ def list_results() -> list[dict]:
         return _list_results_at(root)
 
 
-def _list_results_at(root: Path) -> list[dict]:
+def _list_results_at(root: Path, counts: dict | None = None) -> list[dict]:
     return _paths.list_results_at(
         root,
         config.sandbox_root() / "runs",
@@ -188,6 +188,7 @@ def _list_results_at(root: Path) -> list[dict]:
         walk_cap=_WALK_CAP,
         scan_workspace=scan_workspace_results,
         scan_runs=scan_run_results,
+        counts=counts,
     )
 
 
@@ -408,13 +409,37 @@ def context_snapshot() -> dict[str, Any]:
 
 
 def results_snapshot() -> dict[str, Any]:
+    """Results of one workspace root and generation, walked without holding the context lock.
+
+    A long walk must not hold up a context switch or an approval. The listing is kept only if
+    the root and generation are unchanged afterwards; it is walked once more if they moved.
+    If the workspace moved during both walks, the last walk holds the lock so the call still answers.
+    """
+    for _attempt in range(2):
+        with _CONTEXT_LOCK:
+            identity = context_identity()
+        counts: dict = {}
+        results = _list_results_at(identity[0], counts)
+        with _CONTEXT_LOCK:
+            if context_identity() == identity:
+                return _results_snapshot_of(identity, results, counts)
     with _CONTEXT_LOCK:
-        root, generation = context_identity()
-        return {
-            "root": str(root),
-            "results": _list_results_at(root),
-            "generation": generation,
-        }
+        identity = context_identity()
+        counts = {}
+        return _results_snapshot_of(identity, _list_results_at(identity[0], counts), counts)
+
+
+def _results_snapshot_of(identity: tuple[Path, int], results: list, counts: dict) -> dict[str, Any]:
+    root, generation = identity
+    total = max(int(counts.get("found", 0)), len(results))
+    return {
+        "root": str(root),
+        "results": results,
+        "generation": generation,
+        # More results exist than are listed: past the listing cap, or past the walk cap.
+        "total_results": total,
+        "capped": total > len(results) or bool(counts.get("walk_capped")),
+    }
 
 
 def _switch_root_locked(path: str | Path) -> dict[str, Any]:
