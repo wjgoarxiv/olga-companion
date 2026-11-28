@@ -4,7 +4,7 @@ import { ActivityLoader } from './ui/ActivityLoader';
 import { OperationStatus } from './ui/OperationStatus';
 import { useLocale } from './i18n/index.ts';
 import {
-  buildOperations, cellField, changedRows, conflictKey, displayUnit, unitInBrackets, withUnit, displayValue, formatDisplay, planReasons,
+  buildOperations, cellField, changedRows, conflictKey, displayUnit, unitInBrackets, withUnit, displayValue, formatDisplay, planReasons, planWarningCount, planWarnings,
   type CaseEditRow,
 } from './caseEditModel.mjs';
 import {
@@ -208,7 +208,7 @@ export function CaseEditTable({ rel, onSaved, onClose, highlightRowId = null }: 
         <div>
           <h3 id="case-edit-title" ref={headingRef} tabIndex={-1}>{t('caseEdit.title')}</h3>
           <p className="case-edit-lede">
-            {rows && !rows.marked ? t('caseEdit.ledeEndOnly', { name: fileName }) : t('caseEdit.lede', { name: fileName })}
+            {rows && !rows.marked && rows.rows.length > 0 ? t('caseEdit.ledeOwner', { name: fileName }) : t('caseEdit.lede', { name: fileName })}
           </p>
         </div>
         <Button variant="quiet" onClick={onClose}>{t('caseEdit.close')}</Button>
@@ -331,6 +331,14 @@ export function CaseEditTable({ rel, onSaved, onClose, highlightRowId = null }: 
             title={t('caseEdit.validated')}
             detail={t('caseEdit.newFile', { name: plan.destination_rel.split('/').pop() ?? plan.destination_rel })}
           />
+          {planWarnings(plan).length > 0 && (
+            <OperationStatus
+              className="case-edit-status"
+              tone="info"
+              title={t('caseEdit.warningsTitle', { count: planWarningCount(plan) })}
+              detail={<ul className="case-edit-warnings">{planWarnings(plan).map((line, index) => <li key={`${index}:${line}`}>{line}</li>)}</ul>}
+            />
+          )}
           {(plan.text_diff ?? []).length > 0 && (
             <details className="case-edit-diff">
               <summary>{t('caseEdit.textDiff')}</summary>

@@ -51,3 +51,5 @@ export function changedRows(rows: readonly CaseEditRow[], drafts: Readonly<Recor
 export function buildOperations(rows: readonly CaseEditRow[], drafts: Readonly<Record<string, string>>): BuildResult;
 export function conflictKey(code: string): string | null;
 export function planReasons(plan: unknown): string[];
+export function planWarnings(plan: unknown): string[];
+export function planWarningCount(plan: unknown): number;

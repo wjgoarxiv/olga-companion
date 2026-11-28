@@ -109,6 +109,8 @@ def _success(
             "parser_clean": result.validation.parser_clean,
             "validator_clean": result.validation.validator_clean,
             "diagnostics": [item[:128] for item in result.validation.diagnostics[:8]],
+            "warnings": [item[:128] for item in result.validation.warnings[:8]],
+            "warning_count": max(result.validation.warning_count, len(result.validation.warnings)),
         },
         "rollback": asdict(result.rollback),
     }

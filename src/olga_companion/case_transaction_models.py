@@ -268,6 +268,8 @@ class ValidationReceipt:
     parser_clean: bool
     validator_clean: bool
     diagnostics: tuple[str, ...]
+    warnings: tuple[str, ...] = ()
+    warning_count: int = 0
 
 
 @dataclass(frozen=True, slots=True)

@@ -247,7 +247,9 @@ def test_a_case_the_app_did_not_compile_edits_its_end_time_end_to_end(ws: Path) 
     case = _install(ws, "simple-pipeline")
     rows = _rows(case)
     assert rows["marked"] is False
-    assert [row["id"] for row in rows["rows"]] == ["integration.end_time_s"]
+    assert [row["id"] for row in rows["rows"]] == ["integration.end_time_s"] + [
+        f"flowpaths.FLOWPATH_1.pipes.Pipe_{n}.length_m" for n in (1, 2, 3)
+    ]
     plan = _plan(rows, [{"op": "set_integration", "end_time_s": 7200.0}]).json()
     assert plan["publishable"] is True, plan
     response = _publish(plan)

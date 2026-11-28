@@ -10,6 +10,7 @@ const UNITS = {
   opening: { unit: '%', scale: 100 },
   roughness_m: { unit: 'mm', scale: 1000 },
   diameter_m: { unit: 'mm', scale: 1000 },
+  length_m: { unit: 'm', scale: 1 },
   max_dt_s: { unit: 's', scale: 1 },
   min_dt_s: { unit: 's', scale: 1 },
   dt_start_s: { unit: 's', scale: 1 },
@@ -76,6 +77,7 @@ const RANGES = {
   mass_flow_kg_s: { low: (v) => v >= 0, max: 1_000_000 },
   roughness_m: { low: (v) => v >= 0, max: 0.1 },
   diameter_m: { low: (v) => v > 0, max: 10 },
+  length_m: { low: (v) => v > 0, max: 10_000_000 },
   max_dt_s: { low: (v) => v > 0, max: 31_536_000 },
   min_dt_s: { low: (v) => v > 0, max: 31_536_000 },
   dt_start_s: { low: (v) => v > 0, max: 31_536_000 },
@@ -138,6 +140,18 @@ const CONFLICTS = {
 /** The sentence for a conflict the server reports; null when it is not a conflict. */
 export function conflictKey(code) {
   return CONFLICTS[code] ?? null;
+}
+
+/** The validator warnings of the new case in a publishable plan; saving stays allowed. */
+export function planWarnings(plan) {
+  return (plan?.validation?.warnings ?? []).filter((line) => typeof line === 'string' && line);
+}
+
+/** How many warnings the validator found: its total when the plan gives one, else the lines listed. */
+export function planWarningCount(plan) {
+  const total = plan?.validation?.warning_count;
+  const listed = planWarnings(plan).length;
+  return Number.isInteger(total) && total > listed ? total : listed;
 }
 
 /** Readable reasons from a plan the server could not make publishable. */

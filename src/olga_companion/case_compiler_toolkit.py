@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 import json
+import re
 import tempfile
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Any, TypeAlias
 
@@ -33,6 +34,32 @@ class ToolkitVerification:
     thermal: tuple[Any, ...] = ()
     boundaries: tuple[tuple[str, float, float], ...] = ()
     roughness: tuple[tuple[str, str, float], ...] = ()
+    warnings: tuple[str, ...] = ()
+    warning_count: int = 0
+
+
+def validator_lines(report: str, wanted: str) -> tuple[str, ...]:
+    """The `[RULE] message` lines of one section (ERRORS, WARNINGS or INFO) of a validator report,
+    at most eight, each cut to 128 characters."""
+    found: list[str] = []
+    section = ""
+    for line in report.splitlines():
+        stripped = line.strip()
+        if stripped in ("ERRORS", "WARNINGS", "INFO"):
+            section = stripped
+        elif section == wanted and stripped.startswith("["):
+            found.append(stripped[:128])
+    return tuple(found[:8])
+
+
+def validator_warnings(report: str) -> tuple[str, ...]:
+    return validator_lines(report, "WARNINGS")
+
+
+def validator_count(report: str, wanted: str) -> int:
+    """The total a validator report's header gives for one section (`WARNINGS: 10`), 0 when absent."""
+    match = re.search(rf"^{wanted}:\s*(\d+)\s*$", report, re.MULTILINE)
+    return int(match.group(1)) if match else 0
 
 
 def _number(value: Any) -> float:
@@ -215,7 +242,11 @@ def verify_with_toolkit(text: str) -> ToolkitVerification:
     validator_clean = validator.exit_code == 0
     if parser_clean and validator_clean:
         try:
-            return _verified(parsed)
+            return replace(
+                _verified(parsed),
+                warnings=validator_warnings(validator.stdout),
+                warning_count=validator_count(validator.stdout, "WARNINGS"),
+            )
         except (KeyError, TypeError, ValueError, StopIteration) as error:
             return ToolkitVerification(False, False, True, (f"round-trip parse failed: {error}",))
     diagnostics = tuple(

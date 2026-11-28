@@ -2,8 +2,24 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  buildOperations, changedRows, conflictKey, displayUnit, formatDisplay, parseCell, planReasons,
+  buildOperations, changedRows, conflictKey, displayUnit, formatDisplay, parseCell, planReasons, planWarningCount, planWarnings,
 } from '../src/caseEditModel.mjs';
+
+test('a publishable plan hands over its validator warnings, and a plan without any gives none', async () => {
+  const { translate } = await import('../src/i18n/index.ts');
+  assert.deepEqual(planWarnings({ validation: { warnings: ['[P008] Neighbouring sections differ by 6.25x', ''] } }), ['[P008] Neighbouring sections differ by 6.25x']);
+  assert.deepEqual(planWarnings({ validation: { diagnostics: [] } }), []);
+  assert.deepEqual(planWarnings(null), []);
+  for (const locale of ['en', 'ko']) assert.notEqual(translate(locale, 'caseEdit.warningsTitle'), 'caseEdit.warningsTitle', locale);
+});
+
+test('the warning count is the validator total, not only the listed lines', () => {
+  const listed = Array.from({ length: 8 }, (_, n) => `[P008] line ${n}`);
+  assert.equal(planWarningCount({ validation: { warnings: listed, warning_count: 11 } }), 11);
+  assert.equal(planWarningCount({ validation: { warnings: listed } }), 8);
+  assert.equal(planWarningCount({ validation: { warnings: ['[P008] a'], warning_count: 0 } }), 1);
+  assert.equal(planWarningCount(null), 0);
+});
 
 const rows = [
   { id: 'integration.end_time_s', target: 'ENDTIME', field: 'end_time_s', value: 3600, unit: 's', op: { op: 'set_integration' } },
@@ -90,6 +106,21 @@ test('a pipe diameter is shown and typed in mm and kept inside the grammar range
   assert.deepEqual(buildOperations([row], { d: '250' }).operations, [{ op: 'set_pipe_geometry', flowpath: 'MAIN', pipe: 'UP', diameter_m: 0.25 }]);
   for (const locale of ['en', 'ko']) {
     for (const key of ['caseEdit.field.diameter_m', 'caseEdit.error.range.diameter_m']) assert.notEqual(translate(locale, key), key, `${locale} ${key}`);
+  }
+});
+
+test('a pipe length is shown and typed in m and kept inside the grammar range', async () => {
+  const { translate } = await import('../src/i18n/index.ts');
+  assert.equal(displayUnit('length_m'), 'm');
+  assert.equal(formatDisplay({ field: 'length_m', value: 1200 }), '1200');
+  assert.deepEqual(parseCell('length_m', '1500'), { ok: true, value: 1500 });
+  assert.deepEqual(parseCell('length_m', '0'), { ok: false, error: 'caseEdit.error.range.length_m' });
+  assert.deepEqual(parseCell('length_m', '-5'), { ok: false, error: 'caseEdit.error.range.length_m' });
+  assert.deepEqual(parseCell('length_m', '10000001'), { ok: false, error: 'caseEdit.error.range.length_m' });
+  const row = { id: 'l', field: 'length_m', value: 100, op: { op: 'set_pipe_length', flowpath: 'FLOWPATH_1', pipe: 'Pipe_1' } };
+  assert.deepEqual(buildOperations([row], { l: '120' }).operations, [{ op: 'set_pipe_length', flowpath: 'FLOWPATH_1', pipe: 'Pipe_1', length_m: 120 }]);
+  for (const locale of ['en', 'ko']) {
+    for (const key of ['caseEdit.field.length_m', 'caseEdit.error.range.length_m']) assert.notEqual(translate(locale, key), key, `${locale} ${key}`);
   }
 });
 

@@ -347,7 +347,8 @@ class GenkeyValidator:
 
             # X014: a pipe drawn by end coordinates is as long as the distance from the
             # previous end point (GEOMETRY XSTART/YSTART/ZSTART for the first pipe). Its
-            # LSEGMENT sum must match, or the drawn and the meshed pipe differ.
+            # LSEGMENT sum must match: OLGA 2022.1 stops the case before time 0 with
+            # "The total length of segments ... does not match the pipe length".
             point = None
             for child in children:
                 params = child["params"]
@@ -363,7 +364,7 @@ class GenkeyValidator:
                     if abs(drawn - summed) > max(0.01 * summed, 1e-6):
                         pipe_lbl = str(params.get("LABEL", "(unnamed)"))
                         self._add(
-                            "X014", "WARNING", "solver-syntax",
+                            "X014", "ERROR", "solver-syntax",
                             f"PIPE '{pipe_lbl}' in '{tag}' spans {drawn:g} m between its "
                             f"end points but its LSEGMENT sum is {summed:g} m",
                             location=f"{tag} / PIPE {pipe_lbl}",

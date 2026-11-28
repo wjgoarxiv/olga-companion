@@ -24,7 +24,7 @@ export type CaseEditPlan = {
   readonly semantic_diff?: readonly { path: string; before: string; after: string }[];
   readonly text_diff?: readonly string[];
   readonly diff_truncated?: boolean;
-  readonly validation?: { clean: boolean; diagnostics: readonly string[] };
+  readonly validation?: { clean: boolean; diagnostics: readonly string[]; warnings?: readonly string[]; warning_count?: number };
   readonly errors?: readonly { code: string; message: string; evidence: string }[];
 };
 

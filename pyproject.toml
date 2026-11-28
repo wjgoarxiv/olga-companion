@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "olga-companion"
-version = "0.1.34"
+version = "0.1.35"
 description = "Standalone OLGA Companion sidecar"
 # The full test suite passes on 3.11, 3.12 and 3.13; raise the cap after it passes on the next one.
 requires-python = ">=3.11,<3.14"

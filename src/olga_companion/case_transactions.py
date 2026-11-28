@@ -17,6 +17,7 @@ from pydantic import ValidationError
 
 from .case_companion import CompanionVerificationError, verify_pvt_companion
 from .case_compiler import CaseCompileError, compile_case_spec, render_case_spec
+from .case_compiler_toolkit import validator_count, validator_lines, validator_warnings
 from .case_spec import CaseSpec, normalize_case_spec
 from .case_spec_recovery import UnsupportedSourceError, recover_case_spec
 from .case_spec_validation import JsonValue
@@ -206,6 +207,7 @@ def plan_case_edits(
     validation = ValidationReceipt(
         compiled.validation.clean, compiled.validation.parser_clean,
         compiled.validation.validator_clean, compiled.validation.diagnostics,
+        compiled.validation.warnings, compiled.validation.warning_count,
     )
     backup_hash = hashlib.sha256(backup_bytes).hexdigest()
     plan = TransactionPlan(
@@ -303,15 +305,21 @@ def _apply_owner_operation(text: str, operation: SetIntegration) -> tuple[str, S
     return revised, SemanticDiff("integration.end_time_s", number, rendered)
 
 
-def _validate_owner_bytes(content: bytes) -> tuple[bool, tuple[str, ...]]:
+def _validate_owner_bytes(content: bytes) -> tuple[bool, tuple[str, ...], tuple[str, ...], int]:
+    """Clean or not, the error lines (for a failure), and the warnings and warning total of a clean copy."""
     from . import genkey_static
 
     with tempfile.TemporaryDirectory() as directory:
         path = Path(directory) / "reviewed.genkey"
         path.write_bytes(content)
         result = genkey_static.run_tool("validator", [str(path)])
-    lines = [line.strip()[:128] for line in result.stdout.splitlines() if line.strip()]
-    return result.exit_code == 0, tuple(lines[:8])
+    errors = validator_lines(result.stdout, "ERRORS")
+    if not errors:
+        errors = tuple(line.strip()[:128] for line in result.stdout.splitlines() if line.strip())[:8]
+    return (
+        result.exit_code == 0, errors, validator_warnings(result.stdout),
+        validator_count(result.stdout, "WARNINGS"),
+    )
 
 
 def plan_owner_byte_edits(
@@ -388,7 +396,7 @@ def plan_owner_byte_edits(
     if _sha256_file(contained) != before_hash:
         raise StaleSourceError(before_hash, _sha256_file(contained))
     reviewed = text.encode("utf-8")
-    clean, diagnostics = _validate_owner_bytes(reviewed)
+    clean, diagnostics, warnings, warning_count = _validate_owner_bytes(reviewed)
     if not clean:
         return _failure(
             transaction_id, before_hash, snapshots, len(operations), "compile_validation_failed",
@@ -405,7 +413,7 @@ def plan_owner_byte_edits(
         "compiled_hash": compiled_hash,
         "operations": [dict(operation) for operation in operations],
     }, sort_keys=True, separators=(",", ":")).encode("utf-8")
-    validation = ValidationReceipt(True, True, True, ())
+    validation = ValidationReceipt(True, True, True, (), warnings, warning_count)
     plan = TransactionPlan(
         transaction_id, hashlib.sha256(transaction_payload).hexdigest(), before_hash,
         compiled_hash, compiled_hash, reviewed, tuple(snapshots), tuple(semantic_diff),

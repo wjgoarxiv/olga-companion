@@ -35,6 +35,22 @@ test('the Workspace view opens the table and the step bar Edit action asks for i
   assert.match(stepbar, /requestCaseEdit\(\)/);
 });
 
+test('the review card lists the validator warnings of the new case', () => {
+  assert.match(source, /planWarnings\(plan\)/);
+  // Two warnings may share their first 128 characters, so the list key carries the index.
+  assert.match(source, /planWarnings\(plan\)\.map\(\(line, index\) => <li key=\{`\$\{index\}:\$\{line\}`\}>/);
+  assert.match(source, /t\('caseEdit\.warningsTitle'/);
+  assert.match(api, /warnings\?: readonly string\[\]/);
+});
+
+test('a case the app did not make says its end time and pipe lengths can be changed here', async () => {
+  const { translate } = await import('../src/i18n/index.ts');
+  assert.match(source, /rows && !rows\.marked && rows\.rows\.length > 0 \? t\('caseEdit\.ledeOwner'/);
+  assert.doesNotMatch(source, /ledeEndOnly/);
+  assert.match(translate('ko', 'caseEdit.ledeOwner', { name: 'a.genkey' }), /종료 시간과 관 길이/);
+  assert.match(translate('en', 'caseEdit.ledeOwner', { name: 'a.genkey' }), /end time and pipe lengths/);
+});
+
 test('the table styles stay square and use tokens', () => {
   assert.doesNotMatch(css, /border-radius:\s*\d/);
   assert.doesNotMatch(css, /font-size:\s*\d/);

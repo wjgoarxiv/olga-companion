@@ -11,6 +11,8 @@ import math
 import re
 from dataclasses import dataclass
 
+from pydantic import ValidationError
+
 from .case_transaction_models import SemanticDiff, SetPipeLength
 
 _TO_M = {"m": 1.0, "km": 1000.0, "cm": 0.01, "mm": 0.001, "ft": 0.3048, "in": 0.0254}
@@ -102,8 +104,8 @@ def _label_of(text: str, statement: _Statement, key: str) -> str | None:
     return None
 
 
-def _flowpath(text: str, statements: list[_Statement], wanted: str) -> list[_Statement]:
-    """The statements of the one FLOWPATH whose TAG or PARAMETERS LABEL is `wanted`."""
+def _blocks(text: str, statements: list[_Statement]) -> list[list[_Statement]]:
+    """The statements of each FLOWPATH, its NETWORKCOMPONENT statement first."""
     blocks: list[list[_Statement]] = []
     current: list[_Statement] | None = None
     for statement in statements:
@@ -116,6 +118,11 @@ def _flowpath(text: str, statements: list[_Statement], wanted: str) -> list[_Sta
             current = None
         elif current is not None:
             current.append(statement)
+    return blocks
+
+
+def _flowpath(text: str, blocks: list[list[_Statement]], wanted: str) -> list[_Statement]:
+    """The statements of the one FLOWPATH whose TAG or PARAMETERS LABEL is `wanted`."""
     target = wanted.casefold()
     matches = [
         block for block in blocks
@@ -127,8 +134,43 @@ def _flowpath(text: str, statements: list[_Statement], wanted: str) -> list[_Sta
     return matches[0]
 
 
+def owner_pipe_lengths(text: str) -> list[tuple[str, str, float]]:
+    """(flowpath TAG, pipe LABEL, length in m) of every pipe `apply_owner_pipe_length` can change."""
+    found: list[tuple[str, str, float]] = []
+    blocks = _blocks(text, _statements(text))
+    for block in blocks:
+        tag = _label_of(text, block[0], "TAG")
+        for statement in block:
+            label = _label_of(text, statement, "LABEL") if statement.keyword == "PIPE" else None
+            if not tag or not label:
+                continue
+            try:
+                # The longest allowed length: no pipe rises more than that, so only a pipe the
+                # edit cannot read or rewrite is refused here.
+                probe = SetPipeLength(op="set_pipe_length", flowpath=tag, pipe=label, length_m=10_000_000.0)
+                _, before = _length_edits(text, _flowpath(text, blocks, tag), probe)
+            except (OwnerEditError, ValidationError):
+                continue
+            if math.isfinite(before):
+                found.append((tag, label, before))
+    return found
+
+
 def apply_owner_pipe_length(text: str, operation: SetPipeLength) -> tuple[str, SemanticDiff]:
-    block = _flowpath(text, _statements(text), operation.flowpath)
+    block = _flowpath(text, _blocks(text, _statements(text)), operation.flowpath)
+    edits, before = _length_edits(text, block, operation)
+    revised = text
+    for begin, finish, replacement in sorted(edits, reverse=True):
+        revised = revised[:begin] + replacement + revised[finish:]
+    return revised, SemanticDiff(
+        f"flowpaths.{operation.flowpath}.pipes.{operation.pipe}.length_m", before, operation.length_m
+    )
+
+
+def _length_edits(
+    text: str, block: list[_Statement], operation: SetPipeLength
+) -> tuple[list[tuple[int, int, str]], float]:
+    """The (start, end, replacement) spans that give one pipe of `block` its new length, and its old length in m."""
     pipes = [s for s in block if s.keyword == "PIPE"]
     chosen = [s for s in pipes if (_label_of(text, s, "LABEL") or "").casefold() == operation.pipe.casefold()]
     if len(chosen) != 1:
@@ -196,10 +238,4 @@ def apply_owner_pipe_length(text: str, operation: SetPipeLength) -> tuple[str, S
         raise OwnerEditError(
             "unsupported_operation", f"Later pipes are drawn by coordinates but {operation.pipe} is not."
         )
-
-    revised = text
-    for begin, finish, replacement in sorted(edits, reverse=True):
-        revised = revised[:begin] + replacement + revised[finish:]
-    return revised, SemanticDiff(
-        f"flowpaths.{operation.flowpath}.pipes.{operation.pipe}.length_m", before, operation.length_m
-    )
+    return edits, before

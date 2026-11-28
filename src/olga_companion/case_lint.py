@@ -158,6 +158,7 @@ _TABLE_PATHS: Final = {
     ("set_source_massflow", "mass_flow_kg_s"): "SOURCE.MASSFLOW",
     ("set_valve_opening", "opening"): "VALVE.OPENING",
     ("set_pipe_roughness", "roughness_m"): "PIPE.ROUGHNESS",
+    ("set_pipe_length", "length_m"): "PIPE.LSEGMENT",
     ("set_pipe_geometry", "diameter_m"): "PIPE.DIAMETER",
     ("set_thermal_value", "ambient_temperature_c"): "HEATTRANSFER.TAMBIENT",
     ("set_thermal_value", "outer_heat_transfer_coefficient_w_m2k"): "HEATTRANSFER.HAMBIENT",
@@ -169,6 +170,13 @@ _TABLE_PATHS: Final = {
     ("set_controller_value", "gain"): "PARAMETERS.AMPLIFICATION",
     ("set_controller_value", "integral_s"): "PARAMETERS.INTEGRALCONST",
     ("set_controller_value", "derivative_s"): "PARAMETERS.DERIVATIVECONST",
+}
+
+
+# Keys an edit-table row rewrites besides its own: a new pipe length also rewrites the pipe's
+# LENGTH and moves the end points of that pipe and every later one.
+_TABLE_ALSO: Final = {
+    ("set_pipe_length", "length_m"): ("PIPE.LENGTH", "PIPE.XEND", "PIPE.YEND", "PIPE.ZEND"),
 }
 
 
@@ -184,7 +192,13 @@ def keyword_coverage(path: Path, rows: list[dict[str, Any]]) -> dict[str, list[s
     from .sweep_parameters import sweep_parameter_catalog
 
     unique, ambiguous = sweep_parameter_catalog(path)
-    table = sorted({key for key in map(table_path, rows) if key is not None})
+    present = {item.path for item in unique} | set(ambiguous)
+    also = {
+        key for row in rows
+        for key in _TABLE_ALSO.get((row.get("op", {}).get("op"), row.get("field")), ())
+        if key in present
+    }
+    table = sorted({key for key in map(table_path, rows) if key is not None} | also)
     in_table = set(table)
     return {
         "table": table,

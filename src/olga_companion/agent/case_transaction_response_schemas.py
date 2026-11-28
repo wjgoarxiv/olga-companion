@@ -50,6 +50,17 @@ _VALIDATION: Final = _object(
             "items": {"type": "string", "maxLength": 512},
             "maxItems": 20,
         },
+        "warnings": {
+            "type": "array",
+            "items": {"type": "string", "maxLength": 512},
+            "maxItems": 20,
+            "description": "Validator warnings of the new case; the plan stays publishable. Tell the user each one.",
+        },
+        "warning_count": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "How many warnings the validator found; more than the warnings listed when it found over eight.",
+        },
     },
     ["clean", "parser_clean", "validator_clean", "diagnostics"],
 )

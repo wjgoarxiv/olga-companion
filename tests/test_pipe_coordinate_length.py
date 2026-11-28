@@ -29,6 +29,17 @@ def test_a_moved_end_point_without_new_segments_is_flagged(tmp_path: Path) -> No
     assert "Pipe_2" in lines[1] and "80" in lines[1]
 
 
+def test_a_moved_end_point_is_an_error_because_olga_refuses_the_case(tmp_path: Path) -> None:
+    # OLGA 2022.1 stops such a case before time 0: "The total length of segments
+    # (LSEGMENT sum: 100) does not match the pipe length (LENGTH: 120) [tolerance 1%]".
+    case = tmp_path / "c.genkey"
+    case.write_text(FIXTURE.read_text(encoding="utf-8").replace("XEND=100 m", "XEND=120 m"), encoding="utf-8")
+    result = genkey_static.run_tool("validator", [str(case)])
+    errors = result.stdout.split("\nERRORS\n", 1)[1].split("\nWARNINGS\n", 1)[0]
+    assert result.exit_code == 1
+    assert "[X014]" in errors
+
+
 def test_a_consistent_length_change_passes(tmp_path: Path) -> None:
     text = FIXTURE.read_text(encoding="utf-8")
     text = text.replace(

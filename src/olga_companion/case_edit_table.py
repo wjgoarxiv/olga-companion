@@ -2,8 +2,8 @@
 
 Each row maps to one operation of the closed edit grammar, so a hand edit goes through the same
 reviewed transaction as an assistant edit. A case the app compiled (it carries the CaseSpec marker)
-offers every typed value; any other GENKEY offers only its INTEGRATION ENDTIME, the one edit the
-owner-byte path supports.
+offers every typed value; any other GENKEY offers its INTEGRATION ENDTIME and the length of each
+pipe, the edits the owner-byte path supports.
 """
 
 from __future__ import annotations
@@ -20,6 +20,7 @@ from .case_lint import table_path
 from .case_spec_types import DEFAULT_DTSTART_S, DEFAULT_MINDT_S
 from .case_spec_recovery import UnsupportedSourceError, recover_case_spec
 from .case_spec import CaseSpec
+from .owner_pipe_length import owner_pipe_lengths
 
 
 def _row(row_id: str, target: str, field: str, value: float | None, unit: str, op: dict[str, Any], note: str | None = None) -> dict[str, Any]:
@@ -118,23 +119,30 @@ def _spec_rows(spec: CaseSpec) -> list[dict[str, Any]]:
             rows.append(_row(f"flowpaths.{path.label}.pipes.{pipe.label}.diameter_m", f"{path.label}/{pipe.label}",
                              "diameter_m", pipe.diameter_m, "m",
                              {"op": "set_pipe_geometry", "flowpath": path.label, "pipe": pipe.label}))
+            rows.append(_length_row(path.label, pipe.label, pipe.length))
     return rows
 
 
+def _length_row(flowpath: str, pipe: str, length_m: float) -> dict[str, Any]:
+    return _row(f"flowpaths.{flowpath}.pipes.{pipe}.length_m", f"{flowpath}/{pipe}", "length_m", length_m, "m",
+                {"op": "set_pipe_length", "flowpath": flowpath, "pipe": pipe})
+
+
 def _owner_rows(text: str) -> list[dict[str, Any]]:
+    lengths = [_length_row(flowpath, pipe, length) for flowpath, pipe, length in owner_pipe_lengths(text)]
     matches = case_transactions._endtime_matches(text)
     if len(matches) != 1:
-        return []
+        return lengths
     unit = matches[0].group("unit")
     if unit is not None and unit.casefold() not in case_transactions._SECOND_UNITS:
-        return []
+        return lengths
     try:
         value = float(matches[0].group("number"))
     except ValueError:
-        return []
+        return lengths
     if not math.isfinite(value):
-        return []
-    return [_row("integration.end_time_s", "ENDTIME", "end_time_s", value, "s", {"op": "set_integration"})]
+        return lengths
+    return [_row("integration.end_time_s", "ENDTIME", "end_time_s", value, "s", {"op": "set_integration"}), *lengths]
 
 
 def _with_keywords(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
