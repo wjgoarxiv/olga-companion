@@ -23,6 +23,7 @@ from .case_spec_validation import JsonValue
 from .case_transaction_apply import UnknownTargetError, UnsupportedEditError, apply_operation
 from .case_transaction_models import (
     SetIntegration,
+    SetPipeLength,
     BackupReceipt,
     RollbackReceipt,
     SemanticDiff,
@@ -34,6 +35,7 @@ from .case_transaction_models import (
     ValidationReceipt,
     parse_operation,
 )
+from .owner_pipe_length import OwnerEditError, apply_owner_pipe_length
 from .case_transaction_store import PublishTransaction, load_transaction, persist_transaction
 
 _HASH = re.compile(r"[0-9a-f]{64}")
@@ -355,12 +357,21 @@ def plan_owner_byte_edits(
                 transaction_id, before_hash, snapshots, index, "unsupported_operation",
                 "Operation is outside the closed edit grammar.", evidence,
             )
-        if not isinstance(operation, SetIntegration):
+        if isinstance(operation, SetPipeLength):
+            try:
+                applied = apply_owner_pipe_length(text, operation)
+            except OwnerEditError as exc:
+                return _failure(
+                    transaction_id, before_hash, snapshots, index, exc.code, str(exc),
+                    operation.model_dump_json(),
+                )
+        elif not isinstance(operation, SetIntegration):
             return _failure(
                 transaction_id, before_hash, snapshots, index, "unknown_target",
                 "Edit target does not exist on this owner GENKEY.", operation.model_dump_json(),
             )
-        applied = _apply_owner_operation(text, operation)
+        else:
+            applied = _apply_owner_operation(text, operation)
         if isinstance(applied, str):
             message = (
                 "ENDTIME unit is not seconds; the number was not converted."

@@ -345,6 +345,60 @@ class GenkeyValidator:
                         suggestion="Use ELEVATION=<total rise> m (a scalar)",
                     )
 
+            # X014: a pipe drawn by end coordinates is as long as the distance from the
+            # previous end point (GEOMETRY XSTART/YSTART/ZSTART for the first pipe). Its
+            # LSEGMENT sum must match, or the drawn and the meshed pipe differ.
+            point = None
+            for child in children:
+                params = child["params"]
+                if child["keyword"] == "GEOMETRY":
+                    point = self._point(params, "START") or (0.0, 0.0, 0.0)
+                    continue
+                if child["keyword"] != "PIPE":
+                    continue
+                end = self._point(params, "END")
+                summed = self._length_m(params.get("LSEGMENT"))
+                if point is not None and end is not None and summed:
+                    drawn = sum((a - b) ** 2 for a, b in zip(end, point)) ** 0.5
+                    if abs(drawn - summed) > max(0.01 * summed, 1e-6):
+                        pipe_lbl = str(params.get("LABEL", "(unnamed)"))
+                        self._add(
+                            "X014", "WARNING", "solver-syntax",
+                            f"PIPE '{pipe_lbl}' in '{tag}' spans {drawn:g} m between its "
+                            f"end points but its LSEGMENT sum is {summed:g} m",
+                            location=f"{tag} / PIPE {pipe_lbl}",
+                            suggestion=(
+                                "Change LSEGMENT to add up to the coordinate length, or move "
+                                "XEND/YEND/ZEND (and every later pipe's end point) to match"
+                            ),
+                        )
+                point = end
+
+    def _point(self, params, suffix):
+        """(x, y, z) in metres from X<suffix>/Y<suffix>/Z<suffix>; None without X and Y."""
+        coords = []
+        for axis in "XYZ":
+            raw = params.get(f"{axis}{suffix}")
+            if raw is None and axis == "Z":
+                coords.append(0.0)
+                continue
+            value = self._length_m(raw)
+            if value is None:
+                return None
+            coords.append(value)
+        return tuple(coords)
+
+    def _length_m(self, raw):
+        """A length (or the sum of a length list) in metres; None when unreadable."""
+        values = self._value_list(raw)
+        factor = _LENGTH_TO_M.get(self._length_unit(raw)) if raw is not None else None
+        if not values or factor is None:
+            return None
+        try:
+            return sum(float(v) for v in values) * factor
+        except (TypeError, ValueError):
+            return None
+
     # ------------------------------------------------------------------
     # G rules — Global settings
     # ------------------------------------------------------------------

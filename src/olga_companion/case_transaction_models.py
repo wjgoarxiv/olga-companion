@@ -25,6 +25,7 @@ from .case_spec_types import (
     OUTPUT_NAMES,
     OutputName,
     PhaseFraction,
+    PipeLength,
     PositiveDiameter,
     PositivePressure,
     Roughness,
@@ -104,6 +105,15 @@ class SetPipeGeometry(ClosedCaseModel):
         if self.diameter_m is None and self.elevation_offset_m is None:
             raise ValueError("set_pipe_geometry requires diameter_m or elevation_offset_m")
         return self
+
+
+class SetPipeLength(ClosedCaseModel):
+    """New length of one pipe; its sections scale with it and later pipes move with its end."""
+
+    op: Literal["set_pipe_length"]
+    flowpath: Label
+    pipe: Label
+    length_m: PipeLength
 
 
 class SetPipeSections(ClosedCaseModel):
@@ -204,6 +214,7 @@ EditOperation: TypeAlias = Annotated[
     | SetThermalValue
     | SetPipeGeometry
     | SetPipeSections
+    | SetPipeLength
     | SetBoundaryPressure
     | SetBoundaryTemperature
     | SetPipeRoughness

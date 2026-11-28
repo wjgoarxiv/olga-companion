@@ -1,6 +1,6 @@
 {
   "name": "olga-companion",
-  "version": "0.1.33",
+  "version": "0.1.34",
   "description": "OLGA multiphase flow tools without the desktop app: review and edit cases, make fluid tables, run OLGA and read results. Writes always go to new files, and Claude Code asks before each one.",
   "author": {
     "name": "wjgoarxiv",
@@ -13,7 +13,7 @@
   "mcpServers": {
     "olga-companion": {
       "command": "uvx",
-      "args": ["--from", "olga-companion[results] @ git+https://github.com/wjgoarxiv/olga-companion@v0.1.33", "olga-companion-mcp"]
+      "args": ["--from", "olga-companion[results] @ git+https://github.com/wjgoarxiv/olga-companion@v0.1.34", "olga-companion-mcp"]
     }
   }
 }

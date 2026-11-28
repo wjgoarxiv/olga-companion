@@ -19,6 +19,7 @@ from .case_transaction_models import (
     SetIntegration,
     SetOutputs,
     SetPipeGeometry,
+    SetPipeLength,
     SetPipeRoughness,
     SetPipeSections,
     SetSourceMassflow,
@@ -84,11 +85,56 @@ def _replace_pipe(
     return spec.model_copy(update={"flowpaths": tuple(flowpaths)}), replaced
 
 
+def _set_pipe_length(spec: CaseSpec, operation: SetPipeLength) -> tuple[CaseSpec, SemanticDiff]:
+    """Stretch one pipe along its own direction; the pipes after it move with its end point."""
+    flowpaths: list[FlowpathSpec] = []
+    before: float | None = None
+    for flowpath in spec.flowpaths:
+        if flowpath.label != operation.flowpath:
+            flowpaths.append(flowpath)
+            continue
+        pipes: list[PipeSpec] = []
+        shift: tuple[float, float, float] | None = None
+        for pipe in flowpath.pipes:
+            if shift is not None and pipe.centerline_m is not None:
+                pipe = pipe.model_copy(update={"centerline_m": tuple(
+                    (x + shift[0], y + shift[1], z + shift[2]) for x, y, z in pipe.centerline_m
+                )})
+            if pipe.label == operation.pipe:
+                before = pipe.length
+                ratio = operation.length_m / before
+                updates: dict[str, JsonValue] = {}
+                if pipe.segment_lengths_m is not None:
+                    updates["segment_lengths_m"] = tuple(length * ratio for length in pipe.segment_lengths_m)
+                if pipe.centerline_m is not None:
+                    start, end = pipe.centerline_m
+                    moved = tuple(a + (b - a) * ratio for a, b in zip(start, end))
+                    shift = (moved[0] - end[0], moved[1] - end[1], moved[2] - end[2])
+                    updates["centerline_m"] = (start, moved)
+                else:
+                    if abs(float(pipe.elevation_m or 0.0)) > operation.length_m:
+                        raise UnsupportedEditError(
+                            f"{operation.flowpath}/{operation.pipe} rises or falls more than "
+                            f"{operation.length_m:g} m"
+                        )
+                    updates["length_m"] = operation.length_m
+                pipe = pipe.model_copy(update=updates)
+            pipes.append(pipe)
+        flowpaths.append(flowpath.model_copy(update={"pipes": tuple(pipes)}))
+    if before is None:
+        raise UnknownTargetError(f"{operation.flowpath}/{operation.pipe}")
+    return spec.model_copy(update={"flowpaths": tuple(flowpaths)}), SemanticDiff(
+        f"flowpaths.{operation.flowpath}.pipes.{operation.pipe}.length_m", before, operation.length_m
+    )
+
+
 def apply_operation(
     spec: CaseSpec, operation: EditOperation
 ) -> tuple[CaseSpec, SemanticDiff]:
     """Apply one typed operation without prematurely validating the whole graph."""
     match operation:
+        case SetPipeLength():
+            return _set_pipe_length(spec, operation)
         case SetIntegration(end_time_s=end_time):
             before = spec.integration.end_time_s
             updated = spec.model_copy(update={

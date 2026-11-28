@@ -62,7 +62,9 @@ def test_case_edit_plan_description_narrows_the_closed_branch_to_fallback() -> N
     assert function["parameters"].get("allOf") is None
     assert "When operations is given" not in function["description"]
     assert function["description"] == (
-        "Plan reviewed, hash-bound CaseSpec edits. "
+        "Plan reviewed, hash-bound CaseSpec edits. A hand-written GENKEY (no CaseSpec provenance) "
+        "takes set_integration and set_pipe_length; set_pipe_length scales the pipe's LSEGMENT and "
+        "moves later pipes' end points with it. "
         f"{DESTINATION_RULE} "
         "When source is given, source, source_hash and operations are also required. "
         "When spec is given, spec, spec_hash and operations are also required. "

@@ -82,7 +82,7 @@ def build_tools(handlers: Mapping[str, ToolHandler], *, native_tab: bool | None 
         ),
         bind(
             "case_edit_plan",
-            "Plan reviewed, hash-bound CaseSpec edits. " + DESTINATION_RULE,
+            "Plan reviewed, hash-bound CaseSpec edits. A hand-written GENKEY (no CaseSpec provenance) takes set_integration and set_pipe_length; set_pipe_length scales the pipe's LSEGMENT and moves later pipes' end points with it. " + DESTINATION_RULE,
             {},
             [],
         ),
